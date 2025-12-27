@@ -42,6 +42,7 @@
         </x:Array>
         <x:Array x:Key="WindowSideOptions" Type="{x:Type sys:String}">
             <x:Static Member="sys:String.Empty"/>
+            <sys:String></sys:String>
             <sys:String>Inside</sys:String>
             <sys:String>Inside &amp; Outside</sys:String>
             <sys:String>Outside</sys:String>
