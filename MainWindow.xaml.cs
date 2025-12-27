@@ -458,7 +458,7 @@ namespace Cleaning_Quote
             _occupants.Clear();
             SubItemTypeBox.SelectedIndex = 0;
             WindowSizeBox.SelectedIndex = 1;
-            WindowInsideCheck.IsChecked = true;
+            WindowInsideCheck.IsChecked = false;
             WindowOutsideCheck.IsChecked = false;
             DefaultRoomLevelBox.SelectedIndex = 1;
             DefaultRoomSizeBox.SelectedIndex = 1;
@@ -587,8 +587,9 @@ namespace Cleaning_Quote
 
             var includeInside = WindowInsideCheck.IsChecked == true;
             var includeOutside = WindowOutsideCheck.IsChecked == true;
-            if (category == "Window" && !includeInside && !includeOutside)
-                includeInside = true;
+            var windowSideSelection = category == "Window"
+                ? GetWindowSideSelection(includeInside, includeOutside)
+                : "Excluded";
 
             for (var i = 0; i < count; i++)
             {
@@ -603,8 +604,7 @@ namespace Cleaning_Quote
                     IncludedInQuote = true,
                     Size = category == "Window" ? size : "M",
                     Complexity = GetSubItemDefaultComplexity(category),
-                    WindowInside = category == "Window" && includeInside,
-                    WindowOutside = category == "Window" && includeOutside,
+                    WindowSideSelection = windowSideSelection,
                 };
 
                 InsertSubItemAfterParent(parentRoom, subItem);
@@ -658,6 +658,17 @@ namespace Cleaning_Quote
                 "Standard Window - 2 panes" => "Window",
                 _ => ""
             };
+        }
+
+        private string GetWindowSideSelection(bool includeInside, bool includeOutside)
+        {
+            if (includeInside && includeOutside)
+                return "Inside & Outside";
+            if (includeInside)
+                return "Inside";
+            if (includeOutside)
+                return "Outside";
+            return "Excluded";
         }
 
         private int GetSubItemDefaultComplexity(string category)
