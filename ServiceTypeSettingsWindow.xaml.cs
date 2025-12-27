@@ -33,43 +33,7 @@ namespace Cleaning_Quote
                 return;
 
             _currentPricing = _serviceTypePricingRepo.GetOrCreate(serviceType);
-
-            _suppressLoad = true;
-            SqFtPerLaborHourBox.Text = _currentPricing.SqFtPerLaborHour.ToString();
-            SizeSmallSqFtBox.Text = _currentPricing.SizeSmallSqFt.ToString();
-            SizeMediumSqFtBox.Text = _currentPricing.SizeMediumSqFt.ToString();
-            SizeLargeSqFtBox.Text = _currentPricing.SizeLargeSqFt.ToString();
-            Complexity1MultiplierBox.Text = _currentPricing.Complexity1Multiplier.ToString();
-            Complexity2MultiplierBox.Text = _currentPricing.Complexity2Multiplier.ToString();
-            Complexity3MultiplierBox.Text = _currentPricing.Complexity3Multiplier.ToString();
-            FullGlassShowerHoursBox.Text = _currentPricing.FullGlassShowerHoursEach.ToString();
-            FullGlassShowerComplexityBox.Text = _currentPricing.FullGlassShowerComplexity.ToString();
-            PebbleStoneFloorHoursBox.Text = _currentPricing.PebbleStoneFloorHoursEach.ToString();
-            PebbleStoneFloorComplexityBox.Text = _currentPricing.PebbleStoneFloorComplexity.ToString();
-            FridgeHoursBox.Text = _currentPricing.FridgeHoursEach.ToString();
-            FridgeComplexityBox.Text = _currentPricing.FridgeComplexity.ToString();
-            OvenHoursBox.Text = _currentPricing.OvenHoursEach.ToString();
-            OvenComplexityBox.Text = _currentPricing.OvenComplexity.ToString();
-            CeilingFanHoursBox.Text = _currentPricing.CeilingFanHoursEach.ToString();
-            CeilingFanComplexityBox.Text = _currentPricing.CeilingFanComplexity.ToString();
-            WindowSmallHoursBox.Text = _currentPricing.WindowSmallHoursEach.ToString();
-            WindowMediumHoursBox.Text = _currentPricing.WindowMediumHoursEach.ToString();
-            WindowLargeHoursBox.Text = _currentPricing.WindowLargeHoursEach.ToString();
-            WindowComplexityBox.Text = _currentPricing.WindowComplexity.ToString();
-            FirstCleanRateBox.Text = _currentPricing.FirstCleanRate.ToString();
-            FirstCleanMinimumBox.Text = _currentPricing.FirstCleanMinimum.ToString();
-            DeepCleanRateBox.Text = _currentPricing.DeepCleanRate.ToString();
-            DeepCleanMinimumBox.Text = _currentPricing.DeepCleanMinimum.ToString();
-            MaintenanceRateBox.Text = _currentPricing.MaintenanceRate.ToString();
-            MaintenanceMinimumBox.Text = _currentPricing.MaintenanceMinimum.ToString();
-            OneTimeDeepCleanRateBox.Text = _currentPricing.OneTimeDeepCleanRate.ToString();
-            OneTimeDeepCleanMinimumBox.Text = _currentPricing.OneTimeDeepCleanMinimum.ToString();
-            WindowInsideRateBox.Text = _currentPricing.WindowInsideRate.ToString();
-            WindowOutsideRateBox.Text = _currentPricing.WindowOutsideRate.ToString();
-            Complexity1DefinitionBox.Text = _currentPricing.Complexity1Definition ?? "";
-            Complexity2DefinitionBox.Text = _currentPricing.Complexity2Definition ?? "";
-            Complexity3DefinitionBox.Text = _currentPricing.Complexity3Definition ?? "";
-            _suppressLoad = false;
+            PopulateInputs(_currentPricing);
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -85,6 +49,16 @@ namespace Cleaning_Quote
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ResetToDefault_Click(object sender, RoutedEventArgs e)
+        {
+            var serviceType = GetSelectedServiceType();
+            if (string.IsNullOrWhiteSpace(serviceType))
+                return;
+
+            _currentPricing = ServiceTypePricing.Default(serviceType);
+            PopulateInputs(_currentPricing);
         }
 
         private void UpdateServiceTypePricingFromInputs(ServiceTypePricing pricing)
@@ -155,6 +129,49 @@ namespace Cleaning_Quote
             pricing.Complexity1Definition = Complexity1DefinitionBox.Text?.Trim() ?? "";
             pricing.Complexity2Definition = Complexity2DefinitionBox.Text?.Trim() ?? "";
             pricing.Complexity3Definition = Complexity3DefinitionBox.Text?.Trim() ?? "";
+        }
+
+        private void PopulateInputs(ServiceTypePricing pricing)
+        {
+            if (pricing == null)
+                return;
+
+            _suppressLoad = true;
+            SqFtPerLaborHourBox.Text = pricing.SqFtPerLaborHour.ToString();
+            SizeSmallSqFtBox.Text = pricing.SizeSmallSqFt.ToString();
+            SizeMediumSqFtBox.Text = pricing.SizeMediumSqFt.ToString();
+            SizeLargeSqFtBox.Text = pricing.SizeLargeSqFt.ToString();
+            Complexity1MultiplierBox.Text = pricing.Complexity1Multiplier.ToString();
+            Complexity2MultiplierBox.Text = pricing.Complexity2Multiplier.ToString();
+            Complexity3MultiplierBox.Text = pricing.Complexity3Multiplier.ToString();
+            FullGlassShowerHoursBox.Text = pricing.FullGlassShowerHoursEach.ToString();
+            FullGlassShowerComplexityBox.Text = pricing.FullGlassShowerComplexity.ToString();
+            PebbleStoneFloorHoursBox.Text = pricing.PebbleStoneFloorHoursEach.ToString();
+            PebbleStoneFloorComplexityBox.Text = pricing.PebbleStoneFloorComplexity.ToString();
+            FridgeHoursBox.Text = pricing.FridgeHoursEach.ToString();
+            FridgeComplexityBox.Text = pricing.FridgeComplexity.ToString();
+            OvenHoursBox.Text = pricing.OvenHoursEach.ToString();
+            OvenComplexityBox.Text = pricing.OvenComplexity.ToString();
+            CeilingFanHoursBox.Text = pricing.CeilingFanHoursEach.ToString();
+            CeilingFanComplexityBox.Text = pricing.CeilingFanComplexity.ToString();
+            WindowSmallHoursBox.Text = pricing.WindowSmallHoursEach.ToString();
+            WindowMediumHoursBox.Text = pricing.WindowMediumHoursEach.ToString();
+            WindowLargeHoursBox.Text = pricing.WindowLargeHoursEach.ToString();
+            WindowComplexityBox.Text = pricing.WindowComplexity.ToString();
+            FirstCleanRateBox.Text = pricing.FirstCleanRate.ToString();
+            FirstCleanMinimumBox.Text = pricing.FirstCleanMinimum.ToString();
+            DeepCleanRateBox.Text = pricing.DeepCleanRate.ToString();
+            DeepCleanMinimumBox.Text = pricing.DeepCleanMinimum.ToString();
+            MaintenanceRateBox.Text = pricing.MaintenanceRate.ToString();
+            MaintenanceMinimumBox.Text = pricing.MaintenanceMinimum.ToString();
+            OneTimeDeepCleanRateBox.Text = pricing.OneTimeDeepCleanRate.ToString();
+            OneTimeDeepCleanMinimumBox.Text = pricing.OneTimeDeepCleanMinimum.ToString();
+            WindowInsideRateBox.Text = pricing.WindowInsideRate.ToString();
+            WindowOutsideRateBox.Text = pricing.WindowOutsideRate.ToString();
+            Complexity1DefinitionBox.Text = pricing.Complexity1Definition ?? "";
+            Complexity2DefinitionBox.Text = pricing.Complexity2Definition ?? "";
+            Complexity3DefinitionBox.Text = pricing.Complexity3Definition ?? "";
+            _suppressLoad = false;
         }
 
         private string GetSelectedServiceType()
