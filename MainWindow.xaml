@@ -41,7 +41,7 @@
             <sys:Int32>3</sys:Int32>
         </x:Array>
         <x:Array x:Key="WindowSideOptions" Type="{x:Type sys:String}">
-            <sys:String>Excluded</sys:String>
+            <sys:String></sys:String>
             <sys:String>Inside</sys:String>
             <sys:String>Inside &amp; Outside</sys:String>
             <sys:String>Outside</sys:String>
@@ -395,9 +395,15 @@
               AutoGenerateColumns="False"
               CanUserAddRows="False"
               SelectionMode="Single"
+              AllowDrop="True"
               CellEditEnding="RoomsGrid_CellEditEnding"
-              CurrentCellChanged="RoomsGrid_CurrentCellChanged">
+              CurrentCellChanged="RoomsGrid_CurrentCellChanged"
+              PreviewMouseLeftButtonDown="RoomsGrid_PreviewMouseLeftButtonDown"
+              MouseMove="RoomsGrid_MouseMove"
+              Drop="RoomsGrid_Drop">
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header="Row" Width="60"
+                        Binding="{Binding SortOrder}" IsReadOnly="True"/>
                     <DataGridComboBoxColumn Header="Level" Width="140"
                         ItemsSource="{StaticResource LevelOptions}"
                         SelectedItemBinding="{Binding Level, UpdateSourceTrigger=PropertyChanged}"/>

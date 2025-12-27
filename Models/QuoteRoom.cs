@@ -10,7 +10,8 @@ namespace Cleaning_Quote.Models
         public Guid QuoteRoomId { get; set; } = Guid.NewGuid();
         public Guid QuoteId { get; set; }
         public Guid? ParentRoomId { get; set; }
-        private string _windowSideSelection = "Excluded";
+        private string _windowSideSelection = "";
+        private int _sortOrder;
         private decimal _roomLaborHours;
         private decimal _roomAmount;
 
@@ -24,6 +25,17 @@ namespace Cleaning_Quote.Models
         public bool IncludedInQuote { get; set; } = true;
         public bool WindowInside { get; set; }
         public bool WindowOutside { get; set; }
+        public int SortOrder
+        {
+            get => _sortOrder;
+            set
+            {
+                if (_sortOrder == value)
+                    return;
+                _sortOrder = value;
+                OnPropertyChanged();
+            }
+        }
         public string WindowSideSelection
         {
             get => _windowSideSelection;
@@ -93,7 +105,11 @@ namespace Cleaning_Quote.Models
 
             WindowInside = false;
             WindowOutside = false;
-            IncludedInQuote = selection != "Excluded";
+            var isExcluded = string.IsNullOrWhiteSpace(selection) || selection == "Excluded";
+            IncludedInQuote = !isExcluded;
+
+            if (isExcluded)
+                return;
 
             switch (selection)
             {
@@ -116,7 +132,10 @@ namespace Cleaning_Quote.Models
         private string NormalizeWindowSideSelection(string selection)
         {
             if (!IsWindowRoom)
-                return "Excluded";
+                return "";
+
+            if (string.IsNullOrWhiteSpace(selection) || selection == "Excluded")
+                return "";
 
             return selection switch
             {
@@ -124,17 +143,17 @@ namespace Cleaning_Quote.Models
                 "Outside" => "Outside",
                 "Inside & Outside" => "Inside & Outside",
                 "Window Tract" => "Window Tract",
-                _ => "Excluded"
+                _ => ""
             };
         }
 
         private string GetWindowSideSelectionFromFlags()
         {
             if (!IsWindowRoom)
-                return "Excluded";
+                return "";
 
             if (!IncludedInQuote)
-                return "Excluded";
+                return "";
 
             if (WindowInside && WindowOutside)
                 return "Inside & Outside";
@@ -142,7 +161,7 @@ namespace Cleaning_Quote.Models
                 return "Inside";
             if (WindowOutside)
                 return "Outside";
-            return "Excluded";
+            return "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
