@@ -32,9 +32,19 @@ namespace Cleaning_Quote.Services
 
         // Add-on hours (per item)
         public decimal FullGlassShowerHoursEach { get; set; }
+        public int FullGlassShowerComplexity { get; set; } = 2;
         public decimal PebbleStoneFloorHoursEach { get; set; }
+        public int PebbleStoneFloorComplexity { get; set; } = 2;
         public decimal FridgeHoursEach { get; set; }
+        public int FridgeComplexity { get; set; } = 2;
         public decimal OvenHoursEach { get; set; }
+        public int OvenComplexity { get; set; } = 2;
+        public decimal CeilingFanHoursEach { get; set; }
+        public int CeilingFanComplexity { get; set; } = 1;
+        public decimal WindowSmallHoursEach { get; set; }
+        public decimal WindowMediumHoursEach { get; set; }
+        public decimal WindowLargeHoursEach { get; set; }
+        public int WindowComplexity { get; set; } = 1;
 
         // House modifiers (as added hours)
         public decimal HoursPerPet { get; set; }
@@ -63,9 +73,19 @@ namespace Cleaning_Quote.Services
 
             // Add-ons (edit)
             r.FullGlassShowerHoursEach = 0.30m;
+            r.FullGlassShowerComplexity = 2;
             r.PebbleStoneFloorHoursEach = 0.25m;
+            r.PebbleStoneFloorComplexity = 2;
             r.FridgeHoursEach = 0.30m;
+            r.FridgeComplexity = 2;
             r.OvenHoursEach = 0.35m;
+            r.OvenComplexity = 2;
+            r.CeilingFanHoursEach = 0.15m;
+            r.CeilingFanComplexity = 1;
+            r.WindowSmallHoursEach = 0.08m;
+            r.WindowMediumHoursEach = 0.12m;
+            r.WindowLargeHoursEach = 0.18m;
+            r.WindowComplexity = 1;
 
             // House modifiers (edit)
             r.HoursPerPet = 0.10m;            // +0.10 hours per pet
@@ -98,9 +118,19 @@ namespace Cleaning_Quote.Services
             rules.ComplexityMultiplier[3] = settings.Complexity3Multiplier;
 
             rules.FullGlassShowerHoursEach = settings.FullGlassShowerHoursEach;
+            rules.FullGlassShowerComplexity = settings.FullGlassShowerComplexity;
             rules.PebbleStoneFloorHoursEach = settings.PebbleStoneFloorHoursEach;
+            rules.PebbleStoneFloorComplexity = settings.PebbleStoneFloorComplexity;
             rules.FridgeHoursEach = settings.FridgeHoursEach;
+            rules.FridgeComplexity = settings.FridgeComplexity;
             rules.OvenHoursEach = settings.OvenHoursEach;
+            rules.OvenComplexity = settings.OvenComplexity;
+            rules.CeilingFanHoursEach = settings.CeilingFanHoursEach;
+            rules.CeilingFanComplexity = settings.CeilingFanComplexity;
+            rules.WindowSmallHoursEach = settings.WindowSmallHoursEach;
+            rules.WindowMediumHoursEach = settings.WindowMediumHoursEach;
+            rules.WindowLargeHoursEach = settings.WindowLargeHoursEach;
+            rules.WindowComplexity = settings.WindowComplexity;
 
             return rules;
         }
@@ -163,6 +193,11 @@ namespace Cleaning_Quote.Services
         {
             if (room == null) throw new ArgumentNullException(nameof(room));
 
+            if (room.IsSubItem)
+            {
+                return CalculateSubItemHours(room);
+            }
+
             string roomType = room.RoomType ?? "";
             string size = NormalizeSize(room.Size);
             int complexity = room.Complexity;
@@ -183,6 +218,54 @@ namespace Cleaning_Quote.Services
             roomHours = RoundHours(roomHours, _rules.HourRoundingIncrement);
 
             return roomHours;
+        }
+
+        private decimal CalculateSubItemHours(QuoteRoom item)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (!item.IncludedInQuote) return 0m;
+
+            var category = item.ItemCategory ?? "";
+            var baseHours = category switch
+            {
+                "FullGlassShower" => _rules.FullGlassShowerHoursEach,
+                "PebbleStoneFloor" => _rules.PebbleStoneFloorHoursEach,
+                "Fridge" => _rules.FridgeHoursEach,
+                "Oven" => _rules.OvenHoursEach,
+                "CeilingFan" => _rules.CeilingFanHoursEach,
+                "Window" => GetWindowHours(item),
+                _ => 0m
+            };
+
+            var complexity = category switch
+            {
+                "FullGlassShower" => _rules.FullGlassShowerComplexity,
+                "PebbleStoneFloor" => _rules.PebbleStoneFloorComplexity,
+                "Fridge" => _rules.FridgeComplexity,
+                "Oven" => _rules.OvenComplexity,
+                "CeilingFan" => _rules.CeilingFanComplexity,
+                "Window" => _rules.WindowComplexity,
+                _ => item.Complexity
+            };
+
+            var mult = GetComplexityMultiplier(complexity);
+            var hours = baseHours * mult;
+            return RoundHours(hours, _rules.HourRoundingIncrement);
+        }
+
+        private decimal GetWindowHours(QuoteRoom item)
+        {
+            var size = NormalizeSize(item.Size);
+            var baseHours = size switch
+            {
+                "S" => _rules.WindowSmallHoursEach,
+                "L" => _rules.WindowLargeHoursEach,
+                _ => _rules.WindowMediumHoursEach
+            };
+            var sides = (item.WindowInside ? 1 : 0) + (item.WindowOutside ? 1 : 0);
+            if (sides == 0)
+                sides = 1;
+            return baseHours * sides;
         }
 
         private decimal CalculateHouseModifierHours(Quote quote)

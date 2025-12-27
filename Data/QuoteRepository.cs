@@ -20,11 +20,15 @@ namespace Cleaning_Quote.Data
 
                 cmd.CommandText = @"
 INSERT INTO Quotes
-(QuoteId, ClientId, QuoteDate, QuoteName, ServiceType, ServiceFrequency, LastProfessionalCleaning, Status, LaborRate, TaxRate, CreditCardFeeRate, CreditCard,
+(QuoteId, ClientId, QuoteDate, QuoteName, ServiceType, ServiceFrequency, LastProfessionalCleaning,
+ TotalSqFt, UseTotalSqFtOverride, EntryInstructions, PaymentMethod, PaymentMethodOther, FeedbackDiscussed,
+ Status, LaborRate, TaxRate, CreditCardFeeRate, CreditCard,
  PetsCount, HouseholdSize, SmokingInside, TotalLaborHours, Subtotal, CreditCardFee, Tax, Total,
  Notes, CreatedAt, UpdatedAt)
 VALUES
-($QuoteId, $ClientId, $QuoteDate, $QuoteName, $ServiceType, $ServiceFrequency, $LastProfessionalCleaning, $Status, $LaborRate, $TaxRate, $CreditCardFeeRate, $CreditCard,
+($QuoteId, $ClientId, $QuoteDate, $QuoteName, $ServiceType, $ServiceFrequency, $LastProfessionalCleaning,
+ $TotalSqFt, $UseTotalSqFtOverride, $EntryInstructions, $PaymentMethod, $PaymentMethodOther, $FeedbackDiscussed,
+ $Status, $LaborRate, $TaxRate, $CreditCardFeeRate, $CreditCard,
  $PetsCount, $HouseholdSize, $SmokingInside, $TotalLaborHours, $Subtotal, $CreditCardFee, $Tax, $Total,
  $Notes, $CreatedAt, $UpdatedAt);
 ";
@@ -36,6 +40,12 @@ VALUES
                 cmd.Parameters.AddWithValue("$ServiceType", quote.ServiceType ?? "");
                 cmd.Parameters.AddWithValue("$ServiceFrequency", quote.ServiceFrequency ?? "");
                 cmd.Parameters.AddWithValue("$LastProfessionalCleaning", quote.LastProfessionalCleaning ?? "");
+                cmd.Parameters.AddWithValue("$TotalSqFt", (double)quote.TotalSqFt);
+                cmd.Parameters.AddWithValue("$UseTotalSqFtOverride", quote.UseTotalSqFtOverride ? 1 : 0);
+                cmd.Parameters.AddWithValue("$EntryInstructions", quote.EntryInstructions ?? "");
+                cmd.Parameters.AddWithValue("$PaymentMethod", quote.PaymentMethod ?? "");
+                cmd.Parameters.AddWithValue("$PaymentMethodOther", quote.PaymentMethodOther ?? "");
+                cmd.Parameters.AddWithValue("$FeedbackDiscussed", quote.FeedbackDiscussed ? 1 : 0);
                 cmd.Parameters.AddWithValue("$Status", string.IsNullOrWhiteSpace(quote.Status) ? "Draft" : quote.Status);
 
                 cmd.Parameters.AddWithValue("$LaborRate", (double)quote.LaborRate);
@@ -71,33 +81,47 @@ VALUES
                     roomCmd.CommandText = @"
 INSERT INTO QuoteRooms
 (
-    QuoteRoomId, QuoteId,
+    QuoteRoomId, QuoteId, ParentRoomId,
     RoomType, Size, Complexity,
+    Level, ItemCategory, IsSubItem, IncludedInQuote, WindowInside, WindowOutside,
     FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
-    RoomLaborHours
+    RoomLaborHours, RoomAmount, RoomNotes
 )
 VALUES
 (
-    $QuoteRoomId, $QuoteId,
+    $QuoteRoomId, $QuoteId, $ParentRoomId,
     $RoomType, $Size, $Complexity,
+    $Level, $ItemCategory, $IsSubItem, $IncludedInQuote, $WindowInside, $WindowOutside,
     $Glass, $Pebble, $Fridge, $Oven,
-    $RoomHours
+    $RoomHours, $RoomAmount, $RoomNotes
 );
 ";
                     roomCmd.Parameters.AddWithValue("$QuoteRoomId", room.QuoteRoomId.ToString());
                     roomCmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
+                    roomCmd.Parameters.AddWithValue("$ParentRoomId", (object?)room.ParentRoomId?.ToString() ?? DBNull.Value);
                     roomCmd.Parameters.AddWithValue("$RoomType", room.RoomType ?? "");
                     roomCmd.Parameters.AddWithValue("$Size", room.Size ?? "M");
                     roomCmd.Parameters.AddWithValue("$Complexity", room.Complexity);
+                    roomCmd.Parameters.AddWithValue("$Level", room.Level ?? "");
+                    roomCmd.Parameters.AddWithValue("$ItemCategory", room.ItemCategory ?? "");
+                    roomCmd.Parameters.AddWithValue("$IsSubItem", room.IsSubItem ? 1 : 0);
+                    roomCmd.Parameters.AddWithValue("$IncludedInQuote", room.IncludedInQuote ? 1 : 0);
+                    roomCmd.Parameters.AddWithValue("$WindowInside", room.WindowInside ? 1 : 0);
+                    roomCmd.Parameters.AddWithValue("$WindowOutside", room.WindowOutside ? 1 : 0);
                     roomCmd.Parameters.AddWithValue("$Glass", room.FullGlassShowersCount);
                     roomCmd.Parameters.AddWithValue("$Pebble", room.PebbleStoneFloorsCount);
                     roomCmd.Parameters.AddWithValue("$Fridge", room.FridgeCount);
                     roomCmd.Parameters.AddWithValue("$Oven", room.OvenCount);
                     roomCmd.Parameters.AddWithValue("$RoomHours", (double)room.RoomLaborHours);
+                    roomCmd.Parameters.AddWithValue("$RoomAmount", (double)room.RoomAmount);
+                    roomCmd.Parameters.AddWithValue("$RoomNotes", room.RoomNotes ?? "");
 
                     roomCmd.ExecuteNonQuery();
                 }
             }
+
+            InsertQuotePets(conn, tx, quote);
+            InsertQuoteOccupants(conn, tx, quote);
 
             tx.Commit();
         }
@@ -143,6 +167,7 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
             {
                 cmd.CommandText = @"
                 SELECT QuoteId, ClientId, QuoteDate, QuoteName, ServiceType, ServiceFrequency, LastProfessionalCleaning,
+                       TotalSqFt, UseTotalSqFtOverride, EntryInstructions, PaymentMethod, PaymentMethodOther, FeedbackDiscussed,
                        LaborRate, TaxRate, CreditCardFeeRate, CreditCard,
                        PetsCount, HouseholdSize, SmokingInside,
                        TotalLaborHours, Subtotal, CreditCardFee, Tax, Total,
@@ -164,23 +189,29 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
                     ServiceType = r.IsDBNull(4) ? "" : r.GetString(4),
                     ServiceFrequency = r.IsDBNull(5) ? "" : r.GetString(5),
                     LastProfessionalCleaning = r.IsDBNull(6) ? "" : r.GetString(6),
+                    TotalSqFt = r.IsDBNull(7) ? 0m : Convert.ToDecimal(r.GetDouble(7)),
+                    UseTotalSqFtOverride = !r.IsDBNull(8) && r.GetInt32(8) == 1,
+                    EntryInstructions = r.IsDBNull(9) ? "" : r.GetString(9),
+                    PaymentMethod = r.IsDBNull(10) ? "" : r.GetString(10),
+                    PaymentMethodOther = r.IsDBNull(11) ? "" : r.GetString(11),
+                    FeedbackDiscussed = !r.IsDBNull(12) && r.GetInt32(12) == 1,
 
-                    LaborRate = Convert.ToDecimal(r.GetDouble(7)),
-                    TaxRate = Convert.ToDecimal(r.GetDouble(8)),
-                    CreditCardFeeRate = Convert.ToDecimal(r.GetDouble(9)),
-                    CreditCard = r.GetInt32(10) == 1,
+                    LaborRate = Convert.ToDecimal(r.GetDouble(13)),
+                    TaxRate = Convert.ToDecimal(r.GetDouble(14)),
+                    CreditCardFeeRate = Convert.ToDecimal(r.GetDouble(15)),
+                    CreditCard = r.GetInt32(16) == 1,
 
-                    PetsCount = r.GetInt32(11),
-                    HouseholdSize = r.GetInt32(12),
-                    SmokingInside = r.GetInt32(13) == 1,
+                    PetsCount = r.IsDBNull(17) ? 0 : r.GetInt32(17),
+                    HouseholdSize = r.IsDBNull(18) ? 2 : r.GetInt32(18),
+                    SmokingInside = !r.IsDBNull(19) && r.GetInt32(19) == 1,
 
-                    TotalLaborHours = Convert.ToDecimal(r.GetDouble(14)),
-                    Subtotal = Convert.ToDecimal(r.GetDouble(15)),
-                    CreditCardFee = Convert.ToDecimal(r.GetDouble(16)),
-                    Tax = Convert.ToDecimal(r.GetDouble(17)),
-                    Total = Convert.ToDecimal(r.GetDouble(18)),
+                    TotalLaborHours = Convert.ToDecimal(r.GetDouble(20)),
+                    Subtotal = Convert.ToDecimal(r.GetDouble(21)),
+                    CreditCardFee = Convert.ToDecimal(r.GetDouble(22)),
+                    Tax = Convert.ToDecimal(r.GetDouble(23)),
+                    Total = Convert.ToDecimal(r.GetDouble(24)),
 
-                    Notes = r.IsDBNull(19) ? "" : r.GetString(19),
+                    Notes = r.IsDBNull(25) ? "" : r.GetString(25),
                 };
             }
 
@@ -188,8 +219,9 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
             {
                 cmd.CommandText = @"
 SELECT QuoteRoomId, RoomType, Size, Complexity,
+       Level, ItemCategory, IsSubItem, ParentRoomId, IncludedInQuote, WindowInside, WindowOutside,
        FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
-       RoomLaborHours
+       RoomLaborHours, RoomAmount, RoomNotes
 FROM QuoteRooms
 WHERE QuoteId = $QuoteId;
 ";
@@ -205,14 +237,26 @@ WHERE QuoteId = $QuoteId;
                         RoomType = r.GetString(1),
                         Size = r.GetString(2),
                         Complexity = r.GetInt32(3),
-                        FullGlassShowersCount = r.GetInt32(4),
-                        PebbleStoneFloorsCount = r.GetInt32(5),
-                        FridgeCount = r.GetInt32(6),
-                        OvenCount = r.GetInt32(7),
-                        RoomLaborHours = Convert.ToDecimal(r.GetDouble(8)),
+                        Level = r.IsDBNull(4) ? "" : r.GetString(4),
+                        ItemCategory = r.IsDBNull(5) ? "" : r.GetString(5),
+                        IsSubItem = !r.IsDBNull(6) && r.GetInt32(6) == 1,
+                        ParentRoomId = r.IsDBNull(7) ? (Guid?)null : Guid.Parse(r.GetString(7)),
+                        IncludedInQuote = r.IsDBNull(8) || r.GetInt32(8) == 1,
+                        WindowInside = !r.IsDBNull(9) && r.GetInt32(9) == 1,
+                        WindowOutside = !r.IsDBNull(10) && r.GetInt32(10) == 1,
+                        FullGlassShowersCount = r.IsDBNull(11) ? 0 : r.GetInt32(11),
+                        PebbleStoneFloorsCount = r.IsDBNull(12) ? 0 : r.GetInt32(12),
+                        FridgeCount = r.IsDBNull(13) ? 0 : r.GetInt32(13),
+                        OvenCount = r.IsDBNull(14) ? 0 : r.GetInt32(14),
+                        RoomLaborHours = r.IsDBNull(15) ? 0m : Convert.ToDecimal(r.GetDouble(15)),
+                        RoomAmount = r.IsDBNull(16) ? 0m : Convert.ToDecimal(r.GetDouble(16)),
+                        RoomNotes = r.IsDBNull(17) ? "" : r.GetString(17),
                     });
                 }
             }
+
+            LoadQuotePets(conn, q);
+            LoadQuoteOccupants(conn, q);
 
             return q;
         }
@@ -238,6 +282,12 @@ SET
     ServiceType = $ServiceType,
     ServiceFrequency = $ServiceFrequency,
     LastProfessionalCleaning = $LastProfessionalCleaning,
+    TotalSqFt = $TotalSqFt,
+    UseTotalSqFtOverride = $UseTotalSqFtOverride,
+    EntryInstructions = $EntryInstructions,
+    PaymentMethod = $PaymentMethod,
+    PaymentMethodOther = $PaymentMethodOther,
+    FeedbackDiscussed = $FeedbackDiscussed,
     Status = $Status,
 
     LaborRate = $LaborRate,
@@ -267,6 +317,12 @@ WHERE QuoteId = $QuoteId;
                 cmd.Parameters.AddWithValue("$ServiceType", quote.ServiceType ?? "");
                 cmd.Parameters.AddWithValue("$ServiceFrequency", quote.ServiceFrequency ?? "");
                 cmd.Parameters.AddWithValue("$LastProfessionalCleaning", quote.LastProfessionalCleaning ?? "");
+                cmd.Parameters.AddWithValue("$TotalSqFt", (double)quote.TotalSqFt);
+                cmd.Parameters.AddWithValue("$UseTotalSqFtOverride", quote.UseTotalSqFtOverride ? 1 : 0);
+                cmd.Parameters.AddWithValue("$EntryInstructions", quote.EntryInstructions ?? "");
+                cmd.Parameters.AddWithValue("$PaymentMethod", quote.PaymentMethod ?? "");
+                cmd.Parameters.AddWithValue("$PaymentMethodOther", quote.PaymentMethodOther ?? "");
+                cmd.Parameters.AddWithValue("$FeedbackDiscussed", quote.FeedbackDiscussed ? 1 : 0);
                 cmd.Parameters.AddWithValue("$Status", string.IsNullOrWhiteSpace(quote.Status) ? "Draft" : quote.Status);
 
                 cmd.Parameters.AddWithValue("$LaborRate", (double)quote.LaborRate);
@@ -315,33 +371,50 @@ WHERE QuoteId = $QuoteId;
                     ins.CommandText = @"
 INSERT INTO QuoteRooms
 (
-    QuoteRoomId, QuoteId,
+    QuoteRoomId, QuoteId, ParentRoomId,
     RoomType, Size, Complexity,
+    Level, ItemCategory, IsSubItem, IncludedInQuote, WindowInside, WindowOutside,
     FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
-    RoomLaborHours
+    RoomLaborHours, RoomAmount, RoomNotes
 )
 VALUES
 (
-    $QuoteRoomId, $QuoteId,
+    $QuoteRoomId, $QuoteId, $ParentRoomId,
     $RoomType, $Size, $Complexity,
+    $Level, $ItemCategory, $IsSubItem, $IncludedInQuote, $WindowInside, $WindowOutside,
     $Glass, $Pebble, $Fridge, $Oven,
-    $RoomHours
+    $RoomHours, $RoomAmount, $RoomNotes
 );
 ";
                     ins.Parameters.AddWithValue("$QuoteRoomId", room.QuoteRoomId.ToString());
                     ins.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
+                    ins.Parameters.AddWithValue("$ParentRoomId", (object?)room.ParentRoomId?.ToString() ?? DBNull.Value);
                     ins.Parameters.AddWithValue("$RoomType", room.RoomType ?? "");
                     ins.Parameters.AddWithValue("$Size", room.Size ?? "M");
                     ins.Parameters.AddWithValue("$Complexity", room.Complexity);
+                    ins.Parameters.AddWithValue("$Level", room.Level ?? "");
+                    ins.Parameters.AddWithValue("$ItemCategory", room.ItemCategory ?? "");
+                    ins.Parameters.AddWithValue("$IsSubItem", room.IsSubItem ? 1 : 0);
+                    ins.Parameters.AddWithValue("$IncludedInQuote", room.IncludedInQuote ? 1 : 0);
+                    ins.Parameters.AddWithValue("$WindowInside", room.WindowInside ? 1 : 0);
+                    ins.Parameters.AddWithValue("$WindowOutside", room.WindowOutside ? 1 : 0);
                     ins.Parameters.AddWithValue("$Glass", room.FullGlassShowersCount);
                     ins.Parameters.AddWithValue("$Pebble", room.PebbleStoneFloorsCount);
                     ins.Parameters.AddWithValue("$Fridge", room.FridgeCount);
                     ins.Parameters.AddWithValue("$Oven", room.OvenCount);
                     ins.Parameters.AddWithValue("$RoomHours", (double)room.RoomLaborHours);
+                    ins.Parameters.AddWithValue("$RoomAmount", (double)room.RoomAmount);
+                    ins.Parameters.AddWithValue("$RoomNotes", room.RoomNotes ?? "");
 
                     ins.ExecuteNonQuery();
                 }
             }
+
+            DeleteQuotePets(conn, tx, quote.QuoteId);
+            InsertQuotePets(conn, tx, quote);
+
+            DeleteQuoteOccupants(conn, tx, quote.QuoteId);
+            InsertQuoteOccupants(conn, tx, quote);
 
             tx.Commit();
         }
@@ -380,12 +453,144 @@ VALUES
             using (var cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tx;
+                cmd.CommandText = "DELETE FROM QuotePets WHERE QuoteId = $QuoteId;";
+                cmd.Parameters.AddWithValue("$QuoteId", quoteId.ToString());
+                cmd.ExecuteNonQuery();
+            }
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.Transaction = tx;
+                cmd.CommandText = "DELETE FROM QuoteOccupants WHERE QuoteId = $QuoteId;";
+                cmd.Parameters.AddWithValue("$QuoteId", quoteId.ToString());
+                cmd.ExecuteNonQuery();
+            }
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.Transaction = tx;
                 cmd.CommandText = "DELETE FROM Quotes WHERE QuoteId = $QuoteId;";
                 cmd.Parameters.AddWithValue("$QuoteId", quoteId.ToString());
                 cmd.ExecuteNonQuery();
             }
 
             tx.Commit();
+        }
+
+        private static void InsertQuotePets(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Quote quote)
+        {
+            if (quote?.Pets == null)
+                return;
+
+            foreach (var pet in quote.Pets)
+            {
+                if (pet.QuotePetId == Guid.Empty)
+                    pet.QuotePetId = Guid.NewGuid();
+
+                using var cmd = conn.CreateCommand();
+                cmd.Transaction = tx;
+                cmd.CommandText = @"
+INSERT INTO QuotePets (QuotePetId, QuoteId, Name, Type, Notes)
+VALUES ($QuotePetId, $QuoteId, $Name, $Type, $Notes);
+";
+                cmd.Parameters.AddWithValue("$QuotePetId", pet.QuotePetId.ToString());
+                cmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
+                cmd.Parameters.AddWithValue("$Name", pet.Name ?? "");
+                cmd.Parameters.AddWithValue("$Type", pet.Type ?? "");
+                cmd.Parameters.AddWithValue("$Notes", pet.Notes ?? "");
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static void InsertQuoteOccupants(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Quote quote)
+        {
+            if (quote?.Occupants == null)
+                return;
+
+            foreach (var occupant in quote.Occupants)
+            {
+                if (occupant.QuoteOccupantId == Guid.Empty)
+                    occupant.QuoteOccupantId = Guid.NewGuid();
+
+                using var cmd = conn.CreateCommand();
+                cmd.Transaction = tx;
+                cmd.CommandText = @"
+INSERT INTO QuoteOccupants (QuoteOccupantId, QuoteId, Name, Relationship, Notes)
+VALUES ($QuoteOccupantId, $QuoteId, $Name, $Relationship, $Notes);
+";
+                cmd.Parameters.AddWithValue("$QuoteOccupantId", occupant.QuoteOccupantId.ToString());
+                cmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
+                cmd.Parameters.AddWithValue("$Name", occupant.Name ?? "");
+                cmd.Parameters.AddWithValue("$Relationship", occupant.Relationship ?? "");
+                cmd.Parameters.AddWithValue("$Notes", occupant.Notes ?? "");
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static void DeleteQuotePets(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Guid quoteId)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.Transaction = tx;
+            cmd.CommandText = "DELETE FROM QuotePets WHERE QuoteId = $QuoteId;";
+            cmd.Parameters.AddWithValue("$QuoteId", quoteId.ToString());
+            cmd.ExecuteNonQuery();
+        }
+
+        private static void DeleteQuoteOccupants(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Guid quoteId)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.Transaction = tx;
+            cmd.CommandText = "DELETE FROM QuoteOccupants WHERE QuoteId = $QuoteId;";
+            cmd.Parameters.AddWithValue("$QuoteId", quoteId.ToString());
+            cmd.ExecuteNonQuery();
+        }
+
+        private static void LoadQuotePets(System.Data.Common.DbConnection conn, Quote quote)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
+SELECT QuotePetId, Name, Type, Notes
+FROM QuotePets
+WHERE QuoteId = $QuoteId;
+";
+            cmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                quote.Pets.Add(new QuotePet
+                {
+                    QuotePetId = Guid.Parse(reader.GetString(0)),
+                    QuoteId = quote.QuoteId,
+                    Name = reader.GetString(1),
+                    Type = reader.GetString(2),
+                    Notes = reader.IsDBNull(3) ? "" : reader.GetString(3)
+                });
+            }
+        }
+
+        private static void LoadQuoteOccupants(System.Data.Common.DbConnection conn, Quote quote)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
+SELECT QuoteOccupantId, Name, Relationship, Notes
+FROM QuoteOccupants
+WHERE QuoteId = $QuoteId;
+";
+            cmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                quote.Occupants.Add(new QuoteOccupant
+                {
+                    QuoteOccupantId = Guid.Parse(reader.GetString(0)),
+                    QuoteId = quote.QuoteId,
+                    Name = reader.GetString(1),
+                    Relationship = reader.GetString(2),
+                    Notes = reader.IsDBNull(3) ? "" : reader.GetString(3)
+                });
+            }
         }
     }
 }

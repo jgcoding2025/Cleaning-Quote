@@ -15,6 +15,12 @@ namespace Cleaning_Quote.Models
         public string ServiceType { get; set; } = "";
         public string ServiceFrequency { get; set; } = "";
         public string LastProfessionalCleaning { get; set; } = "";
+        public decimal TotalSqFt { get; set; }
+        public bool UseTotalSqFtOverride { get; set; }
+        public string EntryInstructions { get; set; } = "";
+        public string PaymentMethod { get; set; } = "";
+        public string PaymentMethodOther { get; set; } = "";
+        public bool FeedbackDiscussed { get; set; }
 
         public decimal LaborRate { get; set; } = 50m;
         public decimal TaxRate { get; set; } = 0.08m;
@@ -37,6 +43,8 @@ namespace Cleaning_Quote.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public List<QuoteRoom> Rooms { get; set; } = new List<QuoteRoom>();
+        public List<QuotePet> Pets { get; set; } = new List<QuotePet>();
+        public List<QuoteOccupant> Occupants { get; set; } = new List<QuoteOccupant>();
         public string Status { get; set; } = "Draft";
 
     }
