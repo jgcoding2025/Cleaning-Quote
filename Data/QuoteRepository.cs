@@ -477,7 +477,7 @@ VALUES
             tx.Commit();
         }
 
-        private static void InsertQuotePets(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Quote quote)
+        private static void InsertQuotePets(Microsoft.Data.Sqlite.SqliteConnection conn, Microsoft.Data.Sqlite.SqliteTransaction tx, Quote quote)
         {
             if (quote?.Pets == null)
                 return;
@@ -502,7 +502,7 @@ VALUES ($QuotePetId, $QuoteId, $Name, $Type, $Notes);
             }
         }
 
-        private static void InsertQuoteOccupants(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Quote quote)
+        private static void InsertQuoteOccupants(Microsoft.Data.Sqlite.SqliteConnection conn, Microsoft.Data.Sqlite.SqliteTransaction tx, Quote quote)
         {
             if (quote?.Occupants == null)
                 return;
@@ -527,7 +527,7 @@ VALUES ($QuoteOccupantId, $QuoteId, $Name, $Relationship, $Notes);
             }
         }
 
-        private static void DeleteQuotePets(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Guid quoteId)
+        private static void DeleteQuotePets(Microsoft.Data.Sqlite.SqliteConnection conn, Microsoft.Data.Sqlite.SqliteTransaction tx, Guid quoteId)
         {
             using var cmd = conn.CreateCommand();
             cmd.Transaction = tx;
@@ -536,7 +536,7 @@ VALUES ($QuoteOccupantId, $QuoteId, $Name, $Relationship, $Notes);
             cmd.ExecuteNonQuery();
         }
 
-        private static void DeleteQuoteOccupants(System.Data.Common.DbConnection conn, System.Data.Common.DbTransaction tx, Guid quoteId)
+        private static void DeleteQuoteOccupants(Microsoft.Data.Sqlite.SqliteConnection conn, Microsoft.Data.Sqlite.SqliteTransaction tx, Guid quoteId)
         {
             using var cmd = conn.CreateCommand();
             cmd.Transaction = tx;
@@ -545,7 +545,7 @@ VALUES ($QuoteOccupantId, $QuoteId, $Name, $Relationship, $Notes);
             cmd.ExecuteNonQuery();
         }
 
-        private static void LoadQuotePets(System.Data.Common.DbConnection conn, Quote quote)
+        private static void LoadQuotePets(Microsoft.Data.Sqlite.SqliteConnection conn, Quote quote)
         {
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"
@@ -569,7 +569,7 @@ WHERE QuoteId = $QuoteId;
             }
         }
 
-        private static void LoadQuoteOccupants(System.Data.Common.DbConnection conn, Quote quote)
+        private static void LoadQuoteOccupants(Microsoft.Data.Sqlite.SqliteConnection conn, Quote quote)
         {
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"

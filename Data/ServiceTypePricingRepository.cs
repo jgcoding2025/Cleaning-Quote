@@ -80,9 +80,9 @@ WHERE ServiceType = $ServiceType;
                 };
             }
 
-            var defaults = ServiceTypePricing.Default(normalized);
-            Upsert(defaults);
-            return defaults;
+            var createdDefaults = ServiceTypePricing.Default(normalized);
+            Upsert(createdDefaults);
+            return createdDefaults;
         }
 
         public void Upsert(ServiceTypePricing settings)
