@@ -17,6 +17,7 @@ namespace Cleaning_Quote.Data
             cmd.CommandText = @"
 SELECT ServiceType, SqFtPerLaborHour, SizeSmallSqFt, SizeMediumSqFt, SizeLargeSqFt,
        Complexity1Multiplier, Complexity2Multiplier, Complexity3Multiplier,
+       Complexity1Definition, Complexity2Definition, Complexity3Definition,
        FullGlassShowerHoursEach, PebbleStoneFloorHoursEach, FridgeHoursEach, OvenHoursEach,
        UpdatedAt
 FROM ServiceTypePricing
@@ -37,11 +38,14 @@ WHERE ServiceType = $ServiceType;
                     Complexity1Multiplier = Convert.ToDecimal(reader.GetDouble(5)),
                     Complexity2Multiplier = Convert.ToDecimal(reader.GetDouble(6)),
                     Complexity3Multiplier = Convert.ToDecimal(reader.GetDouble(7)),
-                    FullGlassShowerHoursEach = Convert.ToDecimal(reader.GetDouble(8)),
-                    PebbleStoneFloorHoursEach = Convert.ToDecimal(reader.GetDouble(9)),
-                    FridgeHoursEach = Convert.ToDecimal(reader.GetDouble(10)),
-                    OvenHoursEach = Convert.ToDecimal(reader.GetDouble(11)),
-                    UpdatedAt = DateTime.Parse(reader.GetString(12))
+                    Complexity1Definition = GetOptionalString(reader, 8),
+                    Complexity2Definition = GetOptionalString(reader, 9),
+                    Complexity3Definition = GetOptionalString(reader, 10),
+                    FullGlassShowerHoursEach = Convert.ToDecimal(reader.GetDouble(11)),
+                    PebbleStoneFloorHoursEach = Convert.ToDecimal(reader.GetDouble(12)),
+                    FridgeHoursEach = Convert.ToDecimal(reader.GetDouble(13)),
+                    OvenHoursEach = Convert.ToDecimal(reader.GetDouble(14)),
+                    UpdatedAt = DateTime.Parse(reader.GetString(15))
                 };
             }
 
@@ -75,6 +79,9 @@ SET SqFtPerLaborHour = $SqFtPerLaborHour,
     Complexity1Multiplier = $Complexity1Multiplier,
     Complexity2Multiplier = $Complexity2Multiplier,
     Complexity3Multiplier = $Complexity3Multiplier,
+    Complexity1Definition = $Complexity1Definition,
+    Complexity2Definition = $Complexity2Definition,
+    Complexity3Definition = $Complexity3Definition,
     FullGlassShowerHoursEach = $FullGlassShowerHoursEach,
     PebbleStoneFloorHoursEach = $PebbleStoneFloorHoursEach,
     FridgeHoursEach = $FridgeHoursEach,
@@ -90,6 +97,9 @@ WHERE ServiceType = $ServiceType;
                 cmd.Parameters.AddWithValue("$Complexity1Multiplier", (double)settings.Complexity1Multiplier);
                 cmd.Parameters.AddWithValue("$Complexity2Multiplier", (double)settings.Complexity2Multiplier);
                 cmd.Parameters.AddWithValue("$Complexity3Multiplier", (double)settings.Complexity3Multiplier);
+                cmd.Parameters.AddWithValue("$Complexity1Definition", settings.Complexity1Definition ?? "");
+                cmd.Parameters.AddWithValue("$Complexity2Definition", settings.Complexity2Definition ?? "");
+                cmd.Parameters.AddWithValue("$Complexity3Definition", settings.Complexity3Definition ?? "");
                 cmd.Parameters.AddWithValue("$FullGlassShowerHoursEach", (double)settings.FullGlassShowerHoursEach);
                 cmd.Parameters.AddWithValue("$PebbleStoneFloorHoursEach", (double)settings.PebbleStoneFloorHoursEach);
                 cmd.Parameters.AddWithValue("$FridgeHoursEach", (double)settings.FridgeHoursEach);
@@ -107,11 +117,13 @@ WHERE ServiceType = $ServiceType;
 INSERT INTO ServiceTypePricing
 (ServiceType, SqFtPerLaborHour, SizeSmallSqFt, SizeMediumSqFt, SizeLargeSqFt,
  Complexity1Multiplier, Complexity2Multiplier, Complexity3Multiplier,
+ Complexity1Definition, Complexity2Definition, Complexity3Definition,
  FullGlassShowerHoursEach, PebbleStoneFloorHoursEach, FridgeHoursEach, OvenHoursEach,
  UpdatedAt)
 VALUES
 ($ServiceType, $SqFtPerLaborHour, $SizeSmallSqFt, $SizeMediumSqFt, $SizeLargeSqFt,
  $Complexity1Multiplier, $Complexity2Multiplier, $Complexity3Multiplier,
+ $Complexity1Definition, $Complexity2Definition, $Complexity3Definition,
  $FullGlassShowerHoursEach, $PebbleStoneFloorHoursEach, $FridgeHoursEach, $OvenHoursEach,
  $UpdatedAt);
 ";
@@ -123,6 +135,9 @@ VALUES
                 insert.Parameters.AddWithValue("$Complexity1Multiplier", (double)settings.Complexity1Multiplier);
                 insert.Parameters.AddWithValue("$Complexity2Multiplier", (double)settings.Complexity2Multiplier);
                 insert.Parameters.AddWithValue("$Complexity3Multiplier", (double)settings.Complexity3Multiplier);
+                insert.Parameters.AddWithValue("$Complexity1Definition", settings.Complexity1Definition ?? "");
+                insert.Parameters.AddWithValue("$Complexity2Definition", settings.Complexity2Definition ?? "");
+                insert.Parameters.AddWithValue("$Complexity3Definition", settings.Complexity3Definition ?? "");
                 insert.Parameters.AddWithValue("$FullGlassShowerHoursEach", (double)settings.FullGlassShowerHoursEach);
                 insert.Parameters.AddWithValue("$PebbleStoneFloorHoursEach", (double)settings.PebbleStoneFloorHoursEach);
                 insert.Parameters.AddWithValue("$FridgeHoursEach", (double)settings.FridgeHoursEach);
@@ -131,6 +146,11 @@ VALUES
 
                 insert.ExecuteNonQuery();
             }
+        }
+
+        private static string GetOptionalString(System.Data.Common.DbDataReader reader, int index)
+        {
+            return reader.IsDBNull(index) ? "" : reader.GetString(index);
         }
     }
 }

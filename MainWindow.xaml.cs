@@ -410,6 +410,25 @@ namespace Cleaning_Quote
             LoadServiceTypePricing(GetSelectedServiceType());
         }
 
+        private void OpenServiceTypeDefaults_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsWindow = new ServiceTypeSettingsWindow(GetSelectedServiceType())
+            {
+                Owner = this
+            };
+            settingsWindow.ShowDialog();
+            LoadServiceTypePricing(GetSelectedServiceType());
+        }
+
+        private void OpenComplexityReference_Click(object sender, RoutedEventArgs e)
+        {
+            var referenceWindow = new ComplexityReferenceWindow(GetSelectedServiceType())
+            {
+                Owner = this
+            };
+            referenceWindow.ShowDialog();
+        }
+
         private void NewQuote_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedClient == null)

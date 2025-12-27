@@ -12,6 +12,9 @@ namespace Cleaning_Quote.Models
         public decimal Complexity1Multiplier { get; set; } = 1.00m;
         public decimal Complexity2Multiplier { get; set; } = 1.25m;
         public decimal Complexity3Multiplier { get; set; } = 1.50m;
+        public string Complexity1Definition { get; set; } = "Light use with minimal buildup.";
+        public string Complexity2Definition { get; set; } = "Moderate use with visible buildup.";
+        public string Complexity3Definition { get; set; } = "Heavy use with significant buildup or clutter.";
         public decimal FullGlassShowerHoursEach { get; set; } = 0.30m;
         public decimal PebbleStoneFloorHoursEach { get; set; } = 0.25m;
         public decimal FridgeHoursEach { get; set; } = 0.30m;
@@ -30,6 +33,9 @@ namespace Cleaning_Quote.Models
                 Complexity1Multiplier = 1.00m,
                 Complexity2Multiplier = 1.25m,
                 Complexity3Multiplier = 1.50m,
+                Complexity1Definition = "Light use with minimal buildup.",
+                Complexity2Definition = "Moderate use with visible buildup.",
+                Complexity3Definition = "Heavy use with significant buildup or clutter.",
                 FullGlassShowerHoursEach = 0.30m,
                 PebbleStoneFloorHoursEach = 0.25m,
                 FridgeHoursEach = 0.30m,
