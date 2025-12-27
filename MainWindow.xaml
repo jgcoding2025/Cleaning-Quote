@@ -81,6 +81,7 @@
             <TextBlock x:Name="StatusText" Margin="0,10,0,0" />
 
             <StackPanel Orientation="Horizontal">
+                <Button Content="New Quote" Width="100" Margin="0,0,8,0" Click="NewQuote_Click"/>
                 <Button Content="Load Quote" Width="100" Margin="0,0,8,0" Click="LoadQuote_Click"/>
                 <Button Content="Delete Quote" Width="100" Margin="8,0,0,0" Click="DeleteQuote_Click"/>
             </StackPanel>
@@ -88,7 +89,7 @@
         </StackPanel>
        
         <!-- RIGHT: Totals Panel (what you already had) -->
-        <StackPanel Grid.Column="1" Margin="10">
+        <StackPanel Grid.Column="1" Margin="10" Visibility="{Binding QuotePanelVisibility}">
 
             <TextBlock Text="Quote" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
@@ -176,6 +177,63 @@
                     </ComboBox>
                 </StackPanel>
             </WrapPanel>
+
+            <Expander Header="Service Type Settings" IsExpanded="False" Margin="0,0,0,10">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,10">
+                        <StackPanel Width="160" Margin="0,0,10,0">
+                            <TextBlock Text="Sq Ft per Labor Hour" FontWeight="SemiBold"/>
+                            <TextBox x:Name="SqFtPerLaborHourBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Small Sq Ft" FontWeight="SemiBold"/>
+                            <TextBox x:Name="SizeSmallSqFtBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Medium Sq Ft" FontWeight="SemiBold"/>
+                            <TextBox x:Name="SizeMediumSqFtBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Large Sq Ft" FontWeight="SemiBold"/>
+                            <TextBox x:Name="SizeLargeSqFtBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <WrapPanel Margin="0,0,0,10">
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Complexity 1x" FontWeight="SemiBold"/>
+                            <TextBox x:Name="Complexity1MultiplierBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Complexity 2x" FontWeight="SemiBold"/>
+                            <TextBox x:Name="Complexity2MultiplierBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Complexity 3x" FontWeight="SemiBold"/>
+                            <TextBox x:Name="Complexity3MultiplierBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <WrapPanel>
+                        <StackPanel Width="140" Margin="0,0,10,0">
+                            <TextBlock Text="Glass Shower Hours" FontWeight="SemiBold"/>
+                            <TextBox x:Name="FullGlassShowerHoursBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="140" Margin="0,0,10,0">
+                            <TextBlock Text="Pebble Floor Hours" FontWeight="SemiBold"/>
+                            <TextBox x:Name="PebbleStoneFloorHoursBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Fridge Hours" FontWeight="SemiBold"/>
+                            <TextBox x:Name="FridgeHoursBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                        <StackPanel Width="120" Margin="0,0,10,0">
+                            <TextBlock Text="Oven Hours" FontWeight="SemiBold"/>
+                            <TextBox x:Name="OvenHoursBox" Height="26" TextChanged="ServiceTypeSettings_Changed"/>
+                        </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </Expander>
 
             <!-- Rooms -->
             <TextBlock Text="Rooms" FontWeight="Bold" Margin="0,0,0,6"/>

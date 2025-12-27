@@ -15,9 +15,16 @@ namespace Cleaning_Quote.Services
 
     public sealed class PricingRules
     {
-        // Base hours: RoomType -> Size(S/M/L) -> hours
+        // Base hours: RoomType -> Size(S/M/L) -> hours (optional fallback)
         public Dictionary<string, Dictionary<string, decimal>> BaseHours { get; } =
             new Dictionary<string, Dictionary<string, decimal>>(StringComparer.OrdinalIgnoreCase);
+
+        // Size square footage: Size(S/M/L) -> sqft
+        public Dictionary<string, decimal> SizeSquareFootage { get; } =
+            new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
+        // Labor rate: sqft cleaned per labor hour
+        public decimal SqFtPerLaborHour { get; set; }
 
         // Complexity: 1/2/3 -> multiplier
         public Dictionary<int, decimal> ComplexityMultiplier { get; } =
@@ -48,15 +55,11 @@ namespace Cleaning_Quote.Services
             r.ComplexityMultiplier[2] = 1.25m;
             r.ComplexityMultiplier[3] = 1.50m;
 
-            // Typical starting base hours (EDIT THESE TO MATCH YOUR BUSINESS)
-            r.BaseHours["Bedroom"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.50m, ["M"] = 0.75m, ["L"] = 1.00m };
-            r.BaseHours["Bathroom"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.75m, ["M"] = 1.00m, ["L"] = 1.25m };
-            r.BaseHours["Kitchen"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 1.00m, ["M"] = 1.25m, ["L"] = 1.50m };
-            r.BaseHours["LivingRoom"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.75m, ["M"] = 1.00m, ["L"] = 1.25m };
-            r.BaseHours["Playroom"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.75m, ["M"] = 1.00m, ["L"] = 1.25m };
-            r.BaseHours["Hallway"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.25m, ["M"] = 0.35m, ["L"] = 0.50m };
-            r.BaseHours["Entryway"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.25m, ["M"] = 0.35m, ["L"] = 0.50m };
-            r.BaseHours["Staircase"] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase) { ["S"] = 0.35m, ["M"] = 0.50m, ["L"] = 0.75m };
+            // Typical starting square-foot defaults (edit as needed)
+            r.SqFtPerLaborHour = 500m;
+            r.SizeSquareFootage["S"] = 250m;
+            r.SizeSquareFootage["M"] = 375m;
+            r.SizeSquareFootage["L"] = 500m;
 
             // Add-ons (edit)
             r.FullGlassShowerHoursEach = 0.30m;
@@ -76,6 +79,30 @@ namespace Cleaning_Quote.Services
             r.HourRoundingIncrement = 0.25m;
 
             return r;
+        }
+
+        public static PricingRules FromServiceTypePricing(ServiceTypePricing settings)
+        {
+            var rules = Default();
+
+            if (settings == null)
+                return rules;
+
+            rules.SqFtPerLaborHour = settings.SqFtPerLaborHour;
+            rules.SizeSquareFootage["S"] = settings.SizeSmallSqFt;
+            rules.SizeSquareFootage["M"] = settings.SizeMediumSqFt;
+            rules.SizeSquareFootage["L"] = settings.SizeLargeSqFt;
+
+            rules.ComplexityMultiplier[1] = settings.Complexity1Multiplier;
+            rules.ComplexityMultiplier[2] = settings.Complexity2Multiplier;
+            rules.ComplexityMultiplier[3] = settings.Complexity3Multiplier;
+
+            rules.FullGlassShowerHoursEach = settings.FullGlassShowerHoursEach;
+            rules.PebbleStoneFloorHoursEach = settings.PebbleStoneFloorHoursEach;
+            rules.FridgeHoursEach = settings.FridgeHoursEach;
+            rules.OvenHoursEach = settings.OvenHoursEach;
+
+            return rules;
         }
     }
 
@@ -180,13 +207,20 @@ namespace Cleaning_Quote.Services
 
         private decimal GetBaseHours(string roomType, string size)
         {
-            if (!_rules.BaseHours.TryGetValue(roomType, out var bySize))
-                throw new InvalidOperationException($"No base hours configured for room type '{roomType}'.");
+            if (_rules.SqFtPerLaborHour > 0m &&
+                _rules.SizeSquareFootage.TryGetValue(size, out var sqft) &&
+                sqft > 0m)
+            {
+                return sqft / _rules.SqFtPerLaborHour;
+            }
 
-            if (!bySize.TryGetValue(size, out var hours))
-                throw new InvalidOperationException($"No base hours configured for room type '{roomType}' size '{size}'.");
+            if (_rules.BaseHours.TryGetValue(roomType, out var bySize) &&
+                bySize.TryGetValue(size, out var hours))
+            {
+                return hours;
+            }
 
-            return hours;
+            throw new InvalidOperationException($"No base hours configured for room type '{roomType}' size '{size}'.");
         }
 
         private decimal GetComplexityMultiplier(int complexity)

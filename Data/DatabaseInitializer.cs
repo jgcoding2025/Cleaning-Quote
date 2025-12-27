@@ -75,6 +75,22 @@ CREATE TABLE IF NOT EXISTS QuoteRooms(
 
     FOREIGN KEY (QuoteId) REFERENCES Quotes(QuoteId)
 );
+
+CREATE TABLE IF NOT EXISTS ServiceTypePricing(
+    ServiceType TEXT PRIMARY KEY,
+    SqFtPerLaborHour REAL NOT NULL,
+    SizeSmallSqFt REAL NOT NULL,
+    SizeMediumSqFt REAL NOT NULL,
+    SizeLargeSqFt REAL NOT NULL,
+    Complexity1Multiplier REAL NOT NULL,
+    Complexity2Multiplier REAL NOT NULL,
+    Complexity3Multiplier REAL NOT NULL,
+    FullGlassShowerHoursEach REAL NOT NULL,
+    PebbleStoneFloorHoursEach REAL NOT NULL,
+    FridgeHoursEach REAL NOT NULL,
+    OvenHoursEach REAL NOT NULL,
+    UpdatedAt TEXT NOT NULL
+);
 ";
             cmd.ExecuteNonQuery();
 
@@ -82,6 +98,19 @@ CREATE TABLE IF NOT EXISTS QuoteRooms(
             EnsureColumn(conn, "Quotes", "ServiceType", "TEXT");
             EnsureColumn(conn, "Quotes", "ServiceFrequency", "TEXT");
             EnsureColumn(conn, "Quotes", "LastProfessionalCleaning", "TEXT");
+
+            EnsureColumn(conn, "ServiceTypePricing", "SqFtPerLaborHour", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeSmallSqFt", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeMediumSqFt", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeLargeSqFt", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "Complexity1Multiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "Complexity2Multiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "Complexity3Multiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "FullGlassShowerHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "PebbleStoneFloorHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "FridgeHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "OvenHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "UpdatedAt", "TEXT");
         }
 
         private static void EnsureColumn(SqliteConnection conn, string tableName, string columnName, string columnDefinition)
