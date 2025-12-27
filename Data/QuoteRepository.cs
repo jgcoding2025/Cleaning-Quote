@@ -85,7 +85,7 @@ INSERT INTO QuoteRooms
     RoomType, Size, Complexity,
     Level, ItemCategory, IsSubItem, IncludedInQuote, WindowInside, WindowOutside, WindowSide,
     FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
-    RoomLaborHours, RoomAmount, RoomNotes
+    RoomLaborHours, RoomAmount, RoomNotes, SortOrder
 )
 VALUES
 (
@@ -93,7 +93,7 @@ VALUES
     $RoomType, $Size, $Complexity,
     $Level, $ItemCategory, $IsSubItem, $IncludedInQuote, $WindowInside, $WindowOutside, $WindowSide,
     $Glass, $Pebble, $Fridge, $Oven,
-    $RoomHours, $RoomAmount, $RoomNotes
+    $RoomHours, $RoomAmount, $RoomNotes, $SortOrder
 );
 ";
                     roomCmd.Parameters.AddWithValue("$QuoteRoomId", room.QuoteRoomId.ToString());
@@ -108,7 +108,7 @@ VALUES
                     roomCmd.Parameters.AddWithValue("$IncludedInQuote", room.IncludedInQuote ? 1 : 0);
                     roomCmd.Parameters.AddWithValue("$WindowInside", room.WindowInside ? 1 : 0);
                     roomCmd.Parameters.AddWithValue("$WindowOutside", room.WindowOutside ? 1 : 0);
-                    roomCmd.Parameters.AddWithValue("$WindowSide", room.WindowSideSelection ?? "Excluded");
+                    roomCmd.Parameters.AddWithValue("$WindowSide", room.WindowSideSelection ?? "");
                     roomCmd.Parameters.AddWithValue("$Glass", room.FullGlassShowersCount);
                     roomCmd.Parameters.AddWithValue("$Pebble", room.PebbleStoneFloorsCount);
                     roomCmd.Parameters.AddWithValue("$Fridge", room.FridgeCount);
@@ -116,6 +116,7 @@ VALUES
                     roomCmd.Parameters.AddWithValue("$RoomHours", (double)room.RoomLaborHours);
                     roomCmd.Parameters.AddWithValue("$RoomAmount", (double)room.RoomAmount);
                     roomCmd.Parameters.AddWithValue("$RoomNotes", room.RoomNotes ?? "");
+                    roomCmd.Parameters.AddWithValue("$SortOrder", room.SortOrder);
 
                     roomCmd.ExecuteNonQuery();
                 }
@@ -222,9 +223,10 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
 SELECT QuoteRoomId, RoomType, Size, Complexity,
        Level, ItemCategory, IsSubItem, ParentRoomId, IncludedInQuote, WindowInside, WindowOutside, WindowSide,
        FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
-       RoomLaborHours, RoomAmount, RoomNotes
+       RoomLaborHours, RoomAmount, RoomNotes, SortOrder
 FROM QuoteRooms
-WHERE QuoteId = $QuoteId;
+WHERE QuoteId = $QuoteId
+ORDER BY SortOrder ASC, rowid ASC;
 ";
                 cmd.Parameters.AddWithValue("$QuoteId", quoteId.ToString());
 
@@ -252,6 +254,7 @@ WHERE QuoteId = $QuoteId;
                         RoomLaborHours = r.IsDBNull(16) ? 0m : Convert.ToDecimal(r.GetDouble(16)),
                         RoomAmount = r.IsDBNull(17) ? 0m : Convert.ToDecimal(r.GetDouble(17)),
                         RoomNotes = r.IsDBNull(18) ? "" : r.GetString(18),
+                        SortOrder = r.IsDBNull(19) ? 0 : r.GetInt32(19),
                     };
 
                     var windowSide = r.IsDBNull(11) ? "" : r.GetString(11);
@@ -384,7 +387,7 @@ INSERT INTO QuoteRooms
     RoomType, Size, Complexity,
     Level, ItemCategory, IsSubItem, IncludedInQuote, WindowInside, WindowOutside, WindowSide,
     FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
-    RoomLaborHours, RoomAmount, RoomNotes
+    RoomLaborHours, RoomAmount, RoomNotes, SortOrder
 )
 VALUES
 (
@@ -392,7 +395,7 @@ VALUES
     $RoomType, $Size, $Complexity,
     $Level, $ItemCategory, $IsSubItem, $IncludedInQuote, $WindowInside, $WindowOutside, $WindowSide,
     $Glass, $Pebble, $Fridge, $Oven,
-    $RoomHours, $RoomAmount, $RoomNotes
+    $RoomHours, $RoomAmount, $RoomNotes, $SortOrder
 );
 ";
                     ins.Parameters.AddWithValue("$QuoteRoomId", room.QuoteRoomId.ToString());
@@ -407,7 +410,7 @@ VALUES
                     ins.Parameters.AddWithValue("$IncludedInQuote", room.IncludedInQuote ? 1 : 0);
                     ins.Parameters.AddWithValue("$WindowInside", room.WindowInside ? 1 : 0);
                     ins.Parameters.AddWithValue("$WindowOutside", room.WindowOutside ? 1 : 0);
-                    ins.Parameters.AddWithValue("$WindowSide", room.WindowSideSelection ?? "Excluded");
+                    ins.Parameters.AddWithValue("$WindowSide", room.WindowSideSelection ?? "");
                     ins.Parameters.AddWithValue("$Glass", room.FullGlassShowersCount);
                     ins.Parameters.AddWithValue("$Pebble", room.PebbleStoneFloorsCount);
                     ins.Parameters.AddWithValue("$Fridge", room.FridgeCount);
@@ -415,6 +418,7 @@ VALUES
                     ins.Parameters.AddWithValue("$RoomHours", (double)room.RoomLaborHours);
                     ins.Parameters.AddWithValue("$RoomAmount", (double)room.RoomAmount);
                     ins.Parameters.AddWithValue("$RoomNotes", room.RoomNotes ?? "");
+                    ins.Parameters.AddWithValue("$SortOrder", room.SortOrder);
 
                     ins.ExecuteNonQuery();
                 }
