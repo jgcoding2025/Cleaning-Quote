@@ -459,6 +459,9 @@ namespace Cleaning_Quote
             WindowSizeBox.SelectedIndex = 1;
             WindowInsideCheck.IsChecked = true;
             WindowOutsideCheck.IsChecked = false;
+            DefaultRoomLevelBox.SelectedIndex = 1;
+            DefaultRoomSizeBox.SelectedIndex = 1;
+            DefaultRoomComplexityBox.SelectedIndex = 0;
             LoadServiceTypePricing(GetSelectedServiceType());
         }
 
@@ -497,7 +500,7 @@ namespace Cleaning_Quote
             };
 
             _rooms.Clear();
-            _rooms.Add(new QuoteRoom { RoomType = "Bedroom", Size = "M", Complexity = 1 });
+            _rooms.Add(BuildDefaultRoom());
             _pets.Clear();
             _occupants.Clear();
             QuoteDatePicker.SelectedDate = _currentQuote.QuoteDate;
@@ -527,7 +530,7 @@ namespace Cleaning_Quote
 
         private void AddRoom_Click(object sender, RoutedEventArgs e)
         {
-            _rooms.Add(new QuoteRoom { RoomType = "Bedroom", Size = "M", Complexity = 1 });
+            _rooms.Add(BuildDefaultRoom());
             RecalculateTotals();
         }
 
@@ -581,6 +584,11 @@ namespace Cleaning_Quote
                 count = 1;
             count = Math.Max(1, count);
 
+            var includeInside = WindowInsideCheck.IsChecked == true;
+            var includeOutside = WindowOutsideCheck.IsChecked == true;
+            if (category == "Window" && !includeInside && !includeOutside)
+                includeInside = true;
+
             for (var i = 0; i < count; i++)
             {
                 var subItem = new QuoteRoom
@@ -594,8 +602,8 @@ namespace Cleaning_Quote
                     IncludedInQuote = true,
                     Size = category == "Window" ? size : "M",
                     Complexity = GetSubItemDefaultComplexity(category),
-                    WindowInside = category == "Window" && WindowInsideCheck.IsChecked == true,
-                    WindowOutside = category == "Window" && WindowOutsideCheck.IsChecked == true,
+                    WindowInside = category == "Window" && includeInside,
+                    WindowOutside = category == "Window" && includeOutside,
                 };
 
                 InsertSubItemAfterParent(parentRoom, subItem);
@@ -1272,13 +1280,56 @@ namespace Cleaning_Quote
                 if (!room.IsSubItem || room.ItemCategory != "Window" || !room.IncludedInQuote)
                     continue;
 
-                if (side == "inside" && room.WindowInside)
+                var inside = room.WindowInside;
+                var outside = room.WindowOutside;
+                if (!inside && !outside && side == "inside")
+                {
                     count++;
-                else if (side == "outside" && room.WindowOutside)
+                    continue;
+                }
+
+                if (side == "inside" && inside)
+                    count++;
+                else if (side == "outside" && outside)
                     count++;
             }
 
             return count;
+        }
+
+        private QuoteRoom BuildDefaultRoom()
+        {
+            return new QuoteRoom
+            {
+                RoomType = "Bedroom",
+                Size = GetDefaultRoomSize(),
+                Complexity = GetDefaultRoomComplexity(),
+                Level = GetDefaultRoomLevel()
+            };
+        }
+
+        private string GetDefaultRoomLevel()
+        {
+            return DefaultRoomLevelBox.SelectedItem as string ?? "";
+        }
+
+        private string GetDefaultRoomSize()
+        {
+            return DefaultRoomSizeBox.SelectedItem as string ?? "M";
+        }
+
+        private int GetDefaultRoomComplexity()
+        {
+            if (DefaultRoomComplexityBox.SelectedItem is int complexity)
+                return complexity;
+
+            if (DefaultRoomComplexityBox.SelectedItem is string value &&
+                int.TryParse(value, out var parsed))
+            {
+                return parsed;
+            }
+
+            return 1;
         }
 
         private string BuildClientAddressLine(Client client)
