@@ -133,17 +133,19 @@ namespace Cleaning_Quote
             ClientsList.ItemsSource = _clientRepo.GetAll();
         }
 
-        private void LoadQuotesForSelectedClient()
+        private void LoadQuotesForSelectedClient(bool hideQuotePanel = true)
         {
             if (_selectedClient == null)
             {
                 QuotesList.ItemsSource = null;
-                HideQuotePanel();
+                if (hideQuotePanel)
+                    HideQuotePanel();
                 return;
             }
 
             QuotesList.ItemsSource = _quoteRepo.GetForClient(_selectedClient.ClientId);
-            HideQuotePanel();
+            if (hideQuotePanel)
+                HideQuotePanel();
         }
 
 
@@ -1037,7 +1039,7 @@ namespace Cleaning_Quote
                 _quoteRepo.Save(_currentQuote);
 
 
-                LoadQuotesForSelectedClient(); // refresh list so you see changes
+                LoadQuotesForSelectedClient(hideQuotePanel: false); // refresh list so you see changes
 
                 // Re-select the quote we just saved so the UI reflects the edit
                 foreach (var item in (IEnumerable)QuotesList.ItemsSource)

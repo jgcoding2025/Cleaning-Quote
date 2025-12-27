@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Cleaning_Quote.Models
 {
-    public class QuoteRoom
+    public class QuoteRoom : INotifyPropertyChanged
     {
         public Guid QuoteRoomId { get; set; } = Guid.NewGuid();
         public Guid QuoteId { get; set; }
         public Guid? ParentRoomId { get; set; }
         private string _windowSideSelection = "Excluded";
+        private decimal _roomLaborHours;
+        private decimal _roomAmount;
 
         public string RoomType { get; set; } = "Bedroom";
         public string Size { get; set; } = "M";   // S/M/L
@@ -42,8 +43,29 @@ namespace Cleaning_Quote.Models
         public int? FridgeCount { get; set; } = 0;
         public int? OvenCount { get; set; } = 0;
 
-        public decimal RoomLaborHours { get; set; }
-        public decimal RoomAmount { get; set; }
+        public decimal RoomLaborHours
+        {
+            get => _roomLaborHours;
+            set
+            {
+                if (_roomLaborHours == value)
+                    return;
+                _roomLaborHours = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public decimal RoomAmount
+        {
+            get => _roomAmount;
+            set
+            {
+                if (_roomAmount == value)
+                    return;
+                _roomAmount = value;
+                OnPropertyChanged();
+            }
+        }
         public string RoomNotes { get; set; } = "";
 
         public string WindowSideDisplay
@@ -121,6 +143,13 @@ namespace Cleaning_Quote.Models
             if (WindowOutside)
                 return "Outside";
             return "Excluded";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
