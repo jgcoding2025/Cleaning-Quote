@@ -35,6 +35,7 @@ namespace Cleaning_Quote
 
         private bool _suppressQuoteNameTracking = false;
         private bool _quoteNameManuallyEdited = false;
+        private bool _isLoadingQuote = false;
 
         // Dirty tracking for client form
         private bool _isDirty = false;
@@ -457,7 +458,7 @@ namespace Cleaning_Quote
             _occupants.Clear();
             SubItemTypeBox.SelectedIndex = 0;
             WindowSizeBox.SelectedIndex = 1;
-            WindowInsideCheck.IsChecked = true;
+            WindowInsideCheck.IsChecked = false;
             WindowOutsideCheck.IsChecked = false;
             DefaultRoomLevelBox.SelectedIndex = 1;
             DefaultRoomSizeBox.SelectedIndex = 1;
@@ -586,8 +587,9 @@ namespace Cleaning_Quote
 
             var includeInside = WindowInsideCheck.IsChecked == true;
             var includeOutside = WindowOutsideCheck.IsChecked == true;
-            if (category == "Window" && !includeInside && !includeOutside)
-                includeInside = true;
+            var windowSideSelection = category == "Window"
+                ? GetWindowSideSelection(includeInside, includeOutside)
+                : "Excluded";
 
             for (var i = 0; i < count; i++)
             {
@@ -602,8 +604,7 @@ namespace Cleaning_Quote
                     IncludedInQuote = true,
                     Size = category == "Window" ? size : "M",
                     Complexity = GetSubItemDefaultComplexity(category),
-                    WindowInside = category == "Window" && includeInside,
-                    WindowOutside = category == "Window" && includeOutside,
+                    WindowSideSelection = windowSideSelection,
                 };
 
                 InsertSubItemAfterParent(parentRoom, subItem);
@@ -657,6 +658,17 @@ namespace Cleaning_Quote
                 "Standard Window - 2 panes" => "Window",
                 _ => ""
             };
+        }
+
+        private string GetWindowSideSelection(bool includeInside, bool includeOutside)
+        {
+            if (includeInside && includeOutside)
+                return "Inside & Outside";
+            if (includeInside)
+                return "Inside";
+            if (includeOutside)
+                return "Outside";
+            return "Excluded";
         }
 
         private int GetSubItemDefaultComplexity(string category)
@@ -771,6 +783,9 @@ namespace Cleaning_Quote
 
         private void QuoteDetails_Changed(object sender, RoutedEventArgs e)
         {
+            if (_isLoadingQuote)
+                return;
+
             UpdateQuoteNameIfAuto();
             LoadServiceTypePricing(GetSelectedServiceType());
             RecalculateTotals();
@@ -794,6 +809,9 @@ namespace Cleaning_Quote
 
         private void RecalculateTotals()
         {
+            if (_isLoadingQuote)
+                return;
+
             if (_selectedClient == null || _currentQuote == null)
             {
                 ClearTotals();
@@ -894,71 +912,81 @@ namespace Cleaning_Quote
                 return;
             }
 
-            _currentQuote = q;
-
-            LaborRateBox.Text = q.LaborRate.ToString();
-            TaxRateBox.Text = q.TaxRate.ToString();
-            CcFeeRateBox.Text = q.CreditCardFeeRate.ToString();
-            CreditCardCheck.IsChecked = q.CreditCard;
-            SetSelectedCombo(ServiceTypeBox, q.ServiceType);
-            SetSelectedCombo(ServiceFrequencyBox, q.ServiceFrequency);
-            SetSelectedCombo(LastProfessionalCleaningBox, q.LastProfessionalCleaning);
-            QuoteDatePicker.SelectedDate = q.QuoteDate;
-            TotalSqFtBox.Text = q.TotalSqFt.ToString();
-            SqFtOverrideCheck.IsChecked = q.UseTotalSqFtOverride;
-            EntryInstructionsBox.Text = q.EntryInstructions ?? "";
-            SetSelectedCombo(PaymentMethodBox, q.PaymentMethod);
-            PaymentMethodOtherBox.Text = q.PaymentMethodOther ?? "";
-            FeedbackDiscussedCheck.IsChecked = q.FeedbackDiscussed;
-            QuoteNotesBox.Text = q.Notes ?? "";
-
-            _suppressQuoteNameTracking = true;
-            QuoteNameBox.Text = q.QuoteName ?? "";
-            _suppressQuoteNameTracking = false;
-            _quoteNameManuallyEdited = !string.IsNullOrWhiteSpace(q.QuoteName);
-            if (!_quoteNameManuallyEdited)
-                UpdateQuoteNameIfAuto();
-
-            _rooms.Clear();
-            foreach (var r in q.Rooms)
-                _rooms.Add(r);
-
-            _pets.Clear();
-            if (q.Pets != null)
+            _isLoadingQuote = true;
+            try
             {
-                foreach (var pet in q.Pets)
-                    _pets.Add(pet);
+                _currentQuote = q;
+
+                LaborRateBox.Text = q.LaborRate.ToString();
+                TaxRateBox.Text = q.TaxRate.ToString();
+                CcFeeRateBox.Text = q.CreditCardFeeRate.ToString();
+                CreditCardCheck.IsChecked = q.CreditCard;
+                SetSelectedCombo(ServiceTypeBox, q.ServiceType);
+                SetSelectedCombo(ServiceFrequencyBox, q.ServiceFrequency);
+                SetSelectedCombo(LastProfessionalCleaningBox, q.LastProfessionalCleaning);
+                QuoteDatePicker.SelectedDate = q.QuoteDate;
+                TotalSqFtBox.Text = q.TotalSqFt.ToString();
+                SqFtOverrideCheck.IsChecked = q.UseTotalSqFtOverride;
+                EntryInstructionsBox.Text = q.EntryInstructions ?? "";
+                SetSelectedCombo(PaymentMethodBox, q.PaymentMethod);
+                PaymentMethodOtherBox.Text = q.PaymentMethodOther ?? "";
+                FeedbackDiscussedCheck.IsChecked = q.FeedbackDiscussed;
+                QuoteNotesBox.Text = q.Notes ?? "";
+
+                _suppressQuoteNameTracking = true;
+                QuoteNameBox.Text = q.QuoteName ?? "";
+                _suppressQuoteNameTracking = false;
+                _quoteNameManuallyEdited = !string.IsNullOrWhiteSpace(q.QuoteName);
+                if (!_quoteNameManuallyEdited)
+                    UpdateQuoteNameIfAuto();
+
+                _rooms.Clear();
+                foreach (var r in q.Rooms)
+                    _rooms.Add(r);
+
+                _pets.Clear();
+                if (q.Pets != null)
+                {
+                    foreach (var pet in q.Pets)
+                        _pets.Add(pet);
+                }
+
+                _occupants.Clear();
+                if (q.Occupants != null)
+                {
+                    foreach (var occupant in q.Occupants)
+                        _occupants.Add(occupant);
+                }
+
+                PetsYesCheck.IsChecked = _pets.Count > 0;
+                PetsNoCheck.IsChecked = _pets.Count == 0;
+                PetsGrid.Visibility = _pets.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                PetsButtonsPanel.Visibility = _pets.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                OccupantsYesCheck.IsChecked = _occupants.Count > 0;
+                OccupantsNoCheck.IsChecked = _occupants.Count == 0;
+                OccupantsGrid.Visibility = _occupants.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                OccupantsButtonsPanel.Visibility = _occupants.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                LoadServiceTypePricing(string.IsNullOrWhiteSpace(q.ServiceType) ? GetSelectedServiceType() : q.ServiceType);
+                ShowQuotePanel();
+
+                HoursText = $"Hours: {q.TotalLaborHours}";
+                SubtotalText = $"Subtotal: {q.Subtotal:C}";
+                CcFeeText = $"CC Fee: {q.CreditCardFee:C}";
+                TaxText = $"Tax: {q.Tax:C}";
+                TotalText = $"Total: {q.Total:C}";
+                UpdateEstimatedSqFt();
+                UpdateQuoteFormCalculator();
+
+                StatusText.Text = $"Loaded quote from {q.QuoteDate:MM/dd/yyyy}";
+            }
+            finally
+            {
+                _isLoadingQuote = false;
             }
 
-            _occupants.Clear();
-            if (q.Occupants != null)
-            {
-                foreach (var occupant in q.Occupants)
-                    _occupants.Add(occupant);
-            }
-
-            PetsYesCheck.IsChecked = _pets.Count > 0;
-            PetsNoCheck.IsChecked = _pets.Count == 0;
-            PetsGrid.Visibility = _pets.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-            PetsButtonsPanel.Visibility = _pets.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-            OccupantsYesCheck.IsChecked = _occupants.Count > 0;
-            OccupantsNoCheck.IsChecked = _occupants.Count == 0;
-            OccupantsGrid.Visibility = _occupants.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-            OccupantsButtonsPanel.Visibility = _occupants.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-            LoadServiceTypePricing(string.IsNullOrWhiteSpace(q.ServiceType) ? GetSelectedServiceType() : q.ServiceType);
-            ShowQuotePanel();
-
-            HoursText = $"Hours: {q.TotalLaborHours}";
-            SubtotalText = $"Subtotal: {q.Subtotal:C}";
-            CcFeeText = $"CC Fee: {q.CreditCardFee:C}";
-            TaxText = $"Tax: {q.Tax:C}";
-            TotalText = $"Total: {q.Total:C}";
-            UpdateEstimatedSqFt();
-            UpdateQuoteFormCalculator();
-
-            StatusText.Text = $"Loaded quote from {q.QuoteDate:MM/dd/yyyy}";
+            RecalculateTotals();
         }
 
 

@@ -11,6 +11,7 @@ namespace Cleaning_Quote.Models
         public Guid QuoteRoomId { get; set; } = Guid.NewGuid();
         public Guid QuoteId { get; set; }
         public Guid? ParentRoomId { get; set; }
+        private string _windowSideSelection = "Excluded";
 
         public string RoomType { get; set; } = "Bedroom";
         public string Size { get; set; } = "M";   // S/M/L
@@ -22,6 +23,19 @@ namespace Cleaning_Quote.Models
         public bool IncludedInQuote { get; set; } = true;
         public bool WindowInside { get; set; }
         public bool WindowOutside { get; set; }
+        public string WindowSideSelection
+        {
+            get => _windowSideSelection;
+            set
+            {
+                var normalized = NormalizeWindowSideSelection(value);
+                _windowSideSelection = normalized;
+                ApplyWindowSideSelection(normalized);
+            }
+        }
+        public bool IsWindowRoom =>
+            !string.IsNullOrWhiteSpace(RoomType) &&
+            RoomType.IndexOf("Window", StringComparison.OrdinalIgnoreCase) >= 0;
 
         public int? FullGlassShowersCount { get; set; } = 0;
         public int? PebbleStoneFloorsCount { get; set; } = 0;
@@ -36,19 +50,77 @@ namespace Cleaning_Quote.Models
         {
             get
             {
-                if (!IsSubItem || !string.Equals(ItemCategory, "Window", StringComparison.OrdinalIgnoreCase))
-                    return "";
-
-                var inside = WindowInside;
-                var outside = WindowOutside;
-                if (!inside && !outside)
-                    inside = true;
-
-                if (inside && outside) return "Inside & Outside";
-                if (inside) return "Inside";
-                if (outside) return "Outside";
-                return "";
+                return WindowSideSelection;
             }
+        }
+
+        public void SyncWindowSideSelectionFromFlags()
+        {
+            _windowSideSelection = GetWindowSideSelectionFromFlags();
+            ApplyWindowSideSelection(_windowSideSelection);
+        }
+
+        private void ApplyWindowSideSelection(string selection)
+        {
+            if (!IsWindowRoom)
+            {
+                WindowInside = false;
+                WindowOutside = false;
+                return;
+            }
+
+            WindowInside = false;
+            WindowOutside = false;
+            IncludedInQuote = selection != "Excluded";
+
+            switch (selection)
+            {
+                case "Inside":
+                    WindowInside = true;
+                    break;
+                case "Outside":
+                    WindowOutside = true;
+                    break;
+                case "Inside & Outside":
+                    WindowInside = true;
+                    WindowOutside = true;
+                    break;
+                case "Window Tract":
+                    WindowInside = true;
+                    break;
+            }
+        }
+
+        private string NormalizeWindowSideSelection(string selection)
+        {
+            if (!IsWindowRoom)
+                return "Excluded";
+
+            return selection switch
+            {
+                "Inside" => "Inside",
+                "Outside" => "Outside",
+                "Inside & Outside" => "Inside & Outside",
+                "Window Tract" => "Window Tract",
+                _ => "Excluded"
+            };
+        }
+
+        private string GetWindowSideSelectionFromFlags()
+        {
+            if (!IsWindowRoom)
+                return "Excluded";
+
+            if (!IncludedInQuote)
+                return "Excluded";
+
+            if (WindowInside && WindowOutside)
+                return "Inside & Outside";
+            if (WindowInside)
+                return "Inside";
+            if (WindowOutside)
+                return "Outside";
+            return "Excluded";
         }
     }
 }
