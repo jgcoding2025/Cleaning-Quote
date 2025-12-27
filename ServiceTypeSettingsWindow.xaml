@@ -193,6 +193,7 @@
                 </GroupBox>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Reset to Default" Width="130" Margin="0,0,8,0" Click="ResetToDefault_Click" />
                     <Button Content="Save" Width="90" Margin="0,0,8,0" Click="Save_Click" />
                     <Button Content="Close" Width="90" Click="Close_Click" />
                 </StackPanel>

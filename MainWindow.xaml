@@ -7,6 +7,40 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="1084" Width="800">
+    <Window.Resources>
+        <x:Array x:Key="RoomTypeOptions" Type="{x:Type sys:String}">
+            <sys:String>Bedroom</sys:String>
+            <sys:String>Bathroom</sys:String>
+            <sys:String>Kitchen</sys:String>
+            <sys:String>Living Room</sys:String>
+            <sys:String>Dining Room</sys:String>
+            <sys:String>Office</sys:String>
+            <sys:String>Laundry</sys:String>
+            <sys:String>Family Room</sys:String>
+            <sys:String>Entry</sys:String>
+            <sys:String>Hallway</sys:String>
+            <sys:String>Garage</sys:String>
+            <sys:String>Other</sys:String>
+        </x:Array>
+        <x:Array x:Key="LevelOptions" Type="{x:Type sys:String}">
+            <sys:String>Basement</sys:String>
+            <sys:String>Main Floor (1)</sys:String>
+            <sys:String>Upstairs (2)</sys:String>
+            <sys:String>Floor 3</sys:String>
+            <sys:String>Floor 4</sys:String>
+            <sys:String>Floor 5</sys:String>
+        </x:Array>
+        <x:Array x:Key="RoomSizeOptions" Type="{x:Type sys:String}">
+            <sys:String>S</sys:String>
+            <sys:String>M</sys:String>
+            <sys:String>L</sys:String>
+        </x:Array>
+        <x:Array x:Key="ComplexityOptions" Type="{x:Type sys:Int32}">
+            <sys:Int32>1</sys:Int32>
+            <sys:Int32>2</sys:Int32>
+            <sys:Int32>3</sys:Int32>
+        </x:Array>
+    </Window.Resources>
     <DockPanel Margin="10">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Settings">
@@ -200,11 +234,26 @@
             </GroupBox>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <Button Content="New Quote" Width="100" Margin="0,0,8,0" Click="NewQuote_Click"/>
                 <Button Content="Add Room" Width="90" Margin="0,0,8,0" Click="AddRoom_Click"/>
                 <Button Content="Remove Room" Width="110" Margin="0,0,8,0" Click="RemoveRoom_Click"/>
                 <Button Content="Save Quote" Width="95" Click="SaveQuote_Click"/>
             </StackPanel>
+
+            <TextBlock Text="New Room Defaults" FontWeight="SemiBold" Margin="0,0,0,4"/>
+            <WrapPanel Margin="0,0,0,10">
+                <StackPanel Width="150" Margin="0,0,10,0">
+                    <TextBlock Text="Level" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="DefaultRoomLevelBox" Height="26" ItemsSource="{StaticResource LevelOptions}"/>
+                </StackPanel>
+                <StackPanel Width="90" Margin="0,0,10,0">
+                    <TextBlock Text="Size" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="DefaultRoomSizeBox" Height="26" ItemsSource="{StaticResource RoomSizeOptions}"/>
+                </StackPanel>
+                <StackPanel Width="120" Margin="0,0,10,0">
+                    <TextBlock Text="Complexity" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="DefaultRoomComplexityBox" Height="26" ItemsSource="{StaticResource ComplexityOptions}"/>
+                </StackPanel>
+            </WrapPanel>
 
             <!-- Quote settings -->
             <WrapPanel Margin="0,0,0,10">
@@ -337,7 +386,9 @@
               CellEditEnding="RoomsGrid_CellEditEnding"
               CurrentCellChanged="RoomsGrid_CurrentCellChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Lvl" Width="60" Binding="{Binding Level}"/>
+                    <DataGridComboBoxColumn Header="Level" Width="140"
+                        ItemsSource="{StaticResource LevelOptions}"
+                        SelectedItemBinding="{Binding Level, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <DataGridTemplateColumn Header="Room" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
@@ -358,34 +409,23 @@
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}" />
+                                <ComboBox ItemsSource="{StaticResource RoomTypeOptions}"
+                                          IsEditable="True"
+                                          Text="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
 
                     <DataGridComboBoxColumn Header="Size"
                         Width="70"
-                        SelectedItemBinding="{Binding Size, UpdateSourceTrigger=PropertyChanged}">
-                        <DataGridComboBoxColumn.ItemsSource>
-                            <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                <sys:String>S</sys:String>
-                                <sys:String>M</sys:String>
-                                <sys:String>L</sys:String>
-                            </x:Array>
-                        </DataGridComboBoxColumn.ItemsSource>
-                    </DataGridComboBoxColumn>
+                        ItemsSource="{StaticResource RoomSizeOptions}"
+                        SelectedItemBinding="{Binding Size, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <DataGridComboBoxColumn Header="Complexity"
                         Width="90"
-                        SelectedItemBinding="{Binding Complexity, UpdateSourceTrigger=PropertyChanged}">
-                        <DataGridComboBoxColumn.ItemsSource>
-                            <x:Array Type="{x:Type sys:Int32}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                <sys:Int32>1</sys:Int32>
-                                <sys:Int32>2</sys:Int32>
-                                <sys:Int32>3</sys:Int32>
-                            </x:Array>
-                        </DataGridComboBoxColumn.ItemsSource>
-                    </DataGridComboBoxColumn>
+                        ItemsSource="{StaticResource ComplexityOptions}"
+                        SelectedItemBinding="{Binding Complexity, UpdateSourceTrigger=PropertyChanged}"/>
+                    <DataGridTextColumn Header="Window Side" Binding="{Binding WindowSideDisplay}" IsReadOnly="True" Width="120"/>
                     <DataGridTextColumn Header="Est. Time" Binding="{Binding RoomLaborHours}" IsReadOnly="True" Width="80"/>
                     <DataGridTextColumn Header="Notes" Binding="{Binding RoomNotes}" Width="150"/>
                     <DataGridTextColumn Header="$ Amount" Binding="{Binding RoomAmount, StringFormat=C}" IsReadOnly="True" Width="90"/>

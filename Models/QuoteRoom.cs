@@ -31,5 +31,24 @@ namespace Cleaning_Quote.Models
         public decimal RoomLaborHours { get; set; }
         public decimal RoomAmount { get; set; }
         public string RoomNotes { get; set; } = "";
+
+        public string WindowSideDisplay
+        {
+            get
+            {
+                if (!IsSubItem || !string.Equals(ItemCategory, "Window", StringComparison.OrdinalIgnoreCase))
+                    return "";
+
+                var inside = WindowInside;
+                var outside = WindowOutside;
+                if (!inside && !outside)
+                    inside = true;
+
+                if (inside && outside) return "Inside & Outside";
+                if (inside) return "Inside";
+                if (outside) return "Outside";
+                return "";
+            }
+        }
     }
 }
