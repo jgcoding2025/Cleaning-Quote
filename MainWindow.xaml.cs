@@ -8,6 +8,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Cleaning_Quote
 {
@@ -36,6 +38,7 @@ namespace Cleaning_Quote
         private bool _suppressQuoteNameTracking = false;
         private bool _quoteNameManuallyEdited = false;
         private bool _isLoadingQuote = false;
+        private Point _roomDragStartPoint;
 
         // Dirty tracking for client form
         private bool _isDirty = false;
@@ -504,6 +507,7 @@ namespace Cleaning_Quote
 
             _rooms.Clear();
             _rooms.Add(BuildDefaultRoom());
+            UpdateRoomSortOrders();
             _pets.Clear();
             _occupants.Clear();
             QuoteDatePicker.SelectedDate = _currentQuote.QuoteDate;
@@ -534,6 +538,7 @@ namespace Cleaning_Quote
         private void AddRoom_Click(object sender, RoutedEventArgs e)
         {
             _rooms.Add(BuildDefaultRoom());
+            UpdateRoomSortOrders();
             RecalculateTotals();
         }
 
@@ -546,6 +551,7 @@ namespace Cleaning_Quote
                     RemoveSubItems(r.QuoteRoomId);
                 }
                 _rooms.Remove(r);
+                UpdateRoomSortOrders();
                 RecalculateTotals();
             }
         }
@@ -591,7 +597,7 @@ namespace Cleaning_Quote
             var includeOutside = WindowOutsideCheck.IsChecked == true;
             var windowSideSelection = category == "Window"
                 ? GetWindowSideSelection(includeInside, includeOutside)
-                : "Excluded";
+                : "";
 
             for (var i = 0; i < count; i++)
             {
@@ -612,6 +618,7 @@ namespace Cleaning_Quote
                 InsertSubItemAfterParent(parentRoom, subItem);
             }
 
+            UpdateRoomSortOrders();
             RecalculateTotals();
         }
 
@@ -670,7 +677,7 @@ namespace Cleaning_Quote
                 return "Inside";
             if (includeOutside)
                 return "Outside";
-            return "Excluded";
+            return "";
         }
 
         private int GetSubItemDefaultComplexity(string category)
@@ -864,6 +871,7 @@ namespace Cleaning_Quote
                 _currentQuote.QuoteId = Guid.NewGuid();
 
             _currentQuote.Rooms.Clear();
+            UpdateRoomSortOrders();
 
             foreach (var r in _rooms)
             {
@@ -945,6 +953,7 @@ namespace Cleaning_Quote
                 _rooms.Clear();
                 foreach (var r in q.Rooms)
                     _rooms.Add(r);
+                UpdateRoomSortOrders();
 
                 _pets.Clear();
                 if (q.Pets != null)
@@ -1341,6 +1350,81 @@ namespace Cleaning_Quote
                 Complexity = GetDefaultRoomComplexity(),
                 Level = GetDefaultRoomLevel()
             };
+        }
+
+        private void UpdateRoomSortOrders()
+        {
+            for (var i = 0; i < _rooms.Count; i++)
+            {
+                _rooms[i].SortOrder = i + 1;
+            }
+        }
+
+        private void RoomsGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _roomDragStartPoint = e.GetPosition(null);
+        }
+
+        private void RoomsGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            var position = e.GetPosition(null);
+            if (Math.Abs(position.X - _roomDragStartPoint.X) < SystemParameters.MinimumHorizontalDragDistance &&
+                Math.Abs(position.Y - _roomDragStartPoint.Y) < SystemParameters.MinimumVerticalDragDistance)
+                return;
+
+            if (sender is not DataGrid grid)
+                return;
+
+            var row = FindVisualParent<DataGridRow>(e.OriginalSource as DependencyObject);
+            if (row?.Item is not QuoteRoom room)
+                return;
+
+            DragDrop.DoDragDrop(grid, room, DragDropEffects.Move);
+        }
+
+        private void RoomsGrid_Drop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(typeof(QuoteRoom)))
+                return;
+
+            var droppedRoom = e.Data.GetData(typeof(QuoteRoom)) as QuoteRoom;
+            if (droppedRoom == null)
+                return;
+
+            var targetRow = FindVisualParent<DataGridRow>(e.OriginalSource as DependencyObject);
+            var targetRoom = targetRow?.Item as QuoteRoom;
+
+            var removedIndex = _rooms.IndexOf(droppedRoom);
+            if (removedIndex < 0)
+                return;
+
+            var targetIndex = targetRoom == null ? _rooms.Count - 1 : _rooms.IndexOf(targetRoom);
+            if (targetIndex < 0)
+                return;
+
+            if (removedIndex == targetIndex)
+                return;
+
+            if (removedIndex < targetIndex)
+                targetIndex--;
+
+            _rooms.Move(removedIndex, targetIndex);
+            UpdateRoomSortOrders();
+            RoomsGrid.SelectedItem = droppedRoom;
+        }
+
+        private static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            while (child != null)
+            {
+                if (child is T parent)
+                    return parent;
+                child = VisualTreeHelper.GetParent(child);
+            }
+            return null;
         }
 
         private string GetDefaultRoomLevel()

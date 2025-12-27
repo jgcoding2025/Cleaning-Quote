@@ -78,7 +78,8 @@ CREATE TABLE IF NOT EXISTS QuoteRooms(
     IncludedInQuote INTEGER NOT NULL DEFAULT 1,
     WindowInside INTEGER NOT NULL DEFAULT 0,
     WindowOutside INTEGER NOT NULL DEFAULT 0,
-    WindowSide TEXT NOT NULL DEFAULT 'Excluded',
+    WindowSide TEXT NOT NULL DEFAULT '',
+    SortOrder INTEGER NOT NULL DEFAULT 0,
 
     FullGlassShowersCount INTEGER NOT NULL,
     PebbleStoneFloorsCount INTEGER NOT NULL,
@@ -170,6 +171,7 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "QuoteRooms", "WindowInside", "INTEGER");
             EnsureColumn(conn, "QuoteRooms", "WindowOutside", "INTEGER");
             EnsureColumn(conn, "QuoteRooms", "WindowSide", "TEXT");
+            EnsureColumn(conn, "QuoteRooms", "SortOrder", "INTEGER");
             EnsureColumn(conn, "QuoteRooms", "RoomAmount", "REAL");
             EnsureColumn(conn, "QuoteRooms", "RoomNotes", "TEXT");
 
