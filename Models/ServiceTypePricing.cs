@@ -16,9 +16,29 @@ namespace Cleaning_Quote.Models
         public string Complexity2Definition { get; set; } = "Moderate use with visible buildup.";
         public string Complexity3Definition { get; set; } = "Heavy use with significant buildup or clutter.";
         public decimal FullGlassShowerHoursEach { get; set; } = 0.30m;
+        public int FullGlassShowerComplexity { get; set; } = 2;
         public decimal PebbleStoneFloorHoursEach { get; set; } = 0.25m;
+        public int PebbleStoneFloorComplexity { get; set; } = 2;
         public decimal FridgeHoursEach { get; set; } = 0.30m;
+        public int FridgeComplexity { get; set; } = 2;
         public decimal OvenHoursEach { get; set; } = 0.35m;
+        public int OvenComplexity { get; set; } = 2;
+        public decimal CeilingFanHoursEach { get; set; } = 0.15m;
+        public int CeilingFanComplexity { get; set; } = 1;
+        public decimal WindowSmallHoursEach { get; set; } = 0.08m;
+        public decimal WindowMediumHoursEach { get; set; } = 0.12m;
+        public decimal WindowLargeHoursEach { get; set; } = 0.18m;
+        public int WindowComplexity { get; set; } = 1;
+        public decimal FirstCleanRate { get; set; } = 0.15m;
+        public decimal FirstCleanMinimum { get; set; } = 195m;
+        public decimal DeepCleanRate { get; set; } = 0.20m;
+        public decimal DeepCleanMinimum { get; set; } = 295m;
+        public decimal MaintenanceRate { get; set; } = 0.10m;
+        public decimal MaintenanceMinimum { get; set; } = 125m;
+        public decimal OneTimeDeepCleanRate { get; set; } = 0.30m;
+        public decimal OneTimeDeepCleanMinimum { get; set; } = 400m;
+        public decimal WindowInsideRate { get; set; } = 4m;
+        public decimal WindowOutsideRate { get; set; } = 4m;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public static ServiceTypePricing Default(string serviceType)
@@ -37,9 +57,29 @@ namespace Cleaning_Quote.Models
                 Complexity2Definition = "Moderate use with visible buildup.",
                 Complexity3Definition = "Heavy use with significant buildup or clutter.",
                 FullGlassShowerHoursEach = 0.30m,
+                FullGlassShowerComplexity = 2,
                 PebbleStoneFloorHoursEach = 0.25m,
+                PebbleStoneFloorComplexity = 2,
                 FridgeHoursEach = 0.30m,
+                FridgeComplexity = 2,
                 OvenHoursEach = 0.35m,
+                OvenComplexity = 2,
+                CeilingFanHoursEach = 0.15m,
+                CeilingFanComplexity = 1,
+                WindowSmallHoursEach = 0.08m,
+                WindowMediumHoursEach = 0.12m,
+                WindowLargeHoursEach = 0.18m,
+                WindowComplexity = 1,
+                FirstCleanRate = 0.15m,
+                FirstCleanMinimum = 195m,
+                DeepCleanRate = 0.20m,
+                DeepCleanMinimum = 295m,
+                MaintenanceRate = 0.10m,
+                MaintenanceMinimum = 125m,
+                OneTimeDeepCleanRate = 0.30m,
+                OneTimeDeepCleanMinimum = 400m,
+                WindowInsideRate = 4m,
+                WindowOutsideRate = 4m,
                 UpdatedAt = DateTime.UtcNow
             };
         }
