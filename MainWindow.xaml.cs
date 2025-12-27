@@ -969,6 +969,11 @@ namespace Cleaning_Quote
                 MessageBox.Show("Select a client first.", "No client selected");
                 return;
             }
+            if (_currentQuote == null)
+            {
+                MessageBox.Show("Start a new quote or load an existing quote first.", "No quote selected");
+                return;
+            }
             if (_rooms.Count == 0)
             {
                 MessageBox.Show("Add at least one room.", "No rooms");
