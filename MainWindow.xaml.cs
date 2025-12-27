@@ -14,14 +14,16 @@ namespace Cleaning_Quote
     {
         // Repositories / selection
         private readonly ClientRepository _clientRepo = new ClientRepository();
+        private readonly ServiceTypePricingRepository _serviceTypePricingRepo = new ServiceTypePricingRepository();
         private Client _selectedClient;
 
         // Quotes
         private readonly QuoteRepository _quoteRepo = new QuoteRepository();
-        private readonly PricingService _pricing = new PricingService(PricingRules.Default());
+        private PricingService _pricing = new PricingService(PricingRules.Default());
         private Quote _currentQuote;
         private readonly System.Collections.ObjectModel.ObservableCollection<QuoteRoom> _rooms =
             new System.Collections.ObjectModel.ObservableCollection<QuoteRoom>();
+        private ServiceTypePricing _currentServiceTypePricing;
         
         // Quote list selection
         private QuoteListItem _selectedQuoteListItem;
@@ -40,12 +42,16 @@ namespace Cleaning_Quote
         private string _ccFeeText;
         private string _taxText;
         private string _totalText;
+        private Visibility _quotePanelVisibility = Visibility.Collapsed;
+
+        private bool _suppressServiceTypeSettingsChange = false;
 
         public string HoursText { get => _hoursText; set { _hoursText = value; OnPropertyChanged(); } }
         public string SubtotalText { get => _subtotalText; set { _subtotalText = value; OnPropertyChanged(); } }
         public string CcFeeText { get => _ccFeeText; set { _ccFeeText = value; OnPropertyChanged(); } }
         public string TaxText { get => _taxText; set { _taxText = value; OnPropertyChanged(); } }
         public string TotalText { get => _totalText; set { _totalText = value; OnPropertyChanged(); } }
+        public Visibility QuotePanelVisibility { get => _quotePanelVisibility; set { _quotePanelVisibility = value; OnPropertyChanged(); } }
 
         public MainWindow()
         {
@@ -57,6 +63,7 @@ namespace Cleaning_Quote
 
             RoomsGrid.ItemsSource = _rooms;
             InitQuoteInputsDefaults();
+            HideQuotePanel();
 
         }
 
@@ -101,10 +108,12 @@ namespace Cleaning_Quote
             if (_selectedClient == null)
             {
                 QuotesList.ItemsSource = null;
+                HideQuotePanel();
                 return;
             }
 
             QuotesList.ItemsSource = _quoteRepo.GetForClient(_selectedClient.ClientId);
+            HideQuotePanel();
         }
 
 
@@ -159,6 +168,7 @@ namespace Cleaning_Quote
             StatusText.Text = $"Editing: {_selectedClient.DisplayName}";
 
             LoadQuotesForSelectedClient();
+            HideQuotePanel();
 
         }
 
@@ -184,6 +194,7 @@ namespace Cleaning_Quote
             _isDirty = false;
             SaveButton.Content = "Save";
             StatusText.Text = "New client ready.";
+            HideQuotePanel();
 
         }
 
@@ -396,6 +407,7 @@ namespace Cleaning_Quote
             ServiceFrequencyBox.SelectedIndex = 0;
             LastProfessionalCleaningBox.SelectedIndex = 0;
             QuoteNameBox.Text = "";
+            LoadServiceTypePricing(GetSelectedServiceType());
         }
 
         private void NewQuote_Click(object sender, RoutedEventArgs e)
@@ -419,6 +431,7 @@ namespace Cleaning_Quote
             _quoteNameManuallyEdited = false;
             UpdateQuoteNameIfAuto();
 
+            ShowQuotePanel();
             RecalculateTotals();
             StatusText.Text = "New quote started.";
         }
@@ -450,6 +463,7 @@ namespace Cleaning_Quote
         private void QuoteDetails_Changed(object sender, RoutedEventArgs e)
         {
             UpdateQuoteNameIfAuto();
+            LoadServiceTypePricing(GetSelectedServiceType());
         }
 
         private void QuoteNameBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -470,11 +484,13 @@ namespace Cleaning_Quote
 
         private void RecalculateTotals()
         {
-            if (_selectedClient == null)
+            if (_selectedClient == null || _currentQuote == null)
+            {
+                ClearTotals();
                 return;
+            }
 
-            if (_currentQuote == null)
-                _currentQuote = new Quote { ClientId = _selectedClient.ClientId, QuoteDate = DateTime.Today };
+            ApplyServiceTypePricingRules();
 
             if (!decimal.TryParse(LaborRateBox.Text, out var laborRate)) laborRate = 50m;
             if (!decimal.TryParse(TaxRateBox.Text, out var taxRate)) taxRate = 0.08m;
@@ -576,6 +592,9 @@ namespace Cleaning_Quote
             foreach (var r in q.Rooms)
                 _rooms.Add(r);
 
+            LoadServiceTypePricing(string.IsNullOrWhiteSpace(q.ServiceType) ? GetSelectedServiceType() : q.ServiceType);
+            ShowQuotePanel();
+
             HoursText = $"Hours: {q.TotalLaborHours}";
             SubtotalText = $"Subtotal: {q.Subtotal:C}";
             CcFeeText = $"CC Fee: {q.CreditCardFee:C}";
@@ -672,6 +691,7 @@ namespace Cleaning_Quote
             QuotesList.SelectedItem = null;
 
             LoadQuotesForSelectedClient();
+            HideQuotePanel();
             StatusText.Text = "Quote deleted.";
         }
 
@@ -724,6 +744,105 @@ namespace Cleaning_Quote
                     return;
                 }
             }
+        }
+
+        private void LoadServiceTypePricing(string serviceType)
+        {
+            if (string.IsNullOrWhiteSpace(serviceType))
+                return;
+
+            _currentServiceTypePricing = _serviceTypePricingRepo.GetOrCreate(serviceType);
+            _suppressServiceTypeSettingsChange = true;
+
+            SqFtPerLaborHourBox.Text = _currentServiceTypePricing.SqFtPerLaborHour.ToString();
+            SizeSmallSqFtBox.Text = _currentServiceTypePricing.SizeSmallSqFt.ToString();
+            SizeMediumSqFtBox.Text = _currentServiceTypePricing.SizeMediumSqFt.ToString();
+            SizeLargeSqFtBox.Text = _currentServiceTypePricing.SizeLargeSqFt.ToString();
+            Complexity1MultiplierBox.Text = _currentServiceTypePricing.Complexity1Multiplier.ToString();
+            Complexity2MultiplierBox.Text = _currentServiceTypePricing.Complexity2Multiplier.ToString();
+            Complexity3MultiplierBox.Text = _currentServiceTypePricing.Complexity3Multiplier.ToString();
+            FullGlassShowerHoursBox.Text = _currentServiceTypePricing.FullGlassShowerHoursEach.ToString();
+            PebbleStoneFloorHoursBox.Text = _currentServiceTypePricing.PebbleStoneFloorHoursEach.ToString();
+            FridgeHoursBox.Text = _currentServiceTypePricing.FridgeHoursEach.ToString();
+            OvenHoursBox.Text = _currentServiceTypePricing.OvenHoursEach.ToString();
+
+            _suppressServiceTypeSettingsChange = false;
+            ApplyServiceTypePricingRules();
+            RecalculateTotals();
+        }
+
+        private void ServiceTypeSettings_Changed(object sender, TextChangedEventArgs e)
+        {
+            if (_suppressServiceTypeSettingsChange || _currentServiceTypePricing == null)
+                return;
+
+            UpdateServiceTypePricingFromInputs(_currentServiceTypePricing);
+            _serviceTypePricingRepo.Upsert(_currentServiceTypePricing);
+            ApplyServiceTypePricingRules();
+            RecalculateTotals();
+        }
+
+        private void UpdateServiceTypePricingFromInputs(ServiceTypePricing pricing)
+        {
+            if (pricing == null)
+                return;
+
+            if (decimal.TryParse(SqFtPerLaborHourBox.Text, out var sqftPerHour))
+                pricing.SqFtPerLaborHour = sqftPerHour;
+            if (decimal.TryParse(SizeSmallSqFtBox.Text, out var sizeSmall))
+                pricing.SizeSmallSqFt = sizeSmall;
+            if (decimal.TryParse(SizeMediumSqFtBox.Text, out var sizeMedium))
+                pricing.SizeMediumSqFt = sizeMedium;
+            if (decimal.TryParse(SizeLargeSqFtBox.Text, out var sizeLarge))
+                pricing.SizeLargeSqFt = sizeLarge;
+            if (decimal.TryParse(Complexity1MultiplierBox.Text, out var mult1))
+                pricing.Complexity1Multiplier = mult1;
+            if (decimal.TryParse(Complexity2MultiplierBox.Text, out var mult2))
+                pricing.Complexity2Multiplier = mult2;
+            if (decimal.TryParse(Complexity3MultiplierBox.Text, out var mult3))
+                pricing.Complexity3Multiplier = mult3;
+            if (decimal.TryParse(FullGlassShowerHoursBox.Text, out var glassHours))
+                pricing.FullGlassShowerHoursEach = glassHours;
+            if (decimal.TryParse(PebbleStoneFloorHoursBox.Text, out var pebbleHours))
+                pricing.PebbleStoneFloorHoursEach = pebbleHours;
+            if (decimal.TryParse(FridgeHoursBox.Text, out var fridgeHours))
+                pricing.FridgeHoursEach = fridgeHours;
+            if (decimal.TryParse(OvenHoursBox.Text, out var ovenHours))
+                pricing.OvenHoursEach = ovenHours;
+        }
+
+        private void ApplyServiceTypePricingRules()
+        {
+            _pricing = new PricingService(PricingRules.FromServiceTypePricing(_currentServiceTypePricing));
+        }
+
+        private string GetSelectedServiceType()
+        {
+            return ServiceTypeBox.SelectedItem is ComboBoxItem serviceTypeItem
+                ? serviceTypeItem.Content?.ToString() ?? ""
+                : "";
+        }
+
+        private void ShowQuotePanel()
+        {
+            QuotePanelVisibility = Visibility.Visible;
+        }
+
+        private void HideQuotePanel()
+        {
+            QuotePanelVisibility = Visibility.Collapsed;
+            _currentQuote = null;
+            _rooms.Clear();
+            ClearTotals();
+        }
+
+        private void ClearTotals()
+        {
+            HoursText = "";
+            SubtotalText = "";
+            CcFeeText = "";
+            TaxText = "";
+            TotalText = "";
         }
 
     }
