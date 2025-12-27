@@ -26,6 +26,9 @@ namespace Cleaning_Quote
         // Quote list selection
         private QuoteListItem _selectedQuoteListItem;
 
+        private bool _suppressQuoteNameTracking = false;
+        private bool _quoteNameManuallyEdited = false;
+
         // Dirty tracking for client form
         private bool _isDirty = false;
         private bool _suppressDirtyTracking = false;
@@ -389,6 +392,10 @@ namespace Cleaning_Quote
             PetsBox.Text = "0";
             HouseholdSizeBox.Text = "2";
             SmokingCheck.IsChecked = false;
+            ServiceTypeBox.SelectedIndex = 0;
+            ServiceFrequencyBox.SelectedIndex = 0;
+            LastProfessionalCleaningBox.SelectedIndex = 0;
+            QuoteNameBox.Text = "";
         }
 
         private void NewQuote_Click(object sender, RoutedEventArgs e)
@@ -408,6 +415,9 @@ namespace Cleaning_Quote
 
             _rooms.Clear();
             _rooms.Add(new QuoteRoom { RoomType = "Bedroom", Size = "M", Complexity = 1 });
+
+            _quoteNameManuallyEdited = false;
+            UpdateQuoteNameIfAuto();
 
             RecalculateTotals();
             StatusText.Text = "New quote started.";
@@ -437,6 +447,21 @@ namespace Cleaning_Quote
         private void QuoteInputs_Changed(object sender, RoutedEventArgs e) => RecalculateTotals();
         private void QuoteInputs_Changed(object sender, TextChangedEventArgs e) => RecalculateTotals();
 
+        private void QuoteDetails_Changed(object sender, RoutedEventArgs e)
+        {
+            UpdateQuoteNameIfAuto();
+        }
+
+        private void QuoteNameBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_suppressQuoteNameTracking)
+                return;
+
+            _quoteNameManuallyEdited = !string.IsNullOrWhiteSpace(QuoteNameBox.Text);
+            if (_currentQuote != null)
+                _currentQuote.QuoteName = QuoteNameBox.Text?.Trim() ?? "";
+        }
+
         private void RoomsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             // Let edit commit, then recalc
@@ -465,6 +490,18 @@ namespace Cleaning_Quote
             _currentQuote.PetsCount = pets;
             _currentQuote.HouseholdSize = hh;
             _currentQuote.SmokingInside = SmokingCheck.IsChecked == true;
+            _currentQuote.ServiceType = ServiceTypeBox.SelectedItem is ComboBoxItem serviceTypeItem
+                ? serviceTypeItem.Content?.ToString() ?? ""
+                : "";
+            _currentQuote.ServiceFrequency = ServiceFrequencyBox.SelectedItem is ComboBoxItem frequencyItem
+                ? frequencyItem.Content?.ToString() ?? ""
+                : "";
+            _currentQuote.LastProfessionalCleaning = LastProfessionalCleaningBox.SelectedItem is ComboBoxItem cleaningItem
+                ? cleaningItem.Content?.ToString() ?? ""
+                : "";
+
+            UpdateQuoteNameIfAuto();
+            _currentQuote.QuoteName = QuoteNameBox.Text?.Trim() ?? "";
 
             // Ensure the quote has an ID (new quotes)
             if (_currentQuote.QuoteId == Guid.Empty)
@@ -524,6 +561,16 @@ namespace Cleaning_Quote
             PetsBox.Text = q.PetsCount.ToString();
             HouseholdSizeBox.Text = q.HouseholdSize.ToString();
             SmokingCheck.IsChecked = q.SmokingInside;
+            SetSelectedCombo(ServiceTypeBox, q.ServiceType);
+            SetSelectedCombo(ServiceFrequencyBox, q.ServiceFrequency);
+            SetSelectedCombo(LastProfessionalCleaningBox, q.LastProfessionalCleaning);
+
+            _suppressQuoteNameTracking = true;
+            QuoteNameBox.Text = q.QuoteName ?? "";
+            _suppressQuoteNameTracking = false;
+            _quoteNameManuallyEdited = !string.IsNullOrWhiteSpace(q.QuoteName);
+            if (!_quoteNameManuallyEdited)
+                UpdateQuoteNameIfAuto();
 
             _rooms.Clear();
             foreach (var r in q.Rooms)
@@ -570,6 +617,13 @@ namespace Cleaning_Quote
 
                 if (string.IsNullOrWhiteSpace(_currentQuote.Status))
                     _currentQuote.Status = "Draft";
+
+                if (string.IsNullOrWhiteSpace(_currentQuote.QuoteName))
+                {
+                    _quoteNameManuallyEdited = false;
+                    UpdateQuoteNameIfAuto();
+                    _currentQuote.QuoteName = QuoteNameBox.Text?.Trim() ?? "";
+                }
 
                 _quoteRepo.Save(_currentQuote);
 
@@ -621,6 +675,56 @@ namespace Cleaning_Quote
             StatusText.Text = "Quote deleted.";
         }
 
+        private void UpdateQuoteNameIfAuto()
+        {
+            if (_selectedClient == null || _currentQuote == null)
+                return;
+
+            if (_quoteNameManuallyEdited && !string.IsNullOrWhiteSpace(QuoteNameBox.Text))
+                return;
+
+            var generated = GenerateQuoteName();
+
+            _suppressQuoteNameTracking = true;
+            QuoteNameBox.Text = generated;
+            _suppressQuoteNameTracking = false;
+
+            _currentQuote.QuoteName = generated;
+        }
+
+        private string GenerateQuoteName()
+        {
+            var date = _currentQuote?.QuoteDate == default ? DateTime.Today : _currentQuote.QuoteDate;
+            var displayName = _selectedClient?.DisplayName?.Trim() ?? "";
+            var lastName = displayName;
+
+            if (!string.IsNullOrWhiteSpace(displayName))
+            {
+                var parts = displayName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                lastName = parts.Length > 0 ? parts[^1] : displayName;
+            }
+
+            var serviceType = ServiceTypeBox.SelectedItem is ComboBoxItem item
+                ? item.Content?.ToString() ?? ""
+                : "";
+
+            return $"{date:MM/dd/yyyy} | {lastName} | {serviceType}";
+        }
+
+        private void SetSelectedCombo(ComboBox comboBox, string value)
+        {
+            if (comboBox == null)
+                return;
+
+            foreach (var item in comboBox.Items)
+            {
+                if (item is ComboBoxItem comboItem && comboItem.Content?.ToString() == value)
+                {
+                    comboBox.SelectedItem = comboItem;
+                    return;
+                }
+            }
+        }
 
     }
 }

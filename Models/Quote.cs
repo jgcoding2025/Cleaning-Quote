@@ -11,6 +11,10 @@ namespace Cleaning_Quote.Models
         public Guid QuoteId { get; set; } = Guid.NewGuid();
         public Guid ClientId { get; set; }
         public DateTime QuoteDate { get; set; } = DateTime.Today;
+        public string QuoteName { get; set; } = "";
+        public string ServiceType { get; set; } = "";
+        public string ServiceFrequency { get; set; } = "";
+        public string LastProfessionalCleaning { get; set; } = "";
 
         public decimal LaborRate { get; set; } = 50m;
         public decimal TaxRate { get; set; } = 0.08m;

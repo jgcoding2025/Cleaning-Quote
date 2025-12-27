@@ -20,11 +20,11 @@ namespace Cleaning_Quote.Data
 
                 cmd.CommandText = @"
 INSERT INTO Quotes
-(QuoteId, ClientId, QuoteDate, Status, LaborRate, TaxRate, CreditCardFeeRate, CreditCard,
+(QuoteId, ClientId, QuoteDate, QuoteName, ServiceType, ServiceFrequency, LastProfessionalCleaning, Status, LaborRate, TaxRate, CreditCardFeeRate, CreditCard,
  PetsCount, HouseholdSize, SmokingInside, TotalLaborHours, Subtotal, CreditCardFee, Tax, Total,
  Notes, CreatedAt, UpdatedAt)
 VALUES
-($QuoteId, $ClientId, $QuoteDate, $Status, $LaborRate, $TaxRate, $CreditCardFeeRate, $CreditCard,
+($QuoteId, $ClientId, $QuoteDate, $QuoteName, $ServiceType, $ServiceFrequency, $LastProfessionalCleaning, $Status, $LaborRate, $TaxRate, $CreditCardFeeRate, $CreditCard,
  $PetsCount, $HouseholdSize, $SmokingInside, $TotalLaborHours, $Subtotal, $CreditCardFee, $Tax, $Total,
  $Notes, $CreatedAt, $UpdatedAt);
 ";
@@ -32,6 +32,10 @@ VALUES
                 cmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
                 cmd.Parameters.AddWithValue("$ClientId", quote.ClientId.ToString());
                 cmd.Parameters.AddWithValue("$QuoteDate", quote.QuoteDate.ToString("yyyy-MM-dd"));
+                cmd.Parameters.AddWithValue("$QuoteName", quote.QuoteName ?? "");
+                cmd.Parameters.AddWithValue("$ServiceType", quote.ServiceType ?? "");
+                cmd.Parameters.AddWithValue("$ServiceFrequency", quote.ServiceFrequency ?? "");
+                cmd.Parameters.AddWithValue("$LastProfessionalCleaning", quote.LastProfessionalCleaning ?? "");
                 cmd.Parameters.AddWithValue("$Status", string.IsNullOrWhiteSpace(quote.Status) ? "Draft" : quote.Status);
 
                 cmd.Parameters.AddWithValue("$LaborRate", (double)quote.LaborRate);
@@ -106,7 +110,7 @@ VALUES
             using var cmd = conn.CreateCommand();
 
             cmd.CommandText = @"
-SELECT QuoteId, QuoteDate, Total, TotalLaborHours
+SELECT QuoteId, QuoteDate, Total, TotalLaborHours, QuoteName
 FROM Quotes
 WHERE ClientId = $ClientId
 ORDER BY QuoteDate DESC, CreatedAt DESC;
@@ -122,6 +126,7 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
                     QuoteDate = DateTime.Parse(reader.GetString(1)),
                     Total = Convert.ToDecimal(reader.GetDouble(2)),
                     Hours = Convert.ToDecimal(reader.GetDouble(3)),
+                    QuoteName = reader.IsDBNull(4) ? "" : reader.GetString(4),
                 });
             }
 
@@ -137,7 +142,7 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = @"
-                SELECT QuoteId, ClientId, QuoteDate,
+                SELECT QuoteId, ClientId, QuoteDate, QuoteName, ServiceType, ServiceFrequency, LastProfessionalCleaning,
                        LaborRate, TaxRate, CreditCardFeeRate, CreditCard,
                        PetsCount, HouseholdSize, SmokingInside,
                        TotalLaborHours, Subtotal, CreditCardFee, Tax, Total,
@@ -155,23 +160,27 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
                     QuoteId = Guid.Parse(r.GetString(0)),
                     ClientId = Guid.Parse(r.GetString(1)),
                     QuoteDate = DateTime.Parse(r.GetString(2)),
+                    QuoteName = r.IsDBNull(3) ? "" : r.GetString(3),
+                    ServiceType = r.IsDBNull(4) ? "" : r.GetString(4),
+                    ServiceFrequency = r.IsDBNull(5) ? "" : r.GetString(5),
+                    LastProfessionalCleaning = r.IsDBNull(6) ? "" : r.GetString(6),
 
-                    LaborRate = Convert.ToDecimal(r.GetDouble(3)),
-                    TaxRate = Convert.ToDecimal(r.GetDouble(4)),
-                    CreditCardFeeRate = Convert.ToDecimal(r.GetDouble(5)),
-                    CreditCard = r.GetInt32(6) == 1,
+                    LaborRate = Convert.ToDecimal(r.GetDouble(7)),
+                    TaxRate = Convert.ToDecimal(r.GetDouble(8)),
+                    CreditCardFeeRate = Convert.ToDecimal(r.GetDouble(9)),
+                    CreditCard = r.GetInt32(10) == 1,
 
-                    PetsCount = r.GetInt32(7),
-                    HouseholdSize = r.GetInt32(8),
-                    SmokingInside = r.GetInt32(9) == 1,
+                    PetsCount = r.GetInt32(11),
+                    HouseholdSize = r.GetInt32(12),
+                    SmokingInside = r.GetInt32(13) == 1,
 
-                    TotalLaborHours = Convert.ToDecimal(r.GetDouble(10)),
-                    Subtotal = Convert.ToDecimal(r.GetDouble(11)),
-                    CreditCardFee = Convert.ToDecimal(r.GetDouble(12)),
-                    Tax = Convert.ToDecimal(r.GetDouble(13)),
-                    Total = Convert.ToDecimal(r.GetDouble(14)),
+                    TotalLaborHours = Convert.ToDecimal(r.GetDouble(14)),
+                    Subtotal = Convert.ToDecimal(r.GetDouble(15)),
+                    CreditCardFee = Convert.ToDecimal(r.GetDouble(16)),
+                    Tax = Convert.ToDecimal(r.GetDouble(17)),
+                    Total = Convert.ToDecimal(r.GetDouble(18)),
 
-                    Notes = r.IsDBNull(15) ? "" : r.GetString(15),
+                    Notes = r.IsDBNull(19) ? "" : r.GetString(19),
                 };
             }
 
@@ -225,6 +234,10 @@ UPDATE Quotes
 SET
     ClientId = $ClientId,
     QuoteDate = $QuoteDate,
+    QuoteName = $QuoteName,
+    ServiceType = $ServiceType,
+    ServiceFrequency = $ServiceFrequency,
+    LastProfessionalCleaning = $LastProfessionalCleaning,
     Status = $Status,
 
     LaborRate = $LaborRate,
@@ -250,6 +263,10 @@ WHERE QuoteId = $QuoteId;
                 cmd.Parameters.AddWithValue("$QuoteId", quote.QuoteId.ToString());
                 cmd.Parameters.AddWithValue("$ClientId", quote.ClientId.ToString());
                 cmd.Parameters.AddWithValue("$QuoteDate", quote.QuoteDate.ToString("yyyy-MM-dd"));
+                cmd.Parameters.AddWithValue("$QuoteName", quote.QuoteName ?? "");
+                cmd.Parameters.AddWithValue("$ServiceType", quote.ServiceType ?? "");
+                cmd.Parameters.AddWithValue("$ServiceFrequency", quote.ServiceFrequency ?? "");
+                cmd.Parameters.AddWithValue("$LastProfessionalCleaning", quote.LastProfessionalCleaning ?? "");
                 cmd.Parameters.AddWithValue("$Status", string.IsNullOrWhiteSpace(quote.Status) ? "Draft" : quote.Status);
 
                 cmd.Parameters.AddWithValue("$LaborRate", (double)quote.LaborRate);
