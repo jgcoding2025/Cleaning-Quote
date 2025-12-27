@@ -1321,7 +1321,11 @@ namespace Cleaning_Quote
             var count = 0;
             foreach (var room in _rooms)
             {
-                if (!room.IsSubItem || room.ItemCategory != "Window" || !room.IncludedInQuote)
+                if (!room.IncludedInQuote)
+                    continue;
+
+                var isWindow = room.ItemCategory.Equals("Window", StringComparison.OrdinalIgnoreCase) || room.IsWindowRoom;
+                if (!isWindow)
                     continue;
 
                 var inside = room.WindowInside;
