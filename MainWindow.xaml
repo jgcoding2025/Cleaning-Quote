@@ -7,11 +7,19 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="1084" Width="800">
-    <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
+    <DockPanel Margin="10">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Settings">
+                <MenuItem Header="Service Type Defaults..." Click="OpenServiceTypeDefaults_Click"/>
+                <MenuItem Header="Complexity Reference..." Click="OpenComplexityReference_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
 
         <!-- LEFT: Client Panel -->
         <StackPanel Grid.Column="0" Margin="10">
@@ -308,6 +316,7 @@
 
         </StackPanel>
 
-    </Grid>
+        </Grid>
+    </DockPanel>
 
 </Window>

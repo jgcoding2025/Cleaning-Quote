@@ -85,6 +85,9 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     Complexity1Multiplier REAL NOT NULL,
     Complexity2Multiplier REAL NOT NULL,
     Complexity3Multiplier REAL NOT NULL,
+    Complexity1Definition TEXT NOT NULL,
+    Complexity2Definition TEXT NOT NULL,
+    Complexity3Definition TEXT NOT NULL,
     FullGlassShowerHoursEach REAL NOT NULL,
     PebbleStoneFloorHoursEach REAL NOT NULL,
     FridgeHoursEach REAL NOT NULL,
@@ -106,6 +109,9 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "ServiceTypePricing", "Complexity1Multiplier", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "Complexity2Multiplier", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "Complexity3Multiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "Complexity1Definition", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "Complexity2Definition", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "Complexity3Definition", "TEXT");
             EnsureColumn(conn, "ServiceTypePricing", "FullGlassShowerHoursEach", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "PebbleStoneFloorHoursEach", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "FridgeHoursEach", "REAL");
