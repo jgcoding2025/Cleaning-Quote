@@ -39,7 +39,23 @@ WHERE ServiceType = $ServiceType;
             if (reader.Read())
             {
                 var defaults = ServiceTypePricing.Default(normalized);
-                return new ServiceTypePricing
+                var windowInsideRate = GetOptionalDecimal(reader, 33, defaults.WindowInsideRate);
+                var windowOutsideRate = GetOptionalDecimal(reader, 34, defaults.WindowOutsideRate);
+                var needsUpdate = false;
+
+                if (windowInsideRate <= 0m)
+                {
+                    windowInsideRate = defaults.WindowInsideRate;
+                    needsUpdate = true;
+                }
+
+                if (windowOutsideRate <= 0m)
+                {
+                    windowOutsideRate = defaults.WindowOutsideRate;
+                    needsUpdate = true;
+                }
+
+                var pricing = new ServiceTypePricing
                 {
                     ServiceType = reader.GetString(0),
                     SqFtPerLaborHour = Convert.ToDecimal(reader.GetDouble(1)),
@@ -74,10 +90,15 @@ WHERE ServiceType = $ServiceType;
                     MaintenanceMinimum = GetOptionalDecimal(reader, 30, defaults.MaintenanceMinimum),
                     OneTimeDeepCleanRate = GetOptionalDecimal(reader, 31, defaults.OneTimeDeepCleanRate),
                     OneTimeDeepCleanMinimum = GetOptionalDecimal(reader, 32, defaults.OneTimeDeepCleanMinimum),
-                    WindowInsideRate = GetOptionalDecimal(reader, 33, defaults.WindowInsideRate),
-                    WindowOutsideRate = GetOptionalDecimal(reader, 34, defaults.WindowOutsideRate),
+                    WindowInsideRate = windowInsideRate,
+                    WindowOutsideRate = windowOutsideRate,
                     UpdatedAt = DateTime.Parse(reader.GetString(35))
                 };
+
+                if (needsUpdate)
+                    Upsert(pricing);
+
+                return pricing;
             }
 
             var createdDefaults = ServiceTypePricing.Default(normalized);
