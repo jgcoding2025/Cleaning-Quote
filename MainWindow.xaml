@@ -101,6 +101,104 @@
 
             <TextBlock Text="Quote" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
+            <GroupBox Header="Customer Details" Margin="0,0,0,10">
+                <StackPanel Margin="10">
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Customer:" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding ClientDisplayName}" />
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Address:" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding ClientAddressLine}" TextWrapping="Wrap" Width="360"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock Text="Date:" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                        <DatePicker x:Name="QuoteDatePicker" SelectedDateChanged="QuoteDetails_Changed" Width="140"/>
+                        <TextBlock Text="Total Sq Ft" FontWeight="SemiBold" Margin="16,0,6,0"/>
+                        <TextBox x:Name="TotalSqFtBox" Width="90" Height="24" TextChanged="QuoteInputs_Changed"/>
+                        <CheckBox x:Name="SqFtOverrideCheck" Content="Use Total Sq Ft" Margin="10,0,0,0"
+                                  Checked="QuoteInputs_Changed" Unchecked="QuoteInputs_Changed"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,6,0,0">
+                        <TextBlock Text="Estimated Sq Ft (rooms):" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding EstimatedSqFtText}" />
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Discuss" Margin="0,0,0,10">
+                <StackPanel Margin="10">
+                    <StackPanel Margin="0,0,0,8">
+                        <WrapPanel Margin="0,0,0,6">
+                            <TextBlock Text="Pets" FontWeight="SemiBold" Width="100"/>
+                            <CheckBox x:Name="PetsYesCheck" Content="Yes" Margin="0,0,10,0"
+                                      Checked="PetsYesCheck_Changed" Unchecked="PetsYesCheck_Changed"/>
+                            <CheckBox x:Name="PetsNoCheck" Content="No" Checked="PetsNoCheck_Changed" Unchecked="PetsNoCheck_Changed"/>
+                        </WrapPanel>
+                        <DataGrid x:Name="PetsGrid"
+                                  Height="120"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  Visibility="Collapsed">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="120"/>
+                                <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="200"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Visibility="Collapsed" x:Name="PetsButtonsPanel">
+                            <Button Content="Add Pet" Width="80" Margin="0,0,6,0" Click="AddPet_Click"/>
+                            <Button Content="Remove Pet" Width="100" Click="RemovePet_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,0,8">
+                        <WrapPanel Margin="0,0,0,6">
+                            <TextBlock Text="Home Occupied" FontWeight="SemiBold" Width="120"/>
+                            <CheckBox x:Name="OccupantsYesCheck" Content="Yes" Margin="0,0,10,0"
+                                      Checked="OccupantsYesCheck_Changed" Unchecked="OccupantsYesCheck_Changed"/>
+                            <CheckBox x:Name="OccupantsNoCheck" Content="No" Checked="OccupantsNoCheck_Changed" Unchecked="OccupantsNoCheck_Changed"/>
+                        </WrapPanel>
+                        <DataGrid x:Name="OccupantsGrid"
+                                  Height="120"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  Visibility="Collapsed">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Relationship" Binding="{Binding Relationship}" Width="140"/>
+                                <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="200"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Visibility="Collapsed" x:Name="OccupantsButtonsPanel">
+                            <Button Content="Add Person" Width="90" Margin="0,0,6,0" Click="AddOccupant_Click"/>
+                            <Button Content="Remove Person" Width="110" Click="RemoveOccupant_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Entry" FontWeight="SemiBold" Width="120"/>
+                        <TextBox x:Name="EntryInstructionsBox" Width="280" Height="24" TextChanged="QuoteInputs_Changed"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Payment Method" FontWeight="SemiBold" Width="120"/>
+                        <ComboBox x:Name="PaymentMethodBox" Width="180" SelectionChanged="PaymentMethodBox_SelectionChanged">
+                            <ComboBoxItem>Zelle</ComboBoxItem>
+                            <ComboBoxItem>Check</ComboBoxItem>
+                            <ComboBoxItem>Credit Card</ComboBoxItem>
+                            <ComboBoxItem>Cash</ComboBoxItem>
+                            <ComboBoxItem>Other</ComboBoxItem>
+                        </ComboBox>
+                        <TextBox x:Name="PaymentMethodOtherBox" Width="160" Margin="10,0,0,0" Visibility="Collapsed"
+                                 TextChanged="QuoteInputs_Changed" />
+                    </WrapPanel>
+                    <CheckBox x:Name="FeedbackDiscussedCheck"
+                              Content="Feedback, we don't live here :) discussed"
+                              Checked="QuoteInputs_Changed"
+                              Unchecked="QuoteInputs_Changed"/>
+                </StackPanel>
+            </GroupBox>
+
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <Button Content="New Quote" Width="100" Margin="0,0,8,0" Click="NewQuote_Click"/>
                 <Button Content="Add Room" Width="90" Margin="0,0,8,0" Click="AddRoom_Click"/>
@@ -130,20 +228,6 @@
                     <CheckBox x:Name="CreditCardCheck" Checked="QuoteInputs_Changed" Unchecked="QuoteInputs_Changed"/>
                 </StackPanel>
 
-                <StackPanel Width="90" Margin="0,0,10,0">
-                    <TextBlock Text="Pets" FontWeight="SemiBold"/>
-                    <TextBox x:Name="PetsBox" Height="26" TextChanged="QuoteInputs_Changed"/>
-                </StackPanel>
-
-                <StackPanel Width="130" Margin="0,0,10,0">
-                    <TextBlock Text="Household Size" FontWeight="SemiBold"/>
-                    <TextBox x:Name="HouseholdSizeBox" Height="26" TextChanged="QuoteInputs_Changed"/>
-                </StackPanel>
-
-                <StackPanel Width="140" Margin="0,0,10,0">
-                    <TextBlock Text="Smoking Inside" FontWeight="SemiBold"/>
-                    <CheckBox x:Name="SmokingCheck" Checked="QuoteInputs_Changed" Unchecked="QuoteInputs_Changed"/>
-                </StackPanel>
             </WrapPanel>
 
             <WrapPanel Margin="0,0,0,10">
@@ -244,7 +328,7 @@
             </Expander>
 
             <!-- Rooms -->
-            <TextBlock Text="Rooms" FontWeight="Bold" Margin="0,0,0,6"/>
+            <TextBlock Text="Room Details" FontWeight="Bold" Margin="0,0,0,6"/>
             <DataGrid x:Name="RoomsGrid"
               Height="170"
               AutoGenerateColumns="False"
@@ -253,26 +337,34 @@
               CellEditEnding="RoomsGrid_CellEditEnding"
               CurrentCellChanged="RoomsGrid_CurrentCellChanged">
                 <DataGrid.Columns>
-                    <DataGridComboBoxColumn Header="Room"
-                        Width="*"
-                        SelectedItemBinding="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}">
-                        <DataGridComboBoxColumn.ItemsSource>
-                            <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                <sys:String>Bedroom</sys:String>
-                                <sys:String>Bathroom</sys:String>
-                                <sys:String>Kitchen</sys:String>
-                                <sys:String>Living Room</sys:String>
-                                <sys:String>Dining Room</sys:String>
-                                <sys:String>Office</sys:String>
-                                <sys:String>Hallway</sys:String>
-                                <sys:String>Laundry</sys:String>
-                                <sys:String>Stairs</sys:String>
-                            </x:Array>
-                        </DataGridComboBoxColumn.ItemsSource>
-                    </DataGridComboBoxColumn>
+                    <DataGridTextColumn Header="Lvl" Width="60" Binding="{Binding Level}"/>
+
+                    <DataGridTemplateColumn Header="Room" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RoomType}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Margin" Value="0,0,0,0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSubItem}" Value="True">
+                                                    <Setter Property="Margin" Value="16,0,0,0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
 
                     <DataGridComboBoxColumn Header="Size"
-                        Width="90"
+                        Width="70"
                         SelectedItemBinding="{Binding Size, UpdateSourceTrigger=PropertyChanged}">
                         <DataGridComboBoxColumn.ItemsSource>
                             <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -284,7 +376,7 @@
                     </DataGridComboBoxColumn>
 
                     <DataGridComboBoxColumn Header="Complexity"
-                        Width="120"
+                        Width="90"
                         SelectedItemBinding="{Binding Complexity, UpdateSourceTrigger=PropertyChanged}">
                         <DataGridComboBoxColumn.ItemsSource>
                             <x:Array Type="{x:Type sys:Int32}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -294,13 +386,40 @@
                             </x:Array>
                         </DataGridComboBoxColumn.ItemsSource>
                     </DataGridComboBoxColumn>
-                    <DataGridTextColumn Header="Glass" Binding="{Binding FullGlassShowersCount}" Width="70"/>
-                    <DataGridTextColumn Header="Pebble" Binding="{Binding PebbleStoneFloorsCount}" Width="70"/>
-                    <DataGridTextColumn Header="Fridge" Binding="{Binding FridgeCount}" Width="70"/>
-                    <DataGridTextColumn Header="Oven" Binding="{Binding OvenCount}" Width="70"/>
-                    <DataGridTextColumn Header="Room Hours" Binding="{Binding RoomLaborHours}" IsReadOnly="True" Width="95"/>
+                    <DataGridTextColumn Header="Est. Time" Binding="{Binding RoomLaborHours}" IsReadOnly="True" Width="80"/>
+                    <DataGridTextColumn Header="Notes" Binding="{Binding RoomNotes}" Width="150"/>
+                    <DataGridTextColumn Header="$ Amount" Binding="{Binding RoomAmount, StringFormat=C}" IsReadOnly="True" Width="90"/>
                 </DataGrid.Columns>
             </DataGrid>
+
+            <GroupBox Header="Add Room Sub-Item" Margin="0,8,0,0">
+                <StackPanel Margin="10">
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Sub-Item" FontWeight="SemiBold" Width="80"/>
+                        <ComboBox x:Name="SubItemTypeBox" Width="200">
+                            <ComboBoxItem>Full Glass Shower</ComboBoxItem>
+                            <ComboBoxItem>Pebble Stone Floor</ComboBoxItem>
+                            <ComboBoxItem>Fridge</ComboBoxItem>
+                            <ComboBoxItem>Oven</ComboBoxItem>
+                            <ComboBoxItem>Ceiling Fan</ComboBoxItem>
+                            <ComboBoxItem>Standard Window - 2 panes</ComboBoxItem>
+                        </ComboBox>
+                        <TextBlock Text="Count" FontWeight="SemiBold" Margin="12,0,4,0"/>
+                        <TextBox x:Name="SubItemCountBox" Width="40" Height="24" Text="1"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Window Size" FontWeight="SemiBold" Width="80"/>
+                        <ComboBox x:Name="WindowSizeBox" Width="90">
+                            <ComboBoxItem>S</ComboBoxItem>
+                            <ComboBoxItem>M</ComboBoxItem>
+                            <ComboBoxItem>L</ComboBoxItem>
+                        </ComboBox>
+                        <CheckBox x:Name="WindowInsideCheck" Content="Inside" Margin="10,0,0,0"/>
+                        <CheckBox x:Name="WindowOutsideCheck" Content="Outside" Margin="10,0,0,0"/>
+                        <Button Content="Add Sub-Item" Width="110" Margin="12,0,0,0" Click="AddSubItem_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
 
             <!-- Totals -->
             <Border BorderThickness="1" Padding="10" Margin="0,10,0,0">
@@ -311,8 +430,27 @@
                     <TextBlock Text="{Binding CcFeeText}" />
                     <TextBlock Text="{Binding TaxText}" />
                     <TextBlock Text="{Binding TotalText}" FontWeight="Bold" Margin="0,6,0,0"/>
+                    <TextBlock Text="{Binding MinimumWarningText}" Foreground="Red" FontStyle="Italic" />
                 </StackPanel>
             </Border>
+
+            <Border BorderThickness="1" Padding="10" Margin="0,10,0,0">
+                <StackPanel>
+                    <TextBlock Text="Quote Form Calculator" FontSize="16" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding SqFtCalcText}" />
+                    <TextBlock Text="{Binding FirstCleanText}" />
+                    <TextBlock Text="{Binding DeepCleanText}" />
+                    <TextBlock Text="{Binding MaintenanceText}" />
+                    <TextBlock Text="{Binding OneTimeDeepCleanText}" />
+                    <TextBlock Text="{Binding WindowInsideText}" />
+                    <TextBlock Text="{Binding WindowOutsideText}" />
+                </StackPanel>
+            </Border>
+
+            <GroupBox Header="Special Notes" Margin="0,10,0,0">
+                <TextBox x:Name="QuoteNotesBox" Height="90" TextWrapping="Wrap" AcceptsReturn="True"
+                         TextChanged="QuoteInputs_Changed" Margin="10"/>
+            </GroupBox>
 
         </StackPanel>
 

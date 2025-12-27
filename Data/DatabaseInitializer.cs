@@ -33,6 +33,12 @@ CREATE TABLE IF NOT EXISTS Quotes(
     ServiceType TEXT,
     ServiceFrequency TEXT,
     LastProfessionalCleaning TEXT,
+    TotalSqFt REAL NOT NULL DEFAULT 0,
+    UseTotalSqFtOverride INTEGER NOT NULL DEFAULT 0,
+    EntryInstructions TEXT,
+    PaymentMethod TEXT,
+    PaymentMethodOther TEXT,
+    FeedbackDiscussed INTEGER NOT NULL DEFAULT 0,
     Status TEXT NOT NULL DEFAULT 'Draft',
 
     LaborRate REAL NOT NULL,
@@ -61,10 +67,17 @@ CREATE TABLE IF NOT EXISTS Quotes(
 CREATE TABLE IF NOT EXISTS QuoteRooms(
     QuoteRoomId TEXT PRIMARY KEY,
     QuoteId TEXT NOT NULL,
+    ParentRoomId TEXT,
 
     RoomType TEXT NOT NULL,
     Size TEXT NOT NULL,
     Complexity INTEGER NOT NULL,
+    Level TEXT,
+    ItemCategory TEXT,
+    IsSubItem INTEGER NOT NULL DEFAULT 0,
+    IncludedInQuote INTEGER NOT NULL DEFAULT 1,
+    WindowInside INTEGER NOT NULL DEFAULT 0,
+    WindowOutside INTEGER NOT NULL DEFAULT 0,
 
     FullGlassShowersCount INTEGER NOT NULL,
     PebbleStoneFloorsCount INTEGER NOT NULL,
@@ -72,7 +85,27 @@ CREATE TABLE IF NOT EXISTS QuoteRooms(
     OvenCount INTEGER NOT NULL,
 
     RoomLaborHours REAL NOT NULL,
+    RoomAmount REAL NOT NULL DEFAULT 0,
+    RoomNotes TEXT,
 
+    FOREIGN KEY (QuoteId) REFERENCES Quotes(QuoteId)
+);
+
+CREATE TABLE IF NOT EXISTS QuotePets(
+    QuotePetId TEXT PRIMARY KEY,
+    QuoteId TEXT NOT NULL,
+    Name TEXT NOT NULL,
+    Type TEXT NOT NULL,
+    Notes TEXT,
+    FOREIGN KEY (QuoteId) REFERENCES Quotes(QuoteId)
+);
+
+CREATE TABLE IF NOT EXISTS QuoteOccupants(
+    QuoteOccupantId TEXT PRIMARY KEY,
+    QuoteId TEXT NOT NULL,
+    Name TEXT NOT NULL,
+    Relationship TEXT NOT NULL,
+    Notes TEXT,
     FOREIGN KEY (QuoteId) REFERENCES Quotes(QuoteId)
 );
 
@@ -89,9 +122,29 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     Complexity2Definition TEXT NOT NULL,
     Complexity3Definition TEXT NOT NULL,
     FullGlassShowerHoursEach REAL NOT NULL,
+    FullGlassShowerComplexity INTEGER NOT NULL DEFAULT 2,
     PebbleStoneFloorHoursEach REAL NOT NULL,
+    PebbleStoneFloorComplexity INTEGER NOT NULL DEFAULT 2,
     FridgeHoursEach REAL NOT NULL,
+    FridgeComplexity INTEGER NOT NULL DEFAULT 2,
     OvenHoursEach REAL NOT NULL,
+    OvenComplexity INTEGER NOT NULL DEFAULT 2,
+    CeilingFanHoursEach REAL NOT NULL DEFAULT 0.15,
+    CeilingFanComplexity INTEGER NOT NULL DEFAULT 1,
+    WindowSmallHoursEach REAL NOT NULL DEFAULT 0.08,
+    WindowMediumHoursEach REAL NOT NULL DEFAULT 0.12,
+    WindowLargeHoursEach REAL NOT NULL DEFAULT 0.18,
+    WindowComplexity INTEGER NOT NULL DEFAULT 1,
+    FirstCleanRate REAL NOT NULL DEFAULT 0.15,
+    FirstCleanMinimum REAL NOT NULL DEFAULT 195,
+    DeepCleanRate REAL NOT NULL DEFAULT 0.20,
+    DeepCleanMinimum REAL NOT NULL DEFAULT 295,
+    MaintenanceRate REAL NOT NULL DEFAULT 0.10,
+    MaintenanceMinimum REAL NOT NULL DEFAULT 125,
+    OneTimeDeepCleanRate REAL NOT NULL DEFAULT 0.30,
+    OneTimeDeepCleanMinimum REAL NOT NULL DEFAULT 400,
+    WindowInsideRate REAL NOT NULL DEFAULT 4,
+    WindowOutsideRate REAL NOT NULL DEFAULT 4,
     UpdatedAt TEXT NOT NULL
 );
 ";
@@ -101,6 +154,22 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "Quotes", "ServiceType", "TEXT");
             EnsureColumn(conn, "Quotes", "ServiceFrequency", "TEXT");
             EnsureColumn(conn, "Quotes", "LastProfessionalCleaning", "TEXT");
+            EnsureColumn(conn, "Quotes", "TotalSqFt", "REAL");
+            EnsureColumn(conn, "Quotes", "UseTotalSqFtOverride", "INTEGER");
+            EnsureColumn(conn, "Quotes", "EntryInstructions", "TEXT");
+            EnsureColumn(conn, "Quotes", "PaymentMethod", "TEXT");
+            EnsureColumn(conn, "Quotes", "PaymentMethodOther", "TEXT");
+            EnsureColumn(conn, "Quotes", "FeedbackDiscussed", "INTEGER");
+
+            EnsureColumn(conn, "QuoteRooms", "ParentRoomId", "TEXT");
+            EnsureColumn(conn, "QuoteRooms", "Level", "TEXT");
+            EnsureColumn(conn, "QuoteRooms", "ItemCategory", "TEXT");
+            EnsureColumn(conn, "QuoteRooms", "IsSubItem", "INTEGER");
+            EnsureColumn(conn, "QuoteRooms", "IncludedInQuote", "INTEGER");
+            EnsureColumn(conn, "QuoteRooms", "WindowInside", "INTEGER");
+            EnsureColumn(conn, "QuoteRooms", "WindowOutside", "INTEGER");
+            EnsureColumn(conn, "QuoteRooms", "RoomAmount", "REAL");
+            EnsureColumn(conn, "QuoteRooms", "RoomNotes", "TEXT");
 
             EnsureColumn(conn, "ServiceTypePricing", "SqFtPerLaborHour", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "SizeSmallSqFt", "REAL");
@@ -113,9 +182,29 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "ServiceTypePricing", "Complexity2Definition", "TEXT");
             EnsureColumn(conn, "ServiceTypePricing", "Complexity3Definition", "TEXT");
             EnsureColumn(conn, "ServiceTypePricing", "FullGlassShowerHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "FullGlassShowerComplexity", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "PebbleStoneFloorHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "PebbleStoneFloorComplexity", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "FridgeHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "FridgeComplexity", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "OvenHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "OvenComplexity", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "CeilingFanHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "CeilingFanComplexity", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "WindowSmallHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "WindowMediumHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "WindowLargeHoursEach", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "WindowComplexity", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "FirstCleanRate", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "FirstCleanMinimum", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "DeepCleanRate", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "DeepCleanMinimum", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "MaintenanceRate", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "MaintenanceMinimum", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "OneTimeDeepCleanRate", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "OneTimeDeepCleanMinimum", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "WindowInsideRate", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "WindowOutsideRate", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "UpdatedAt", "TEXT");
         }
 

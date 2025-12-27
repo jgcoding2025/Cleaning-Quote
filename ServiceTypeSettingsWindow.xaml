@@ -59,17 +59,117 @@
                                 <TextBlock Text="Glass Shower Hours" FontWeight="SemiBold"/>
                                 <TextBox x:Name="FullGlassShowerHoursBox" Height="26"/>
                             </StackPanel>
+                            <StackPanel Width="120" Margin="0,0,10,0">
+                                <TextBlock Text="Glass Shower Complexity" FontWeight="SemiBold"/>
+                                <TextBox x:Name="FullGlassShowerComplexityBox" Height="26"/>
+                            </StackPanel>
                             <StackPanel Width="140" Margin="0,0,10,0">
                                 <TextBlock Text="Pebble Floor Hours" FontWeight="SemiBold"/>
                                 <TextBox x:Name="PebbleStoneFloorHoursBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="120" Margin="0,0,10,0">
+                                <TextBlock Text="Pebble Floor Complexity" FontWeight="SemiBold"/>
+                                <TextBox x:Name="PebbleStoneFloorComplexityBox" Height="26"/>
                             </StackPanel>
                             <StackPanel Width="120" Margin="0,0,10,0">
                                 <TextBlock Text="Fridge Hours" FontWeight="SemiBold"/>
                                 <TextBox x:Name="FridgeHoursBox" Height="26"/>
                             </StackPanel>
                             <StackPanel Width="120" Margin="0,0,10,0">
+                                <TextBlock Text="Fridge Complexity" FontWeight="SemiBold"/>
+                                <TextBox x:Name="FridgeComplexityBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="120" Margin="0,0,10,0">
                                 <TextBlock Text="Oven Hours" FontWeight="SemiBold"/>
                                 <TextBox x:Name="OvenHoursBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="120" Margin="0,0,10,0">
+                                <TextBlock Text="Oven Complexity" FontWeight="SemiBold"/>
+                                <TextBox x:Name="OvenComplexityBox" Height="26"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Sub-Item Defaults" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <WrapPanel Margin="0,0,0,10">
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Ceiling Fan Hours" FontWeight="SemiBold"/>
+                                <TextBox x:Name="CeilingFanHoursBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Ceiling Fan Complexity" FontWeight="SemiBold"/>
+                                <TextBox x:Name="CeilingFanComplexityBox" Height="26"/>
+                            </StackPanel>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Window Small Hours" FontWeight="SemiBold"/>
+                                <TextBox x:Name="WindowSmallHoursBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Window Medium Hours" FontWeight="SemiBold"/>
+                                <TextBox x:Name="WindowMediumHoursBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Window Large Hours" FontWeight="SemiBold"/>
+                                <TextBox x:Name="WindowLargeHoursBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Window Complexity" FontWeight="SemiBold"/>
+                                <TextBox x:Name="WindowComplexityBox" Height="26"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Quote Form Rates" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <WrapPanel Margin="0,0,0,10">
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="First Clean Rate" FontWeight="SemiBold"/>
+                                <TextBox x:Name="FirstCleanRateBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="First Clean Minimum" FontWeight="SemiBold"/>
+                                <TextBox x:Name="FirstCleanMinimumBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Deep Clean Rate" FontWeight="SemiBold"/>
+                                <TextBox x:Name="DeepCleanRateBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Deep Clean Minimum" FontWeight="SemiBold"/>
+                                <TextBox x:Name="DeepCleanMinimumBox" Height="26"/>
+                            </StackPanel>
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,10">
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Maintenance Rate" FontWeight="SemiBold"/>
+                                <TextBox x:Name="MaintenanceRateBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Maintenance Minimum" FontWeight="SemiBold"/>
+                                <TextBox x:Name="MaintenanceMinimumBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="160" Margin="0,0,10,0">
+                                <TextBlock Text="One-Time Deep Rate" FontWeight="SemiBold"/>
+                                <TextBox x:Name="OneTimeDeepCleanRateBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="160" Margin="0,0,10,0">
+                                <TextBlock Text="One-Time Deep Min" FontWeight="SemiBold"/>
+                                <TextBox x:Name="OneTimeDeepCleanMinimumBox" Height="26"/>
+                            </StackPanel>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Window Inside Rate" FontWeight="SemiBold"/>
+                                <TextBox x:Name="WindowInsideRateBox" Height="26"/>
+                            </StackPanel>
+                            <StackPanel Width="140" Margin="0,0,10,0">
+                                <TextBlock Text="Window Outside Rate" FontWeight="SemiBold"/>
+                                <TextBox x:Name="WindowOutsideRateBox" Height="26"/>
                             </StackPanel>
                         </WrapPanel>
                     </StackPanel>
