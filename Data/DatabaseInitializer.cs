@@ -29,6 +29,10 @@ CREATE TABLE IF NOT EXISTS Quotes(
     QuoteId TEXT PRIMARY KEY,
     ClientId TEXT NOT NULL,
     QuoteDate TEXT NOT NULL,
+    QuoteName TEXT,
+    ServiceType TEXT,
+    ServiceFrequency TEXT,
+    LastProfessionalCleaning TEXT,
     Status TEXT NOT NULL DEFAULT 'Draft',
 
     LaborRate REAL NOT NULL,
@@ -73,6 +77,28 @@ CREATE TABLE IF NOT EXISTS QuoteRooms(
 );
 ";
             cmd.ExecuteNonQuery();
+
+            EnsureColumn(conn, "Quotes", "QuoteName", "TEXT");
+            EnsureColumn(conn, "Quotes", "ServiceType", "TEXT");
+            EnsureColumn(conn, "Quotes", "ServiceFrequency", "TEXT");
+            EnsureColumn(conn, "Quotes", "LastProfessionalCleaning", "TEXT");
+        }
+
+        private static void EnsureColumn(SqliteConnection conn, string tableName, string columnName, string columnDefinition)
+        {
+            using var pragma = conn.CreateCommand();
+            pragma.CommandText = $"PRAGMA table_info({tableName});";
+
+            using var reader = pragma.ExecuteReader();
+            while (reader.Read())
+            {
+                if (reader.GetString(1).Equals(columnName, System.StringComparison.OrdinalIgnoreCase))
+                    return;
+            }
+
+            using var alter = conn.CreateCommand();
+            alter.CommandText = $"ALTER TABLE {tableName} ADD COLUMN {columnName} {columnDefinition};";
+            alter.ExecuteNonQuery();
         }
     }
 }

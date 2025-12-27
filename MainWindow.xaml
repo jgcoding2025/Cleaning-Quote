@@ -137,6 +137,46 @@
                 </StackPanel>
             </WrapPanel>
 
+            <WrapPanel Margin="0,0,0,10">
+                <StackPanel Width="270" Margin="0,0,10,0">
+                    <TextBlock Text="Quote Name" FontWeight="SemiBold"/>
+                    <TextBox x:Name="QuoteNameBox" Height="26" TextChanged="QuoteNameBox_TextChanged"/>
+                </StackPanel>
+
+                <StackPanel Width="190" Margin="0,0,10,0">
+                    <TextBlock Text="Service Type" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="ServiceTypeBox" Height="26" SelectionChanged="QuoteDetails_Changed">
+                        <ComboBoxItem>Standard Clean</ComboBoxItem>
+                        <ComboBoxItem>Initial Clean</ComboBoxItem>
+                        <ComboBoxItem>Deep Clean</ComboBoxItem>
+                        <ComboBoxItem>Light Clean</ComboBoxItem>
+                        <ComboBoxItem>Move in/out Clean</ComboBoxItem>
+                        <ComboBoxItem>Pressure Washing</ComboBoxItem>
+                        <ComboBoxItem>Organizing</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Width="150" Margin="0,0,10,0">
+                    <TextBlock Text="Frequency" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="ServiceFrequencyBox" Height="26" SelectionChanged="QuoteDetails_Changed">
+                        <ComboBoxItem>Weekly</ComboBoxItem>
+                        <ComboBoxItem>Bi-weekly</ComboBoxItem>
+                        <ComboBoxItem>Every 4 weeks</ComboBoxItem>
+                        <ComboBoxItem>One Time</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Width="190" Margin="0,0,10,0">
+                    <TextBlock Text="Last Professional Cleaning" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="LastProfessionalCleaningBox" Height="26" SelectionChanged="QuoteDetails_Changed">
+                        <ComboBoxItem>&lt; 2 weeks</ComboBoxItem>
+                        <ComboBoxItem>2 - 4 weeks</ComboBoxItem>
+                        <ComboBoxItem>&gt;1 month</ComboBoxItem>
+                        <ComboBoxItem>Never</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+            </WrapPanel>
+
             <!-- Rooms -->
             <TextBlock Text="Rooms" FontWeight="Bold" Margin="0,0,0,6"/>
             <DataGrid x:Name="RoomsGrid"
