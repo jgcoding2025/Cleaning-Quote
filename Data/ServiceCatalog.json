@@ -1,0 +1,31 @@
+{
+  "serviceTypes": [
+    "Standard Clean",
+    "Initial Clean (Standard Clean Items Only)",
+    "Deep Clean (one-time)",
+    "Deep Clean (post initial clean)",
+    "Deep Clean (Semi-Annual)",
+    "Deep Clean (Annual)",
+    "Light Clean (dusting and floors)",
+    "Move In/Out Clean",
+    "Pressure Washing",
+    "Organizing"
+  ],
+  "subItems": [
+    "Ceiling Fan",
+    "Fridge",
+    "Mirror +1",
+    "Oven",
+    "Shower: Discount (no glass)",
+    "Shower: Discount (no stone/tile)",
+    "Sink: Discount 1",
+    "Stove Top (Gas)",
+    "Tub / Jacuzzi Tub",
+    "Window (1 pane, inside only, 1st story)",
+    "Window (1 pane, outside only, 1st story)",
+    "Window (1 pane, inside only, 2nd story)",
+    "Window (1 pane, outside only, 2nd story)",
+    "Window Tract",
+    "Window: Standard (2 panes)"
+  ]
+}

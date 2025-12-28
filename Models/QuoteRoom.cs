@@ -14,6 +14,7 @@ namespace Cleaning_Quote.Models
         private int _sortOrder;
         private decimal _roomLaborHours;
         private decimal _roomAmount;
+        private bool _includedInQuote = true;
 
         public string RoomType { get; set; } = "Bedroom";
         public string Size { get; set; } = "M";   // S/M/L
@@ -22,7 +23,17 @@ namespace Cleaning_Quote.Models
         public string Level { get; set; } = "";
         public string ItemCategory { get; set; } = "";
         public bool IsSubItem { get; set; }
-        public bool IncludedInQuote { get; set; } = true;
+        public bool IncludedInQuote
+        {
+            get => _includedInQuote;
+            set
+            {
+                if (_includedInQuote == value)
+                    return;
+                _includedInQuote = value;
+                OnPropertyChanged();
+            }
+        }
         public bool WindowInside { get; set; }
         public bool WindowOutside { get; set; }
         public int SortOrder

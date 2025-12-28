@@ -2,7 +2,7 @@
 using Cleaning_Quote.Models;
 using Cleaning_Quote.Services;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -19,6 +19,8 @@ namespace Cleaning_Quote
         private readonly ClientRepository _clientRepo = new ClientRepository();
         private readonly ServiceTypePricingRepository _serviceTypePricingRepo = new ServiceTypePricingRepository();
         private Client _selectedClient;
+        private readonly ServiceCatalog _serviceCatalog;
+        private List<ServiceTypeStandard> _serviceTypeStandards = new List<ServiceTypeStandard>();
 
         // Quotes
         private readonly QuoteRepository _quoteRepo = new QuoteRepository();
@@ -56,15 +58,11 @@ namespace Cleaning_Quote
         private string _clientAddressLine;
         private string _estimatedSqFtText;
         private string _sqFtCalcText;
-        private string _firstCleanText;
-        private string _deepCleanText;
-        private string _maintenanceText;
-        private string _oneTimeDeepCleanText;
+        private string _serviceTypeStandardText;
+        private string _serviceTypeTotalText;
         private string _windowInsideText;
         private string _windowOutsideText;
         private Visibility _quotePanelVisibility = Visibility.Collapsed;
-
-        private bool _suppressServiceTypeSettingsChange = false;
 
         public string HoursText { get => _hoursText; set { _hoursText = value; OnPropertyChanged(); } }
         public string SubtotalText { get => _subtotalText; set { _subtotalText = value; OnPropertyChanged(); } }
@@ -76,10 +74,8 @@ namespace Cleaning_Quote
         public string ClientAddressLine { get => _clientAddressLine; set { _clientAddressLine = value; OnPropertyChanged(); } }
         public string EstimatedSqFtText { get => _estimatedSqFtText; set { _estimatedSqFtText = value; OnPropertyChanged(); } }
         public string SqFtCalcText { get => _sqFtCalcText; set { _sqFtCalcText = value; OnPropertyChanged(); } }
-        public string FirstCleanText { get => _firstCleanText; set { _firstCleanText = value; OnPropertyChanged(); } }
-        public string DeepCleanText { get => _deepCleanText; set { _deepCleanText = value; OnPropertyChanged(); } }
-        public string MaintenanceText { get => _maintenanceText; set { _maintenanceText = value; OnPropertyChanged(); } }
-        public string OneTimeDeepCleanText { get => _oneTimeDeepCleanText; set { _oneTimeDeepCleanText = value; OnPropertyChanged(); } }
+        public string ServiceTypeStandardText { get => _serviceTypeStandardText; set { _serviceTypeStandardText = value; OnPropertyChanged(); } }
+        public string ServiceTypeTotalText { get => _serviceTypeTotalText; set { _serviceTypeTotalText = value; OnPropertyChanged(); } }
         public string WindowInsideText { get => _windowInsideText; set { _windowInsideText = value; OnPropertyChanged(); } }
         public string WindowOutsideText { get => _windowOutsideText; set { _windowOutsideText = value; OnPropertyChanged(); } }
         public Visibility QuotePanelVisibility { get => _quotePanelVisibility; set { _quotePanelVisibility = value; OnPropertyChanged(); } }
@@ -88,6 +84,11 @@ namespace Cleaning_Quote
         {
             InitializeComponent();
             DataContext = this;
+
+            _serviceCatalog = ServiceCatalogStore.Load();
+            ServiceTypeBox.ItemsSource = _serviceCatalog.ServiceTypes;
+            SubItemTypeBox.ItemsSource = _serviceCatalog.SubItems;
+            _serviceTypeStandards = ServiceTypeStandardsStore.Load(_serviceCatalog);
 
             // Load client list on startup
             LoadClients();
@@ -462,9 +463,6 @@ namespace Cleaning_Quote
             _pets.Clear();
             _occupants.Clear();
             SubItemTypeBox.SelectedIndex = 0;
-            WindowSizeBox.SelectedIndex = 1;
-            WindowInsideCheck.IsChecked = false;
-            WindowOutsideCheck.IsChecked = false;
             DefaultRoomTypeBox.SelectedIndex = 0;
             DefaultRoomLevelBox.SelectedIndex = 1;
             DefaultRoomSizeBox.SelectedIndex = 1;
@@ -479,6 +477,7 @@ namespace Cleaning_Quote
                 Owner = this
             };
             settingsWindow.ShowDialog();
+            _serviceTypeStandards = ServiceTypeStandardsStore.Load(_serviceCatalog);
             LoadServiceTypePricing(GetSelectedServiceType());
         }
 
@@ -586,18 +585,14 @@ namespace Cleaning_Quote
             }
 
             var category = MapSubItemCategory(subItemLabel);
-            var size = WindowSizeBox.SelectedItem is ComboBoxItem sizeItem
-                ? sizeItem.Content?.ToString() ?? "M"
-                : "M";
+            var size = GetDefaultWindowSize();
 
             if (!int.TryParse(SubItemCountBox.Text, out var count))
                 count = 1;
             count = Math.Max(1, count);
 
-            var includeInside = WindowInsideCheck.IsChecked == true;
-            var includeOutside = WindowOutsideCheck.IsChecked == true;
             var windowSideSelection = category == "Window"
-                ? GetWindowSideSelection(includeInside, includeOutside)
+                ? GetWindowSideSelectionFromLabel(subItemLabel)
                 : "";
 
             for (var i = 0; i < count; i++)
@@ -651,9 +646,7 @@ namespace Cleaning_Quote
 
         private string GetSelectedSubItemLabel()
         {
-            return SubItemTypeBox.SelectedItem is ComboBoxItem item
-                ? item.Content?.ToString() ?? ""
-                : "";
+            return SubItemTypeBox.SelectedItem as string ?? "";
         }
 
         private string MapSubItemCategory(string label)
@@ -675,15 +668,26 @@ namespace Cleaning_Quote
             };
         }
 
-        private string GetWindowSideSelection(bool includeInside, bool includeOutside)
+        private string GetDefaultWindowSize()
         {
-            if (includeInside && includeOutside)
-                return "Inside & Outside";
-            if (includeInside)
+            return _currentServiceTypePricing?.DefaultWindowSize ?? "M";
+        }
+
+        private string GetWindowSideSelectionFromLabel(string label)
+        {
+            if (string.IsNullOrWhiteSpace(label))
+                return "Excluded";
+
+            if (label.Contains("inside only", StringComparison.OrdinalIgnoreCase))
                 return "Inside";
-            if (includeOutside)
+            if (label.Contains("outside only", StringComparison.OrdinalIgnoreCase))
                 return "Outside";
-            return "Excluded";
+            if (label.Contains("Window Tract", StringComparison.OrdinalIgnoreCase))
+                return "Window Tract";
+            if (label.Contains("Standard", StringComparison.OrdinalIgnoreCase))
+                return "Inside & Outside";
+
+            return "Inside";
         }
 
         private int GetSubItemDefaultComplexity(string category)
@@ -846,9 +850,7 @@ namespace Cleaning_Quote
             _currentQuote.CreditCardFeeRate = ccRate;
             _currentQuote.CreditCard = CreditCardCheck.IsChecked == true;
             _currentQuote.PetsCount = pets;
-            _currentQuote.ServiceType = ServiceTypeBox.SelectedItem is ComboBoxItem serviceTypeItem
-                ? serviceTypeItem.Content?.ToString() ?? ""
-                : "";
+            _currentQuote.ServiceType = ServiceTypeBox.SelectedItem as string ?? "";
             _currentQuote.ServiceFrequency = ServiceFrequencyBox.SelectedItem is ComboBoxItem frequencyItem
                 ? frequencyItem.Content?.ToString() ?? ""
                 : "";
@@ -1131,9 +1133,7 @@ namespace Cleaning_Quote
                 lastName = parts.Length > 0 ? parts[^1] : displayName;
             }
 
-            var serviceType = ServiceTypeBox.SelectedItem is ComboBoxItem item
-                ? item.Content?.ToString() ?? ""
-                : "";
+            var serviceType = ServiceTypeBox.SelectedItem as string ?? "";
 
             return $"{date:MM/dd/yyyy} | {lastName} | {serviceType}";
         }
@@ -1150,6 +1150,12 @@ namespace Cleaning_Quote
                     comboBox.SelectedItem = comboItem;
                     return;
                 }
+
+                if (item is string stringItem && stringItem == value)
+                {
+                    comboBox.SelectedItem = stringItem;
+                    return;
+                }
             }
         }
 
@@ -1159,70 +1165,14 @@ namespace Cleaning_Quote
                 return;
 
             _currentServiceTypePricing = _serviceTypePricingRepo.GetOrCreate(serviceType);
-            _suppressServiceTypeSettingsChange = true;
 
             DefaultRoomTypeBox.SelectedItem = _currentServiceTypePricing.DefaultRoomType;
             DefaultRoomLevelBox.SelectedItem = _currentServiceTypePricing.DefaultRoomLevel;
             DefaultRoomSizeBox.SelectedItem = _currentServiceTypePricing.DefaultRoomSize;
             DefaultRoomComplexityBox.SelectedItem = _currentServiceTypePricing.DefaultRoomComplexity;
             SetSelectedCombo(SubItemTypeBox, _currentServiceTypePricing.DefaultSubItemType);
-            SetSelectedCombo(WindowSizeBox, _currentServiceTypePricing.DefaultWindowSize);
-
-            SqFtPerLaborHourBox.Text = _currentServiceTypePricing.SqFtPerLaborHour.ToString();
-            SizeSmallSqFtBox.Text = _currentServiceTypePricing.SizeSmallSqFt.ToString();
-            SizeMediumSqFtBox.Text = _currentServiceTypePricing.SizeMediumSqFt.ToString();
-            SizeLargeSqFtBox.Text = _currentServiceTypePricing.SizeLargeSqFt.ToString();
-            Complexity1MultiplierBox.Text = _currentServiceTypePricing.Complexity1Multiplier.ToString();
-            Complexity2MultiplierBox.Text = _currentServiceTypePricing.Complexity2Multiplier.ToString();
-            Complexity3MultiplierBox.Text = _currentServiceTypePricing.Complexity3Multiplier.ToString();
-            FullGlassShowerHoursBox.Text = _currentServiceTypePricing.FullGlassShowerHoursEach.ToString();
-            PebbleStoneFloorHoursBox.Text = _currentServiceTypePricing.PebbleStoneFloorHoursEach.ToString();
-            FridgeHoursBox.Text = _currentServiceTypePricing.FridgeHoursEach.ToString();
-            OvenHoursBox.Text = _currentServiceTypePricing.OvenHoursEach.ToString();
-
-            _suppressServiceTypeSettingsChange = false;
             ApplyServiceTypePricingRules();
             RecalculateTotals();
-        }
-
-        private void ServiceTypeSettings_Changed(object sender, TextChangedEventArgs e)
-        {
-            if (_suppressServiceTypeSettingsChange || _currentServiceTypePricing == null)
-                return;
-
-            UpdateServiceTypePricingFromInputs(_currentServiceTypePricing);
-            _serviceTypePricingRepo.Upsert(_currentServiceTypePricing);
-            ApplyServiceTypePricingRules();
-            RecalculateTotals();
-        }
-
-        private void UpdateServiceTypePricingFromInputs(ServiceTypePricing pricing)
-        {
-            if (pricing == null)
-                return;
-
-            if (decimal.TryParse(SqFtPerLaborHourBox.Text, out var sqftPerHour))
-                pricing.SqFtPerLaborHour = sqftPerHour;
-            if (decimal.TryParse(SizeSmallSqFtBox.Text, out var sizeSmall))
-                pricing.SizeSmallSqFt = sizeSmall;
-            if (decimal.TryParse(SizeMediumSqFtBox.Text, out var sizeMedium))
-                pricing.SizeMediumSqFt = sizeMedium;
-            if (decimal.TryParse(SizeLargeSqFtBox.Text, out var sizeLarge))
-                pricing.SizeLargeSqFt = sizeLarge;
-            if (decimal.TryParse(Complexity1MultiplierBox.Text, out var mult1))
-                pricing.Complexity1Multiplier = mult1;
-            if (decimal.TryParse(Complexity2MultiplierBox.Text, out var mult2))
-                pricing.Complexity2Multiplier = mult2;
-            if (decimal.TryParse(Complexity3MultiplierBox.Text, out var mult3))
-                pricing.Complexity3Multiplier = mult3;
-            if (decimal.TryParse(FullGlassShowerHoursBox.Text, out var glassHours))
-                pricing.FullGlassShowerHoursEach = glassHours;
-            if (decimal.TryParse(PebbleStoneFloorHoursBox.Text, out var pebbleHours))
-                pricing.PebbleStoneFloorHoursEach = pebbleHours;
-            if (decimal.TryParse(FridgeHoursBox.Text, out var fridgeHours))
-                pricing.FridgeHoursEach = fridgeHours;
-            if (decimal.TryParse(OvenHoursBox.Text, out var ovenHours))
-                pricing.OvenHoursEach = ovenHours;
         }
 
         private void UpdateRoomAmounts(decimal laborRate)
@@ -1246,6 +1196,8 @@ namespace Cleaning_Quote
             {
                 if (room.IsSubItem)
                     continue;
+                if (!room.IncludedInQuote)
+                    continue;
 
                 var size = (room.Size ?? "").Trim().ToUpperInvariant();
                 total += size switch
@@ -1264,10 +1216,8 @@ namespace Cleaning_Quote
             if (_currentServiceTypePricing == null || _currentQuote == null)
             {
                 SqFtCalcText = "";
-                FirstCleanText = "";
-                DeepCleanText = "";
-                MaintenanceText = "";
-                OneTimeDeepCleanText = "";
+                ServiceTypeStandardText = "";
+                ServiceTypeTotalText = "";
                 WindowInsideText = "";
                 WindowOutsideText = "";
                 MinimumWarningText = "";
@@ -1278,15 +1228,17 @@ namespace Cleaning_Quote
             var effectiveSqFt = _currentQuote.UseTotalSqFtOverride ? _currentQuote.TotalSqFt : estimatedSqFt;
             SqFtCalcText = $"Sq Ft: {effectiveSqFt:N0}";
 
-            var firstCleanTotal = effectiveSqFt * _currentServiceTypePricing.FirstCleanRate;
-            var deepCleanTotal = effectiveSqFt * _currentServiceTypePricing.DeepCleanRate;
-            var maintenanceTotal = effectiveSqFt * _currentServiceTypePricing.MaintenanceRate;
-            var oneTimeDeepTotal = effectiveSqFt * _currentServiceTypePricing.OneTimeDeepCleanRate;
+            var serviceType = GetSelectedServiceType();
+            if (string.IsNullOrWhiteSpace(serviceType))
+                serviceType = "Service Type";
+            var standard = _serviceTypeStandards.FirstOrDefault(item =>
+                string.Equals(item.ServiceType, serviceType, StringComparison.OrdinalIgnoreCase));
+            var rate = standard?.Rate ?? 0m;
+            var multiplier = standard?.Multiplier ?? 1m;
+            var serviceTypeTotal = effectiveSqFt * rate * multiplier;
 
-            FirstCleanText = $"First Clean ({_currentServiceTypePricing.FirstCleanRate:0.##}/sq ft): {firstCleanTotal:C} (min {_currentServiceTypePricing.FirstCleanMinimum:C})";
-            DeepCleanText = $"Deep Clean ({_currentServiceTypePricing.DeepCleanRate:0.##}/sq ft): {deepCleanTotal:C} (min {_currentServiceTypePricing.DeepCleanMinimum:C})";
-            MaintenanceText = $"Maintenance ({_currentServiceTypePricing.MaintenanceRate:0.##}/sq ft): {maintenanceTotal:C} (min {_currentServiceTypePricing.MaintenanceMinimum:C})";
-            OneTimeDeepCleanText = $"One Time Deep Clean ({_currentServiceTypePricing.OneTimeDeepCleanRate:0.##}/sq ft): {oneTimeDeepTotal:C} (min {_currentServiceTypePricing.OneTimeDeepCleanMinimum:C})";
+            ServiceTypeStandardText = $"{serviceType} ({rate:0.##}/sq ft x {multiplier:0.##})";
+            ServiceTypeTotalText = $"Estimated total: {serviceTypeTotal:C}";
 
             var windowInsideCount = CountWindows(side: "inside");
             var windowOutsideCount = CountWindows(side: "outside");
@@ -1295,15 +1247,7 @@ namespace Cleaning_Quote
             WindowInsideText = $"Windows inside ({windowInsideCount} @ {_currentServiceTypePricing.WindowInsideRate:C}): {windowInsideTotal:C}";
             WindowOutsideText = $"Windows outside ({windowOutsideCount} @ {_currentServiceTypePricing.WindowOutsideRate:C}): {windowOutsideTotal:C}";
 
-            var minNotMet =
-                firstCleanTotal < _currentServiceTypePricing.FirstCleanMinimum ||
-                deepCleanTotal < _currentServiceTypePricing.DeepCleanMinimum ||
-                maintenanceTotal < _currentServiceTypePricing.MaintenanceMinimum ||
-                oneTimeDeepTotal < _currentServiceTypePricing.OneTimeDeepCleanMinimum;
-
-            MinimumWarningText = minNotMet
-                ? "Minimum not met for quote form pricing."
-                : "";
+            MinimumWarningText = "";
         }
 
         private decimal GetEstimatedSqFtValue()
@@ -1315,6 +1259,8 @@ namespace Cleaning_Quote
             foreach (var room in _rooms)
             {
                 if (room.IsSubItem)
+                    continue;
+                if (!room.IncludedInQuote)
                     continue;
 
                 var size = (room.Size ?? "").Trim().ToUpperInvariant();
@@ -1489,9 +1435,7 @@ namespace Cleaning_Quote
 
         private string GetSelectedServiceType()
         {
-            return ServiceTypeBox.SelectedItem is ComboBoxItem serviceTypeItem
-                ? serviceTypeItem.Content?.ToString() ?? ""
-                : "";
+            return ServiceTypeBox.SelectedItem as string ?? "";
         }
 
         private void ShowQuotePanel()
@@ -1519,10 +1463,8 @@ namespace Cleaning_Quote
             MinimumWarningText = "";
             EstimatedSqFtText = "";
             SqFtCalcText = "";
-            FirstCleanText = "";
-            DeepCleanText = "";
-            MaintenanceText = "";
-            OneTimeDeepCleanText = "";
+            ServiceTypeStandardText = "";
+            ServiceTypeTotalText = "";
             WindowInsideText = "";
             WindowOutsideText = "";
         }
