@@ -39,6 +39,12 @@ namespace Cleaning_Quote.Models
         public decimal OneTimeDeepCleanMinimum { get; set; } = 400m;
         public decimal WindowInsideRate { get; set; } = 4m;
         public decimal WindowOutsideRate { get; set; } = 4m;
+        public string DefaultRoomType { get; set; } = "Bedroom";
+        public string DefaultRoomLevel { get; set; } = "Main Floor (1)";
+        public string DefaultRoomSize { get; set; } = "M";
+        public int DefaultRoomComplexity { get; set; } = 1;
+        public string DefaultSubItemType { get; set; } = "Full Glass Shower";
+        public string DefaultWindowSize { get; set; } = "M";
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public static ServiceTypePricing Default(string serviceType)
@@ -80,6 +86,12 @@ namespace Cleaning_Quote.Models
                 OneTimeDeepCleanMinimum = 400m,
                 WindowInsideRate = 4m,
                 WindowOutsideRate = 4m,
+                DefaultRoomType = "Bedroom",
+                DefaultRoomLevel = "Main Floor (1)",
+                DefaultRoomSize = "M",
+                DefaultRoomComplexity = 1,
+                DefaultSubItemType = "Full Glass Shower",
+                DefaultWindowSize = "M",
                 UpdatedAt = DateTime.UtcNow
             };
         }

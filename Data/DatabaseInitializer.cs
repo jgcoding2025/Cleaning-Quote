@@ -147,6 +147,12 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     OneTimeDeepCleanMinimum REAL NOT NULL DEFAULT 400,
     WindowInsideRate REAL NOT NULL DEFAULT 4,
     WindowOutsideRate REAL NOT NULL DEFAULT 4,
+    DefaultRoomType TEXT NOT NULL DEFAULT 'Bedroom',
+    DefaultRoomLevel TEXT NOT NULL DEFAULT 'Main Floor (1)',
+    DefaultRoomSize TEXT NOT NULL DEFAULT 'M',
+    DefaultRoomComplexity INTEGER NOT NULL DEFAULT 1,
+    DefaultSubItemType TEXT NOT NULL DEFAULT 'Full Glass Shower',
+    DefaultWindowSize TEXT NOT NULL DEFAULT 'M',
     UpdatedAt TEXT NOT NULL
 );
 ";
@@ -209,6 +215,12 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "ServiceTypePricing", "OneTimeDeepCleanMinimum", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "WindowInsideRate", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "WindowOutsideRate", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "DefaultRoomType", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "DefaultRoomLevel", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "DefaultRoomSize", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "DefaultRoomComplexity", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "DefaultSubItemType", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "DefaultWindowSize", "TEXT");
             EnsureColumn(conn, "ServiceTypePricing", "UpdatedAt", "TEXT");
         }
 

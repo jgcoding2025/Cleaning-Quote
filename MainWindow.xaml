@@ -253,6 +253,10 @@
 
             <TextBlock Text="New Room Defaults" FontWeight="SemiBold" Margin="0,0,0,4"/>
             <WrapPanel Margin="0,0,0,10">
+                <StackPanel Width="160" Margin="0,0,10,0">
+                    <TextBlock Text="Room Type" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="DefaultRoomTypeBox" Height="26" ItemsSource="{StaticResource RoomTypeOptions}"/>
+                </StackPanel>
                 <StackPanel Width="150" Margin="0,0,10,0">
                     <TextBlock Text="Level" FontWeight="SemiBold"/>
                     <ComboBox x:Name="DefaultRoomLevelBox" Height="26" ItemsSource="{StaticResource LevelOptions}"/>

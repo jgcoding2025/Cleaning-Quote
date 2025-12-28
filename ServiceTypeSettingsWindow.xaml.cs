@@ -63,6 +63,14 @@ namespace Cleaning_Quote
 
         private void UpdateServiceTypePricingFromInputs(ServiceTypePricing pricing)
         {
+            pricing.DefaultRoomType = DefaultRoomTypeBox.SelectedItem as string ?? pricing.DefaultRoomType;
+            pricing.DefaultRoomLevel = DefaultRoomLevelBox.SelectedItem as string ?? pricing.DefaultRoomLevel;
+            pricing.DefaultRoomSize = DefaultRoomSizeBox.SelectedItem as string ?? pricing.DefaultRoomSize;
+            if (DefaultRoomComplexityBox.SelectedItem is int roomComplexity)
+                pricing.DefaultRoomComplexity = roomComplexity;
+            pricing.DefaultSubItemType = DefaultSubItemTypeBox.SelectedItem as string ?? pricing.DefaultSubItemType;
+            pricing.DefaultWindowSize = DefaultWindowSizeBox.SelectedItem as string ?? pricing.DefaultWindowSize;
+
             if (decimal.TryParse(SqFtPerLaborHourBox.Text, out var sqftPerHour))
                 pricing.SqFtPerLaborHour = sqftPerHour;
             if (decimal.TryParse(SizeSmallSqFtBox.Text, out var sizeSmall))
@@ -137,6 +145,12 @@ namespace Cleaning_Quote
                 return;
 
             _suppressLoad = true;
+            DefaultRoomTypeBox.SelectedItem = pricing.DefaultRoomType;
+            DefaultRoomLevelBox.SelectedItem = pricing.DefaultRoomLevel;
+            DefaultRoomSizeBox.SelectedItem = pricing.DefaultRoomSize;
+            DefaultRoomComplexityBox.SelectedItem = pricing.DefaultRoomComplexity;
+            DefaultSubItemTypeBox.SelectedItem = pricing.DefaultSubItemType;
+            DefaultWindowSizeBox.SelectedItem = pricing.DefaultWindowSize;
             SqFtPerLaborHourBox.Text = pricing.SqFtPerLaborHour.ToString();
             SizeSmallSqFtBox.Text = pricing.SizeSmallSqFt.ToString();
             SizeMediumSqFtBox.Text = pricing.SizeMediumSqFt.ToString();
