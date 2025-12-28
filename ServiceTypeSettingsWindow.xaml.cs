@@ -84,7 +84,7 @@ namespace Cleaning_Quote
             pricing.DefaultRoomType = DefaultRoomTypeBox.SelectedItem as string ?? pricing.DefaultRoomType;
             pricing.DefaultRoomLevel = DefaultRoomLevelBox.SelectedItem as string ?? pricing.DefaultRoomLevel;
             pricing.DefaultRoomSize = DefaultRoomSizeBox.SelectedItem as string ?? pricing.DefaultRoomSize;
-            if (DefaultRoomComplexityBox.SelectedItem is int roomComplexity)
+            if (DefaultRoomComplexityBox.SelectedValue is int roomComplexity)
                 pricing.DefaultRoomComplexity = roomComplexity;
             pricing.DefaultSubItemType = DefaultSubItemTypeBox.SelectedItem as string ?? pricing.DefaultSubItemType;
 
@@ -175,7 +175,7 @@ namespace Cleaning_Quote
             DefaultRoomTypeBox.SelectedItem = pricing.DefaultRoomType;
             DefaultRoomLevelBox.SelectedItem = pricing.DefaultRoomLevel;
             DefaultRoomSizeBox.SelectedItem = pricing.DefaultRoomSize;
-            DefaultRoomComplexityBox.SelectedItem = pricing.DefaultRoomComplexity;
+            DefaultRoomComplexityBox.SelectedValue = pricing.DefaultRoomComplexity;
             DefaultSubItemTypeBox.SelectedItem = pricing.DefaultSubItemType;
             SizeSmallMultiplierBox.Text = pricing.SizeSmallMultiplier.ToString();
             SizeMediumMultiplierBox.Text = pricing.SizeMediumMultiplier.ToString();

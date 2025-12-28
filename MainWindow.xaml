@@ -38,10 +38,10 @@
             <sys:String>M</sys:String>
             <sys:String>L</sys:String>
         </x:Array>
-        <x:Array x:Key="ComplexityOptions" Type="{x:Type sys:Int32}">
-            <sys:Int32>1</sys:Int32>
-            <sys:Int32>2</sys:Int32>
-            <sys:Int32>3</sys:Int32>
+        <x:Array x:Key="ComplexityOptions" Type="{x:Type local:ComplexityOption}">
+            <local:ComplexityOption Value="1" Label="Easy"/>
+            <local:ComplexityOption Value="2" Label="Medium"/>
+            <local:ComplexityOption Value="3" Label="Hard"/>
         </x:Array>
     </Window.Resources>
     <DockPanel Margin="10">
@@ -245,7 +245,6 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <Button Content="Add Room" Width="90" Margin="0,0,8,0" Click="AddRoom_Click"/>
                 <Button Content="Remove Room" Width="110" Margin="0,0,8,0" Click="RemoveRoom_Click"/>
-                <Button Content="Remove Sub-Item" Width="120" Margin="0,0,8,0" Click="RemoveSubItem_Click"/>
                 <Button Content="Save Quote" Width="95" Click="SaveQuote_Click"/>
             </StackPanel>
 
@@ -265,7 +264,11 @@
                 </StackPanel>
                 <StackPanel Width="120" Margin="0,0,10,0">
                     <TextBlock Text="Complexity" FontWeight="SemiBold"/>
-                    <ComboBox x:Name="DefaultRoomComplexityBox" Height="26" ItemsSource="{StaticResource ComplexityOptions}"/>
+                    <ComboBox x:Name="DefaultRoomComplexityBox"
+                              Height="26"
+                              ItemsSource="{StaticResource ComplexityOptions}"
+                              DisplayMemberPath="Label"
+                              SelectedValuePath="Value"/>
                 </StackPanel>
             </WrapPanel>
 
@@ -438,7 +441,9 @@
                     <DataGridComboBoxColumn Header="Complexity"
                         Width="Auto"
                         ItemsSource="{StaticResource ComplexityOptions}"
-                        SelectedItemBinding="{Binding Complexity, UpdateSourceTrigger=PropertyChanged}"/>
+                        DisplayMemberPath="Label"
+                        SelectedValuePath="Value"
+                        SelectedValueBinding="{Binding Complexity, UpdateSourceTrigger=PropertyChanged}"/>
                     <DataGridTextColumn Header="Est. Time" Binding="{Binding RoomLaborHours}" IsReadOnly="True" Width="Auto"/>
                     <DataGridTextColumn Header="Notes" Binding="{Binding RoomNotes}" Width="*"/>
                     <DataGridTextColumn Header="$ Amount" Binding="{Binding RoomAmount, StringFormat=C}" IsReadOnly="True" Width="Auto"/>
@@ -453,6 +458,7 @@
                         <TextBlock Text="Count" FontWeight="SemiBold" Margin="12,0,4,0"/>
                         <TextBox x:Name="SubItemCountBox" Width="40" Height="24" Text="1"/>
                         <Button Content="Add Sub-Item" Width="110" Margin="12,0,0,0" Click="AddSubItem_Click"/>
+                        <Button Content="Remove Sub-Item" Width="120" Margin="8,0,0,0" Click="RemoveSubItem_Click"/>
                     </WrapPanel>
                 </StackPanel>
             </GroupBox>
