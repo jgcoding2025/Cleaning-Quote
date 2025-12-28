@@ -134,22 +134,13 @@ namespace Cleaning_Quote
             if (TryParseScaledMinutes(RoomOfficeMinutesBox.Text, multiplier, out var roomOfficeMinutes))
                 pricing.RoomOfficeMinutes = roomOfficeMinutes;
             if (TryParseScaledMinutes(SubItemCeilingFanMinutesBox.Text, multiplier, out var subItemCeilingFanMinutes))
-            {
                 pricing.SubItemCeilingFanMinutes = subItemCeilingFanMinutes;
-                pricing.CeilingFanHoursEach = subItemCeilingFanMinutes / 60m;
-            }
             if (TryParseScaledMinutes(SubItemFridgeMinutesBox.Text, multiplier, out var subItemFridgeMinutes))
-            {
                 pricing.SubItemFridgeMinutes = subItemFridgeMinutes;
-                pricing.FridgeHoursEach = subItemFridgeMinutes / 60m;
-            }
             if (TryParseScaledMinutes(SubItemMirrorMinutesBox.Text, multiplier, out var subItemMirrorMinutes))
                 pricing.SubItemMirrorMinutes = subItemMirrorMinutes;
             if (TryParseScaledMinutes(SubItemOvenMinutesBox.Text, multiplier, out var subItemOvenMinutes))
-            {
                 pricing.SubItemOvenMinutes = subItemOvenMinutes;
-                pricing.OvenHoursEach = subItemOvenMinutes / 60m;
-            }
             if (TryParseScaledMinutes(SubItemShowerNoGlassMinutesBox.Text, multiplier, out var subItemShowerNoGlassMinutes))
                 pricing.SubItemShowerNoGlassMinutes = subItemShowerNoGlassMinutes;
             if (TryParseScaledMinutes(SubItemShowerNoStoneMinutesBox.Text, multiplier, out var subItemShowerNoStoneMinutes))

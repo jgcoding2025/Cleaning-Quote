@@ -119,8 +119,8 @@ namespace Cleaning_Quote
             };
 
             quote.Rooms.Add(new QuoteRoom { RoomType = "Bedroom", Size = "M", Complexity = 2 });
-            quote.Rooms.Add(new QuoteRoom { RoomType = "Bathroom", Size = "M", Complexity = 3, FullGlassShowersCount = 1 });
-            quote.Rooms.Add(new QuoteRoom { RoomType = "Kitchen", Size = "L", Complexity = 2, FridgeCount = 1, OvenCount = 1 });
+            quote.Rooms.Add(new QuoteRoom { RoomType = "Bathroom", Size = "M", Complexity = 3 });
+            quote.Rooms.Add(new QuoteRoom { RoomType = "Kitchen", Size = "L", Complexity = 2 });
 
             var totals = pricing.CalculateTotals(quote);
 
@@ -592,10 +592,6 @@ namespace Cleaning_Quote
                 count = 1;
             count = Math.Max(1, count);
 
-            var windowSideSelection = category == "Window"
-                ? GetWindowSideSelectionFromLabel(subItemLabel)
-                : "";
-
             for (var i = 0; i < count; i++)
             {
                 var subItem = new QuoteRoom
@@ -609,8 +605,7 @@ namespace Cleaning_Quote
                     IncludedInQuote = true,
                     Size = category == "Window" ? size : "M",
                     Level = "",
-                    Complexity = GetSubItemDefaultComplexity(category),
-                    WindowSideSelection = windowSideSelection,
+                    Complexity = 1
                 };
 
                 InsertSubItemAfterParent(parentRoom, subItem);
@@ -700,39 +695,6 @@ namespace Cleaning_Quote
             };
         }
 
-        private string GetWindowSideSelectionFromLabel(string label)
-        {
-            if (string.IsNullOrWhiteSpace(label))
-                return "Excluded";
-
-            if (label.Contains("inside only", StringComparison.OrdinalIgnoreCase))
-                return "Inside";
-            if (label.Contains("outside only", StringComparison.OrdinalIgnoreCase))
-                return "Outside";
-            if (label.Contains("Window Tract", StringComparison.OrdinalIgnoreCase))
-                return "Window Tract";
-            if (label.Contains("Standard", StringComparison.OrdinalIgnoreCase))
-                return "Inside & Outside";
-
-            return "Inside";
-        }
-
-        private int GetSubItemDefaultComplexity(string category)
-        {
-            if (_currentServiceTypePricing == null)
-                return 1;
-
-            return category switch
-            {
-                "FullGlassShower" => _currentServiceTypePricing.FullGlassShowerComplexity,
-                "PebbleStoneFloor" => _currentServiceTypePricing.PebbleStoneFloorComplexity,
-                "Fridge" => _currentServiceTypePricing.FridgeComplexity,
-                "Oven" => _currentServiceTypePricing.OvenComplexity,
-                "CeilingFan" => _currentServiceTypePricing.CeilingFanComplexity,
-                "Window" => _currentServiceTypePricing.WindowComplexity,
-                _ => 1
-            };
-        }
 
         private void PetsYesCheck_Changed(object sender, RoutedEventArgs e)
         {
