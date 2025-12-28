@@ -8,10 +8,13 @@
                 <TextBlock Text="Service Type" FontWeight="SemiBold" />
                 <ComboBox x:Name="ServiceTypeBox" Height="28" SelectionChanged="ServiceTypeBox_SelectionChanged">
                     <ComboBoxItem>Standard Clean</ComboBoxItem>
-                    <ComboBoxItem>Initial Clean</ComboBoxItem>
-                    <ComboBoxItem>Deep Clean</ComboBoxItem>
-                    <ComboBoxItem>Light Clean</ComboBoxItem>
-                    <ComboBoxItem>Move in/out Clean</ComboBoxItem>
+                    <ComboBoxItem>Initial Clean (Standard Clean Items Only)</ComboBoxItem>
+                    <ComboBoxItem>Deep Clean (one-time)</ComboBoxItem>
+                    <ComboBoxItem>Deep Clean (post initial clean)</ComboBoxItem>
+                    <ComboBoxItem>Deep Clean (Semi-Annual)</ComboBoxItem>
+                    <ComboBoxItem>Deep Clean (Annual)</ComboBoxItem>
+                    <ComboBoxItem>Light Clean (dusting and floors)</ComboBoxItem>
+                    <ComboBoxItem>Move In/Out Clean</ComboBoxItem>
                     <ComboBoxItem>Pressure Washing</ComboBoxItem>
                     <ComboBoxItem>Organizing</ComboBoxItem>
                 </ComboBox>
