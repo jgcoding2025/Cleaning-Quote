@@ -9,8 +9,11 @@
         Title="MainWindow" Height="1084" Width="800">
     <Window.Resources>
         <x:Array x:Key="RoomTypeOptions" Type="{x:Type sys:String}">
+            <sys:String>Bathroom (Full)</sys:String>
+            <sys:String>Bathroom (Half)</sys:String>
+            <sys:String>Bathroom (Master - 2 sinks, glass/stone shower)</sys:String>
             <sys:String>Bedroom</sys:String>
-            <sys:String>Bathroom</sys:String>
+            <sys:String>Bedroom (Master)</sys:String>
             <sys:String>Kitchen</sys:String>
             <sys:String>Living Room</sys:String>
             <sys:String>Dining Room</sys:String>
@@ -305,10 +308,13 @@
                     <TextBlock Text="Service Type" FontWeight="SemiBold"/>
                     <ComboBox x:Name="ServiceTypeBox" Height="26" SelectionChanged="QuoteDetails_Changed">
                         <ComboBoxItem>Standard Clean</ComboBoxItem>
-                        <ComboBoxItem>Initial Clean</ComboBoxItem>
-                        <ComboBoxItem>Deep Clean</ComboBoxItem>
-                        <ComboBoxItem>Light Clean</ComboBoxItem>
-                        <ComboBoxItem>Move in/out Clean</ComboBoxItem>
+                        <ComboBoxItem>Initial Clean (Standard Clean Items Only)</ComboBoxItem>
+                        <ComboBoxItem>Deep Clean (one-time)</ComboBoxItem>
+                        <ComboBoxItem>Deep Clean (post initial clean)</ComboBoxItem>
+                        <ComboBoxItem>Deep Clean (Semi-Annual)</ComboBoxItem>
+                        <ComboBoxItem>Deep Clean (Annual)</ComboBoxItem>
+                        <ComboBoxItem>Light Clean (dusting and floors)</ComboBoxItem>
+                        <ComboBoxItem>Move In/Out Clean</ComboBoxItem>
                         <ComboBoxItem>Pressure Washing</ComboBoxItem>
                         <ComboBoxItem>Organizing</ComboBoxItem>
                     </ComboBox>
@@ -320,6 +326,8 @@
                         <ComboBoxItem>Weekly</ComboBoxItem>
                         <ComboBoxItem>Bi-weekly</ComboBoxItem>
                         <ComboBoxItem>Every 4 weeks</ComboBoxItem>
+                        <ComboBoxItem>Semi-Annual</ComboBoxItem>
+                        <ComboBoxItem>Annual</ComboBoxItem>
                         <ComboBoxItem>One Time</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
