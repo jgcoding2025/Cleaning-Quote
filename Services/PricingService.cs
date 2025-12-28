@@ -235,8 +235,9 @@ namespace Cleaning_Quote.Services
             if (!item.IncludedInQuote) return 0m;
 
             var label = item.RoomType ?? "";
+            decimal baseHours = 0m;
             var hasLabelHours = !string.IsNullOrWhiteSpace(label) &&
-                                _rules.SubItemHoursByLabel.TryGetValue(label, out var baseHours);
+                                _rules.SubItemHoursByLabel.TryGetValue(label, out baseHours);
             var mult = GetComplexityMultiplier(item.Complexity);
             var hours = (hasLabelHours ? baseHours : 0m) * mult;
             return RoundHours(hours, _rules.HourRoundingIncrement);
