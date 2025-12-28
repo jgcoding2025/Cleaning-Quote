@@ -224,6 +224,8 @@ namespace Cleaning_Quote.Services
         public decimal CalculateRoomHours(QuoteRoom room)
         {
             if (room == null) throw new ArgumentNullException(nameof(room));
+            if (!room.IncludedInQuote)
+                return 0m;
 
             if (room.IsSubItem)
             {

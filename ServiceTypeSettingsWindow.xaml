@@ -39,23 +39,6 @@
             <sys:Int32>2</sys:Int32>
             <sys:Int32>3</sys:Int32>
         </x:Array>
-        <x:Array x:Key="SubItemTypeOptions" Type="{x:Type sys:String}">
-            <sys:String>Ceiling Fan</sys:String>
-            <sys:String>Fridge</sys:String>
-            <sys:String>Mirror +1</sys:String>
-            <sys:String>Oven</sys:String>
-            <sys:String>Shower: Discount (no glass)</sys:String>
-            <sys:String>Shower: Discount (no stone/tile)</sys:String>
-            <sys:String>Sink: Discount 1</sys:String>
-            <sys:String>Stove Top (Gas)</sys:String>
-            <sys:String>Tub / Jacuzzi Tub</sys:String>
-            <sys:String>Window (1 pane, inside only, 1st story)</sys:String>
-            <sys:String>Window (1 pane, outside only, 1st story)</sys:String>
-            <sys:String>Window (1 pane, inside only, 2nd story)</sys:String>
-            <sys:String>Window (1 pane, outside only, 2nd story)</sys:String>
-            <sys:String>Window Tract</sys:String>
-            <sys:String>Window: Standard (2 panes)</sys:String>
-        </x:Array>
         <x:Array x:Key="WindowSizeOptions" Type="{x:Type sys:String}">
             <sys:String>S</sys:String>
             <sys:String>M</sys:String>
@@ -65,20 +48,24 @@
     <DockPanel Margin="10">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
+                <GroupBox Header="Service Type Standards" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <DataGrid x:Name="ServiceTypeStandardsGrid"
+                                  Height="180"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Service Type" Binding="{Binding ServiceType}" IsReadOnly="True" Width="2*"/>
+                                <DataGridTextColumn Header="Rate (per sq ft)" Binding="{Binding Rate, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                                <DataGridTextColumn Header="Multiplier" Binding="{Binding Multiplier, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </GroupBox>
+
                 <StackPanel Margin="0,0,0,10">
                     <TextBlock Text="Service Type" FontWeight="SemiBold" />
-                    <ComboBox x:Name="ServiceTypeBox" Height="28" SelectionChanged="ServiceTypeBox_SelectionChanged">
-                        <ComboBoxItem>Standard Clean</ComboBoxItem>
-                        <ComboBoxItem>Initial Clean (Standard Clean Items Only)</ComboBoxItem>
-                        <ComboBoxItem>Deep Clean (one-time)</ComboBoxItem>
-                        <ComboBoxItem>Deep Clean (post initial clean)</ComboBoxItem>
-                        <ComboBoxItem>Deep Clean (Semi-Annual)</ComboBoxItem>
-                        <ComboBoxItem>Deep Clean (Annual)</ComboBoxItem>
-                        <ComboBoxItem>Light Clean (dusting and floors)</ComboBoxItem>
-                        <ComboBoxItem>Move In/Out Clean</ComboBoxItem>
-                        <ComboBoxItem>Pressure Washing</ComboBoxItem>
-                        <ComboBoxItem>Organizing</ComboBoxItem>
-                    </ComboBox>
+                    <ComboBox x:Name="ServiceTypeBox" Height="28" SelectionChanged="ServiceTypeBox_SelectionChanged"/>
                 </StackPanel>
 
                 <GroupBox Header="Room Defaults" Margin="0,0,0,12">
@@ -221,7 +208,7 @@
                         <WrapPanel Margin="0,0,0,10">
                             <StackPanel Width="220" Margin="0,0,10,0">
                                 <TextBlock Text="Sub-Item Type" FontWeight="SemiBold"/>
-                                <ComboBox x:Name="DefaultSubItemTypeBox" Height="26" ItemsSource="{StaticResource SubItemTypeOptions}"/>
+                                <ComboBox x:Name="DefaultSubItemTypeBox" Height="26"/>
                             </StackPanel>
                             <StackPanel Width="120">
                                 <TextBlock Text="Window Size" FontWeight="SemiBold"/>
@@ -340,18 +327,10 @@
 
                 <GroupBox Header="Labor Standards" Margin="0,0,0,12">
                     <StackPanel Margin="10">
-                        <WrapPanel Margin="0,0,0,10">
-                            <StackPanel Width="180" Margin="0,0,10,0">
-                                <TextBlock Text="Sq Ft per Labor Hour" FontWeight="SemiBold"/>
-                                <TextBox x:Name="SqFtPerLaborHourBox" Height="26"/>
-                            </StackPanel>
-                        </WrapPanel>
-
                         <TextBlock Text="Size Standards" FontWeight="SemiBold" Margin="0,0,0,6"/>
                         <Grid Margin="0,0,0,12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60"/>
-                                <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
@@ -362,24 +341,20 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Size" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Sq Ft" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Multiplier" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Definition" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Multiplier" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Definition" FontWeight="SemiBold"/>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="S"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="SizeSmallSqFtBox" Height="24"/>
-                            <TextBox Grid.Row="1" Grid.Column="2" x:Name="SizeSmallMultiplierBox" Height="24"/>
-                            <TextBox Grid.Row="1" Grid.Column="3" x:Name="SizeSmallDefinitionBox" Height="24"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="SizeSmallMultiplierBox" Height="24"/>
+                            <TextBox Grid.Row="1" Grid.Column="2" x:Name="SizeSmallDefinitionBox" Height="24"/>
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="M"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="SizeMediumSqFtBox" Height="24"/>
-                            <TextBox Grid.Row="2" Grid.Column="2" x:Name="SizeMediumMultiplierBox" Height="24"/>
-                            <TextBox Grid.Row="2" Grid.Column="3" x:Name="SizeMediumDefinitionBox" Height="24"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="SizeMediumMultiplierBox" Height="24"/>
+                            <TextBox Grid.Row="2" Grid.Column="2" x:Name="SizeMediumDefinitionBox" Height="24"/>
 
                             <TextBlock Grid.Row="3" Grid.Column="0" Text="L"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="SizeLargeSqFtBox" Height="24"/>
-                            <TextBox Grid.Row="3" Grid.Column="2" x:Name="SizeLargeMultiplierBox" Height="24"/>
-                            <TextBox Grid.Row="3" Grid.Column="3" x:Name="SizeLargeDefinitionBox" Height="24"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="SizeLargeMultiplierBox" Height="24"/>
+                            <TextBox Grid.Row="3" Grid.Column="2" x:Name="SizeLargeDefinitionBox" Height="24"/>
                         </Grid>
 
                         <TextBlock Text="Complexity Standards" FontWeight="SemiBold" Margin="0,0,0,6"/>
@@ -412,111 +387,6 @@
                             <TextBox Grid.Row="3" Grid.Column="2" x:Name="Complexity3DefinitionBox" Height="24"/>
                         </Grid>
 
-                        <TextBlock Text="Add-On Standards" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="120"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Add-On" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Hours" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Complexity" FontWeight="SemiBold"/>
-
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Full Glass Shower"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="FullGlassShowerHoursBox" Height="24"/>
-                            <TextBox Grid.Row="1" Grid.Column="2" x:Name="FullGlassShowerComplexityBox" Height="24"/>
-
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Pebble Stone Floor"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="PebbleStoneFloorHoursBox" Height="24"/>
-                            <TextBox Grid.Row="2" Grid.Column="2" x:Name="PebbleStoneFloorComplexityBox" Height="24"/>
-
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ceiling Fan"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="CeilingFanHoursBox" Height="24" IsReadOnly="True"/>
-                            <TextBox Grid.Row="3" Grid.Column="2" x:Name="CeilingFanComplexityBox" Height="24"/>
-
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Fridge"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" x:Name="FridgeHoursBox" Height="24" IsReadOnly="True"/>
-                            <TextBox Grid.Row="4" Grid.Column="2" x:Name="FridgeComplexityBox" Height="24"/>
-
-                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Oven"/>
-                            <TextBox Grid.Row="5" Grid.Column="1" x:Name="OvenHoursBox" Height="24" IsReadOnly="True"/>
-                            <TextBox Grid.Row="5" Grid.Column="2" x:Name="OvenComplexityBox" Height="24"/>
-
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Window - Small"/>
-                            <TextBox Grid.Row="6" Grid.Column="1" x:Name="WindowSmallHoursBox" Height="24"/>
-                            <TextBox Grid.Row="6" Grid.Column="2" x:Name="WindowComplexityBox" Height="24"/>
-
-                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Window - Medium"/>
-                            <TextBox Grid.Row="7" Grid.Column="1" x:Name="WindowMediumHoursBox" Height="24"/>
-                            <TextBlock Grid.Row="7" Grid.Column="2" Text=""/>
-
-                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Window - Large"/>
-                            <TextBox Grid.Row="8" Grid.Column="1" x:Name="WindowLargeHoursBox" Height="24"/>
-                            <TextBlock Grid.Row="8" Grid.Column="2" Text=""/>
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
-
-                <GroupBox Header="Quote Form Rates" Margin="0,0,0,12">
-                    <StackPanel Margin="10">
-                        <WrapPanel Margin="0,0,0,10">
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="First Clean Rate" FontWeight="SemiBold"/>
-                                <TextBox x:Name="FirstCleanRateBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="First Clean Minimum" FontWeight="SemiBold"/>
-                                <TextBox x:Name="FirstCleanMinimumBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="Deep Clean Rate" FontWeight="SemiBold"/>
-                                <TextBox x:Name="DeepCleanRateBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="Deep Clean Minimum" FontWeight="SemiBold"/>
-                                <TextBox x:Name="DeepCleanMinimumBox" Height="26"/>
-                            </StackPanel>
-                        </WrapPanel>
-                        <WrapPanel Margin="0,0,0,10">
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="Maintenance Rate" FontWeight="SemiBold"/>
-                                <TextBox x:Name="MaintenanceRateBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="Maintenance Minimum" FontWeight="SemiBold"/>
-                                <TextBox x:Name="MaintenanceMinimumBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="160" Margin="0,0,10,0">
-                                <TextBlock Text="One-Time Deep Rate" FontWeight="SemiBold"/>
-                                <TextBox x:Name="OneTimeDeepCleanRateBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="160" Margin="0,0,10,0">
-                                <TextBlock Text="One-Time Deep Min" FontWeight="SemiBold"/>
-                                <TextBox x:Name="OneTimeDeepCleanMinimumBox" Height="26"/>
-                            </StackPanel>
-                        </WrapPanel>
-                        <WrapPanel>
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="Window Inside Rate" FontWeight="SemiBold"/>
-                                <TextBox x:Name="WindowInsideRateBox" Height="26"/>
-                            </StackPanel>
-                            <StackPanel Width="140" Margin="0,0,10,0">
-                                <TextBlock Text="Window Outside Rate" FontWeight="SemiBold"/>
-                                <TextBox x:Name="WindowOutsideRateBox" Height="26"/>
-                            </StackPanel>
-                        </WrapPanel>
                     </StackPanel>
                 </GroupBox>
 
