@@ -31,6 +31,10 @@ SELECT ServiceType, SqFtPerLaborHour, SizeSmallSqFt, SizeMediumSqFt, SizeLargeSq
        RoomBedroomMinutes, RoomBedroomMasterMinutes, RoomDiningRoomMinutes,
        RoomEntryMinutes, RoomFamilyRoomMinutes, RoomHallwayMinutes,
        RoomKitchenMinutes, RoomLaundryMinutes, RoomLivingRoomMinutes, RoomOfficeMinutes,
+       RoomBathroomFullSqFt, RoomBathroomHalfSqFt, RoomBathroomMasterSqFt,
+       RoomBedroomSqFt, RoomBedroomMasterSqFt, RoomDiningRoomSqFt,
+       RoomEntrySqFt, RoomFamilyRoomSqFt, RoomHallwaySqFt,
+       RoomKitchenSqFt, RoomLaundrySqFt, RoomLivingRoomSqFt, RoomOfficeSqFt,
        SubItemCeilingFanMinutes, SubItemFridgeMinutes, SubItemMirrorMinutes, SubItemOvenMinutes,
        SubItemShowerNoGlassMinutes, SubItemShowerNoStoneMinutes, SubItemSinkDiscountMinutes,
        SubItemStoveTopGasMinutes, SubItemTubMinutes,
@@ -198,22 +202,35 @@ WHERE ServiceType = $ServiceType;
                         RoomLaundryMinutes = GetOptionalInt(reader, 43, defaults.RoomLaundryMinutes),
                         RoomLivingRoomMinutes = GetOptionalInt(reader, 44, defaults.RoomLivingRoomMinutes),
                         RoomOfficeMinutes = GetOptionalInt(reader, 45, defaults.RoomOfficeMinutes),
-                        SubItemCeilingFanMinutes = GetOptionalInt(reader, 46, defaults.SubItemCeilingFanMinutes),
-                        SubItemFridgeMinutes = GetOptionalInt(reader, 47, defaults.SubItemFridgeMinutes),
-                        SubItemMirrorMinutes = GetOptionalInt(reader, 48, defaults.SubItemMirrorMinutes),
-                        SubItemOvenMinutes = GetOptionalInt(reader, 49, defaults.SubItemOvenMinutes),
-                        SubItemShowerNoGlassMinutes = GetOptionalInt(reader, 50, defaults.SubItemShowerNoGlassMinutes),
-                        SubItemShowerNoStoneMinutes = GetOptionalInt(reader, 51, defaults.SubItemShowerNoStoneMinutes),
-                        SubItemSinkDiscountMinutes = GetOptionalInt(reader, 52, defaults.SubItemSinkDiscountMinutes),
-                        SubItemStoveTopGasMinutes = GetOptionalInt(reader, 53, defaults.SubItemStoveTopGasMinutes),
-                        SubItemTubMinutes = GetOptionalInt(reader, 54, defaults.SubItemTubMinutes),
-                        SubItemWindowInsideFirstMinutes = GetOptionalInt(reader, 55, defaults.SubItemWindowInsideFirstMinutes),
-                        SubItemWindowOutsideFirstMinutes = GetOptionalInt(reader, 56, defaults.SubItemWindowOutsideFirstMinutes),
-                        SubItemWindowInsideSecondMinutes = GetOptionalInt(reader, 57, defaults.SubItemWindowInsideSecondMinutes),
-                        SubItemWindowOutsideSecondMinutes = GetOptionalInt(reader, 58, defaults.SubItemWindowOutsideSecondMinutes),
-                        SubItemWindowTrackMinutes = GetOptionalInt(reader, 59, defaults.SubItemWindowTrackMinutes),
-                        SubItemWindowStandardMinutes = GetOptionalInt(reader, 60, defaults.SubItemWindowStandardMinutes),
-                        UpdatedAt = DateTime.Parse(reader.GetString(61))
+                        RoomBathroomFullSqFt = GetOptionalInt(reader, 46, defaults.RoomBathroomFullSqFt),
+                        RoomBathroomHalfSqFt = GetOptionalInt(reader, 47, defaults.RoomBathroomHalfSqFt),
+                        RoomBathroomMasterSqFt = GetOptionalInt(reader, 48, defaults.RoomBathroomMasterSqFt),
+                        RoomBedroomSqFt = GetOptionalInt(reader, 49, defaults.RoomBedroomSqFt),
+                        RoomBedroomMasterSqFt = GetOptionalInt(reader, 50, defaults.RoomBedroomMasterSqFt),
+                        RoomDiningRoomSqFt = GetOptionalInt(reader, 51, defaults.RoomDiningRoomSqFt),
+                        RoomEntrySqFt = GetOptionalInt(reader, 52, defaults.RoomEntrySqFt),
+                        RoomFamilyRoomSqFt = GetOptionalInt(reader, 53, defaults.RoomFamilyRoomSqFt),
+                        RoomHallwaySqFt = GetOptionalInt(reader, 54, defaults.RoomHallwaySqFt),
+                        RoomKitchenSqFt = GetOptionalInt(reader, 55, defaults.RoomKitchenSqFt),
+                        RoomLaundrySqFt = GetOptionalInt(reader, 56, defaults.RoomLaundrySqFt),
+                        RoomLivingRoomSqFt = GetOptionalInt(reader, 57, defaults.RoomLivingRoomSqFt),
+                        RoomOfficeSqFt = GetOptionalInt(reader, 58, defaults.RoomOfficeSqFt),
+                        SubItemCeilingFanMinutes = GetOptionalInt(reader, 59, defaults.SubItemCeilingFanMinutes),
+                        SubItemFridgeMinutes = GetOptionalInt(reader, 60, defaults.SubItemFridgeMinutes),
+                        SubItemMirrorMinutes = GetOptionalInt(reader, 61, defaults.SubItemMirrorMinutes),
+                        SubItemOvenMinutes = GetOptionalInt(reader, 62, defaults.SubItemOvenMinutes),
+                        SubItemShowerNoGlassMinutes = GetOptionalInt(reader, 63, defaults.SubItemShowerNoGlassMinutes),
+                        SubItemShowerNoStoneMinutes = GetOptionalInt(reader, 64, defaults.SubItemShowerNoStoneMinutes),
+                        SubItemSinkDiscountMinutes = GetOptionalInt(reader, 65, defaults.SubItemSinkDiscountMinutes),
+                        SubItemStoveTopGasMinutes = GetOptionalInt(reader, 66, defaults.SubItemStoveTopGasMinutes),
+                        SubItemTubMinutes = GetOptionalInt(reader, 67, defaults.SubItemTubMinutes),
+                        SubItemWindowInsideFirstMinutes = GetOptionalInt(reader, 68, defaults.SubItemWindowInsideFirstMinutes),
+                        SubItemWindowOutsideFirstMinutes = GetOptionalInt(reader, 69, defaults.SubItemWindowOutsideFirstMinutes),
+                        SubItemWindowInsideSecondMinutes = GetOptionalInt(reader, 70, defaults.SubItemWindowInsideSecondMinutes),
+                        SubItemWindowOutsideSecondMinutes = GetOptionalInt(reader, 71, defaults.SubItemWindowOutsideSecondMinutes),
+                        SubItemWindowTrackMinutes = GetOptionalInt(reader, 72, defaults.SubItemWindowTrackMinutes),
+                        SubItemWindowStandardMinutes = GetOptionalInt(reader, 73, defaults.SubItemWindowStandardMinutes),
+                        UpdatedAt = DateTime.Parse(reader.GetString(74))
                     };
                 }
             }
@@ -294,6 +311,19 @@ SET SqFtPerLaborHour = $SqFtPerLaborHour,
     RoomLaundryMinutes = $RoomLaundryMinutes,
     RoomLivingRoomMinutes = $RoomLivingRoomMinutes,
     RoomOfficeMinutes = $RoomOfficeMinutes,
+    RoomBathroomFullSqFt = $RoomBathroomFullSqFt,
+    RoomBathroomHalfSqFt = $RoomBathroomHalfSqFt,
+    RoomBathroomMasterSqFt = $RoomBathroomMasterSqFt,
+    RoomBedroomSqFt = $RoomBedroomSqFt,
+    RoomBedroomMasterSqFt = $RoomBedroomMasterSqFt,
+    RoomDiningRoomSqFt = $RoomDiningRoomSqFt,
+    RoomEntrySqFt = $RoomEntrySqFt,
+    RoomFamilyRoomSqFt = $RoomFamilyRoomSqFt,
+    RoomHallwaySqFt = $RoomHallwaySqFt,
+    RoomKitchenSqFt = $RoomKitchenSqFt,
+    RoomLaundrySqFt = $RoomLaundrySqFt,
+    RoomLivingRoomSqFt = $RoomLivingRoomSqFt,
+    RoomOfficeSqFt = $RoomOfficeSqFt,
     SubItemCeilingFanMinutes = $SubItemCeilingFanMinutes,
     SubItemFridgeMinutes = $SubItemFridgeMinutes,
     SubItemMirrorMinutes = $SubItemMirrorMinutes,
@@ -358,6 +388,19 @@ WHERE ServiceType = $ServiceType;
                 cmd.Parameters.AddWithValue("$RoomLaundryMinutes", settings.RoomLaundryMinutes);
                 cmd.Parameters.AddWithValue("$RoomLivingRoomMinutes", settings.RoomLivingRoomMinutes);
                 cmd.Parameters.AddWithValue("$RoomOfficeMinutes", settings.RoomOfficeMinutes);
+                cmd.Parameters.AddWithValue("$RoomBathroomFullSqFt", settings.RoomBathroomFullSqFt);
+                cmd.Parameters.AddWithValue("$RoomBathroomHalfSqFt", settings.RoomBathroomHalfSqFt);
+                cmd.Parameters.AddWithValue("$RoomBathroomMasterSqFt", settings.RoomBathroomMasterSqFt);
+                cmd.Parameters.AddWithValue("$RoomBedroomSqFt", settings.RoomBedroomSqFt);
+                cmd.Parameters.AddWithValue("$RoomBedroomMasterSqFt", settings.RoomBedroomMasterSqFt);
+                cmd.Parameters.AddWithValue("$RoomDiningRoomSqFt", settings.RoomDiningRoomSqFt);
+                cmd.Parameters.AddWithValue("$RoomEntrySqFt", settings.RoomEntrySqFt);
+                cmd.Parameters.AddWithValue("$RoomFamilyRoomSqFt", settings.RoomFamilyRoomSqFt);
+                cmd.Parameters.AddWithValue("$RoomHallwaySqFt", settings.RoomHallwaySqFt);
+                cmd.Parameters.AddWithValue("$RoomKitchenSqFt", settings.RoomKitchenSqFt);
+                cmd.Parameters.AddWithValue("$RoomLaundrySqFt", settings.RoomLaundrySqFt);
+                cmd.Parameters.AddWithValue("$RoomLivingRoomSqFt", settings.RoomLivingRoomSqFt);
+                cmd.Parameters.AddWithValue("$RoomOfficeSqFt", settings.RoomOfficeSqFt);
                 cmd.Parameters.AddWithValue("$SubItemCeilingFanMinutes", settings.SubItemCeilingFanMinutes);
                 cmd.Parameters.AddWithValue("$SubItemFridgeMinutes", settings.SubItemFridgeMinutes);
                 cmd.Parameters.AddWithValue("$SubItemMirrorMinutes", settings.SubItemMirrorMinutes);
@@ -400,6 +443,10 @@ INSERT INTO ServiceTypePricing
  RoomBedroomMinutes, RoomBedroomMasterMinutes, RoomDiningRoomMinutes,
  RoomEntryMinutes, RoomFamilyRoomMinutes, RoomHallwayMinutes,
  RoomKitchenMinutes, RoomLaundryMinutes, RoomLivingRoomMinutes, RoomOfficeMinutes,
+ RoomBathroomFullSqFt, RoomBathroomHalfSqFt, RoomBathroomMasterSqFt,
+ RoomBedroomSqFt, RoomBedroomMasterSqFt, RoomDiningRoomSqFt,
+ RoomEntrySqFt, RoomFamilyRoomSqFt, RoomHallwaySqFt,
+ RoomKitchenSqFt, RoomLaundrySqFt, RoomLivingRoomSqFt, RoomOfficeSqFt,
  SubItemCeilingFanMinutes, SubItemFridgeMinutes, SubItemMirrorMinutes, SubItemOvenMinutes,
  SubItemShowerNoGlassMinutes, SubItemShowerNoStoneMinutes, SubItemSinkDiscountMinutes,
  SubItemStoveTopGasMinutes, SubItemTubMinutes,
@@ -424,6 +471,10 @@ VALUES
  $RoomBedroomMinutes, $RoomBedroomMasterMinutes, $RoomDiningRoomMinutes,
  $RoomEntryMinutes, $RoomFamilyRoomMinutes, $RoomHallwayMinutes,
  $RoomKitchenMinutes, $RoomLaundryMinutes, $RoomLivingRoomMinutes, $RoomOfficeMinutes,
+ $RoomBathroomFullSqFt, $RoomBathroomHalfSqFt, $RoomBathroomMasterSqFt,
+ $RoomBedroomSqFt, $RoomBedroomMasterSqFt, $RoomDiningRoomSqFt,
+ $RoomEntrySqFt, $RoomFamilyRoomSqFt, $RoomHallwaySqFt,
+ $RoomKitchenSqFt, $RoomLaundrySqFt, $RoomLivingRoomSqFt, $RoomOfficeSqFt,
  $SubItemCeilingFanMinutes, $SubItemFridgeMinutes, $SubItemMirrorMinutes, $SubItemOvenMinutes,
  $SubItemShowerNoGlassMinutes, $SubItemShowerNoStoneMinutes, $SubItemSinkDiscountMinutes,
  $SubItemStoveTopGasMinutes, $SubItemTubMinutes,
@@ -478,6 +529,19 @@ VALUES
                 insert.Parameters.AddWithValue("$RoomLaundryMinutes", settings.RoomLaundryMinutes);
                 insert.Parameters.AddWithValue("$RoomLivingRoomMinutes", settings.RoomLivingRoomMinutes);
                 insert.Parameters.AddWithValue("$RoomOfficeMinutes", settings.RoomOfficeMinutes);
+                insert.Parameters.AddWithValue("$RoomBathroomFullSqFt", settings.RoomBathroomFullSqFt);
+                insert.Parameters.AddWithValue("$RoomBathroomHalfSqFt", settings.RoomBathroomHalfSqFt);
+                insert.Parameters.AddWithValue("$RoomBathroomMasterSqFt", settings.RoomBathroomMasterSqFt);
+                insert.Parameters.AddWithValue("$RoomBedroomSqFt", settings.RoomBedroomSqFt);
+                insert.Parameters.AddWithValue("$RoomBedroomMasterSqFt", settings.RoomBedroomMasterSqFt);
+                insert.Parameters.AddWithValue("$RoomDiningRoomSqFt", settings.RoomDiningRoomSqFt);
+                insert.Parameters.AddWithValue("$RoomEntrySqFt", settings.RoomEntrySqFt);
+                insert.Parameters.AddWithValue("$RoomFamilyRoomSqFt", settings.RoomFamilyRoomSqFt);
+                insert.Parameters.AddWithValue("$RoomHallwaySqFt", settings.RoomHallwaySqFt);
+                insert.Parameters.AddWithValue("$RoomKitchenSqFt", settings.RoomKitchenSqFt);
+                insert.Parameters.AddWithValue("$RoomLaundrySqFt", settings.RoomLaundrySqFt);
+                insert.Parameters.AddWithValue("$RoomLivingRoomSqFt", settings.RoomLivingRoomSqFt);
+                insert.Parameters.AddWithValue("$RoomOfficeSqFt", settings.RoomOfficeSqFt);
                 insert.Parameters.AddWithValue("$SubItemCeilingFanMinutes", settings.SubItemCeilingFanMinutes);
                 insert.Parameters.AddWithValue("$SubItemFridgeMinutes", settings.SubItemFridgeMinutes);
                 insert.Parameters.AddWithValue("$SubItemMirrorMinutes", settings.SubItemMirrorMinutes);

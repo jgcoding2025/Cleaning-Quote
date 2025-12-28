@@ -150,6 +150,19 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     RoomLaundryMinutes INTEGER NOT NULL DEFAULT 10,
     RoomLivingRoomMinutes INTEGER NOT NULL DEFAULT 20,
     RoomOfficeMinutes INTEGER NOT NULL DEFAULT 15,
+    RoomBathroomFullSqFt INTEGER NOT NULL DEFAULT 50,
+    RoomBathroomHalfSqFt INTEGER NOT NULL DEFAULT 25,
+    RoomBathroomMasterSqFt INTEGER NOT NULL DEFAULT 100,
+    RoomBedroomSqFt INTEGER NOT NULL DEFAULT 110,
+    RoomBedroomMasterSqFt INTEGER NOT NULL DEFAULT 225,
+    RoomDiningRoomSqFt INTEGER NOT NULL DEFAULT 140,
+    RoomEntrySqFt INTEGER NOT NULL DEFAULT 45,
+    RoomFamilyRoomSqFt INTEGER NOT NULL DEFAULT 300,
+    RoomHallwaySqFt INTEGER NOT NULL DEFAULT 40,
+    RoomKitchenSqFt INTEGER NOT NULL DEFAULT 175,
+    RoomLaundrySqFt INTEGER NOT NULL DEFAULT 55,
+    RoomLivingRoomSqFt INTEGER NOT NULL DEFAULT 300,
+    RoomOfficeSqFt INTEGER NOT NULL DEFAULT 120,
     SubItemCeilingFanMinutes INTEGER NOT NULL DEFAULT 10,
     SubItemFridgeMinutes INTEGER NOT NULL DEFAULT 60,
     SubItemMirrorMinutes INTEGER NOT NULL DEFAULT 5,
@@ -235,6 +248,19 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "ServiceTypePricing", "RoomLaundryMinutes", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "RoomLivingRoomMinutes", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "RoomOfficeMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBathroomFullSqFt", "INTEGER NOT NULL DEFAULT 50");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBathroomHalfSqFt", "INTEGER NOT NULL DEFAULT 25");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBathroomMasterSqFt", "INTEGER NOT NULL DEFAULT 100");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBedroomSqFt", "INTEGER NOT NULL DEFAULT 110");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBedroomMasterSqFt", "INTEGER NOT NULL DEFAULT 225");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomDiningRoomSqFt", "INTEGER NOT NULL DEFAULT 140");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomEntrySqFt", "INTEGER NOT NULL DEFAULT 45");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomFamilyRoomSqFt", "INTEGER NOT NULL DEFAULT 300");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomHallwaySqFt", "INTEGER NOT NULL DEFAULT 40");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomKitchenSqFt", "INTEGER NOT NULL DEFAULT 175");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomLaundrySqFt", "INTEGER NOT NULL DEFAULT 55");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomLivingRoomSqFt", "INTEGER NOT NULL DEFAULT 300");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomOfficeSqFt", "INTEGER NOT NULL DEFAULT 120");
             EnsureColumn(conn, "ServiceTypePricing", "SubItemCeilingFanMinutes", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "SubItemFridgeMinutes", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "SubItemMirrorMinutes", "INTEGER");
@@ -429,6 +455,19 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing_New(
     RoomLaundryMinutes INTEGER NOT NULL DEFAULT 10,
     RoomLivingRoomMinutes INTEGER NOT NULL DEFAULT 20,
     RoomOfficeMinutes INTEGER NOT NULL DEFAULT 15,
+    RoomBathroomFullSqFt INTEGER NOT NULL DEFAULT 50,
+    RoomBathroomHalfSqFt INTEGER NOT NULL DEFAULT 25,
+    RoomBathroomMasterSqFt INTEGER NOT NULL DEFAULT 100,
+    RoomBedroomSqFt INTEGER NOT NULL DEFAULT 110,
+    RoomBedroomMasterSqFt INTEGER NOT NULL DEFAULT 225,
+    RoomDiningRoomSqFt INTEGER NOT NULL DEFAULT 140,
+    RoomEntrySqFt INTEGER NOT NULL DEFAULT 45,
+    RoomFamilyRoomSqFt INTEGER NOT NULL DEFAULT 300,
+    RoomHallwaySqFt INTEGER NOT NULL DEFAULT 40,
+    RoomKitchenSqFt INTEGER NOT NULL DEFAULT 175,
+    RoomLaundrySqFt INTEGER NOT NULL DEFAULT 55,
+    RoomLivingRoomSqFt INTEGER NOT NULL DEFAULT 300,
+    RoomOfficeSqFt INTEGER NOT NULL DEFAULT 120,
     SubItemCeilingFanMinutes INTEGER NOT NULL DEFAULT 10,
     SubItemFridgeMinutes INTEGER NOT NULL DEFAULT 60,
     SubItemMirrorMinutes INTEGER NOT NULL DEFAULT 5,
@@ -471,6 +510,10 @@ INSERT INTO ServiceTypePricing_New
  RoomBedroomMinutes, RoomBedroomMasterMinutes, RoomDiningRoomMinutes,
  RoomEntryMinutes, RoomFamilyRoomMinutes, RoomHallwayMinutes,
  RoomKitchenMinutes, RoomLaundryMinutes, RoomLivingRoomMinutes, RoomOfficeMinutes,
+ RoomBathroomFullSqFt, RoomBathroomHalfSqFt, RoomBathroomMasterSqFt,
+ RoomBedroomSqFt, RoomBedroomMasterSqFt, RoomDiningRoomSqFt,
+ RoomEntrySqFt, RoomFamilyRoomSqFt, RoomHallwaySqFt,
+ RoomKitchenSqFt, RoomLaundrySqFt, RoomLivingRoomSqFt, RoomOfficeSqFt,
  SubItemCeilingFanMinutes, SubItemFridgeMinutes, SubItemMirrorMinutes, SubItemOvenMinutes,
  SubItemShowerNoGlassMinutes, SubItemShowerNoStoneMinutes, SubItemSinkDiscountMinutes,
  SubItemStoveTopGasMinutes, SubItemTubMinutes,
@@ -497,6 +540,10 @@ SELECT ServiceType,
        COALESCE(RoomBedroomMinutes, 15), COALESCE(RoomBedroomMasterMinutes, 20), COALESCE(RoomDiningRoomMinutes, 20),
        COALESCE(RoomEntryMinutes, 8), COALESCE(RoomFamilyRoomMinutes, 20), COALESCE(RoomHallwayMinutes, 6),
        COALESCE(RoomKitchenMinutes, 60), COALESCE(RoomLaundryMinutes, 10), COALESCE(RoomLivingRoomMinutes, 20), COALESCE(RoomOfficeMinutes, 15),
+       COALESCE(RoomBathroomFullSqFt, 50), COALESCE(RoomBathroomHalfSqFt, 25), COALESCE(RoomBathroomMasterSqFt, 100),
+       COALESCE(RoomBedroomSqFt, 110), COALESCE(RoomBedroomMasterSqFt, 225), COALESCE(RoomDiningRoomSqFt, 140),
+       COALESCE(RoomEntrySqFt, 45), COALESCE(RoomFamilyRoomSqFt, 300), COALESCE(RoomHallwaySqFt, 40),
+       COALESCE(RoomKitchenSqFt, 175), COALESCE(RoomLaundrySqFt, 55), COALESCE(RoomLivingRoomSqFt, 300), COALESCE(RoomOfficeSqFt, 120),
        COALESCE(SubItemCeilingFanMinutes, 10), COALESCE(SubItemFridgeMinutes, 60), COALESCE(SubItemMirrorMinutes, 5), COALESCE(SubItemOvenMinutes, 60),
        COALESCE(SubItemShowerNoGlassMinutes, -20), COALESCE(SubItemShowerNoStoneMinutes, -20), COALESCE(SubItemSinkDiscountMinutes, -10),
        COALESCE(SubItemStoveTopGasMinutes, 30), COALESCE(SubItemTubMinutes, 25),
