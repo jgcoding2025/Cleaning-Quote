@@ -1,6 +1,8 @@
 using Cleaning_Quote.Data;
 using Cleaning_Quote.Models;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -78,13 +80,13 @@ namespace Cleaning_Quote
 
         private void UpdateServiceTypePricingFromInputs(ServiceTypePricing pricing)
         {
+            var multiplier = GetSelectedServiceTypeMultiplier();
             pricing.DefaultRoomType = DefaultRoomTypeBox.SelectedItem as string ?? pricing.DefaultRoomType;
             pricing.DefaultRoomLevel = DefaultRoomLevelBox.SelectedItem as string ?? pricing.DefaultRoomLevel;
             pricing.DefaultRoomSize = DefaultRoomSizeBox.SelectedItem as string ?? pricing.DefaultRoomSize;
             if (DefaultRoomComplexityBox.SelectedItem is int roomComplexity)
                 pricing.DefaultRoomComplexity = roomComplexity;
             pricing.DefaultSubItemType = DefaultSubItemTypeBox.SelectedItem as string ?? pricing.DefaultSubItemType;
-            pricing.DefaultWindowSize = DefaultWindowSizeBox.SelectedItem as string ?? pricing.DefaultWindowSize;
 
             if (decimal.TryParse(SizeSmallMultiplierBox.Text, out var sizeSmallMultiplier))
                 pricing.SizeSmallMultiplier = sizeSmallMultiplier;
@@ -105,70 +107,70 @@ namespace Cleaning_Quote
             pricing.Complexity2Definition = Complexity2DefinitionBox.Text?.Trim() ?? "";
             pricing.Complexity3Definition = Complexity3DefinitionBox.Text?.Trim() ?? "";
 
-            if (int.TryParse(RoomBathroomFullMinutesBox.Text, out var roomBathroomFullMinutes))
+            if (TryParseScaledMinutes(RoomBathroomFullMinutesBox.Text, multiplier, out var roomBathroomFullMinutes))
                 pricing.RoomBathroomFullMinutes = roomBathroomFullMinutes;
-            if (int.TryParse(RoomBathroomHalfMinutesBox.Text, out var roomBathroomHalfMinutes))
+            if (TryParseScaledMinutes(RoomBathroomHalfMinutesBox.Text, multiplier, out var roomBathroomHalfMinutes))
                 pricing.RoomBathroomHalfMinutes = roomBathroomHalfMinutes;
-            if (int.TryParse(RoomBathroomMasterMinutesBox.Text, out var roomBathroomMasterMinutes))
+            if (TryParseScaledMinutes(RoomBathroomMasterMinutesBox.Text, multiplier, out var roomBathroomMasterMinutes))
                 pricing.RoomBathroomMasterMinutes = roomBathroomMasterMinutes;
-            if (int.TryParse(RoomBedroomMinutesBox.Text, out var roomBedroomMinutes))
+            if (TryParseScaledMinutes(RoomBedroomMinutesBox.Text, multiplier, out var roomBedroomMinutes))
                 pricing.RoomBedroomMinutes = roomBedroomMinutes;
-            if (int.TryParse(RoomBedroomMasterMinutesBox.Text, out var roomBedroomMasterMinutes))
+            if (TryParseScaledMinutes(RoomBedroomMasterMinutesBox.Text, multiplier, out var roomBedroomMasterMinutes))
                 pricing.RoomBedroomMasterMinutes = roomBedroomMasterMinutes;
-            if (int.TryParse(RoomDiningRoomMinutesBox.Text, out var roomDiningRoomMinutes))
+            if (TryParseScaledMinutes(RoomDiningRoomMinutesBox.Text, multiplier, out var roomDiningRoomMinutes))
                 pricing.RoomDiningRoomMinutes = roomDiningRoomMinutes;
-            if (int.TryParse(RoomEntryMinutesBox.Text, out var roomEntryMinutes))
+            if (TryParseScaledMinutes(RoomEntryMinutesBox.Text, multiplier, out var roomEntryMinutes))
                 pricing.RoomEntryMinutes = roomEntryMinutes;
-            if (int.TryParse(RoomFamilyRoomMinutesBox.Text, out var roomFamilyRoomMinutes))
+            if (TryParseScaledMinutes(RoomFamilyRoomMinutesBox.Text, multiplier, out var roomFamilyRoomMinutes))
                 pricing.RoomFamilyRoomMinutes = roomFamilyRoomMinutes;
-            if (int.TryParse(RoomHallwayMinutesBox.Text, out var roomHallwayMinutes))
+            if (TryParseScaledMinutes(RoomHallwayMinutesBox.Text, multiplier, out var roomHallwayMinutes))
                 pricing.RoomHallwayMinutes = roomHallwayMinutes;
-            if (int.TryParse(RoomKitchenMinutesBox.Text, out var roomKitchenMinutes))
+            if (TryParseScaledMinutes(RoomKitchenMinutesBox.Text, multiplier, out var roomKitchenMinutes))
                 pricing.RoomKitchenMinutes = roomKitchenMinutes;
-            if (int.TryParse(RoomLaundryMinutesBox.Text, out var roomLaundryMinutes))
+            if (TryParseScaledMinutes(RoomLaundryMinutesBox.Text, multiplier, out var roomLaundryMinutes))
                 pricing.RoomLaundryMinutes = roomLaundryMinutes;
-            if (int.TryParse(RoomLivingRoomMinutesBox.Text, out var roomLivingRoomMinutes))
+            if (TryParseScaledMinutes(RoomLivingRoomMinutesBox.Text, multiplier, out var roomLivingRoomMinutes))
                 pricing.RoomLivingRoomMinutes = roomLivingRoomMinutes;
-            if (int.TryParse(RoomOfficeMinutesBox.Text, out var roomOfficeMinutes))
+            if (TryParseScaledMinutes(RoomOfficeMinutesBox.Text, multiplier, out var roomOfficeMinutes))
                 pricing.RoomOfficeMinutes = roomOfficeMinutes;
-            if (int.TryParse(SubItemCeilingFanMinutesBox.Text, out var subItemCeilingFanMinutes))
+            if (TryParseScaledMinutes(SubItemCeilingFanMinutesBox.Text, multiplier, out var subItemCeilingFanMinutes))
             {
                 pricing.SubItemCeilingFanMinutes = subItemCeilingFanMinutes;
                 pricing.CeilingFanHoursEach = subItemCeilingFanMinutes / 60m;
             }
-            if (int.TryParse(SubItemFridgeMinutesBox.Text, out var subItemFridgeMinutes))
+            if (TryParseScaledMinutes(SubItemFridgeMinutesBox.Text, multiplier, out var subItemFridgeMinutes))
             {
                 pricing.SubItemFridgeMinutes = subItemFridgeMinutes;
                 pricing.FridgeHoursEach = subItemFridgeMinutes / 60m;
             }
-            if (int.TryParse(SubItemMirrorMinutesBox.Text, out var subItemMirrorMinutes))
+            if (TryParseScaledMinutes(SubItemMirrorMinutesBox.Text, multiplier, out var subItemMirrorMinutes))
                 pricing.SubItemMirrorMinutes = subItemMirrorMinutes;
-            if (int.TryParse(SubItemOvenMinutesBox.Text, out var subItemOvenMinutes))
+            if (TryParseScaledMinutes(SubItemOvenMinutesBox.Text, multiplier, out var subItemOvenMinutes))
             {
                 pricing.SubItemOvenMinutes = subItemOvenMinutes;
                 pricing.OvenHoursEach = subItemOvenMinutes / 60m;
             }
-            if (int.TryParse(SubItemShowerNoGlassMinutesBox.Text, out var subItemShowerNoGlassMinutes))
+            if (TryParseScaledMinutes(SubItemShowerNoGlassMinutesBox.Text, multiplier, out var subItemShowerNoGlassMinutes))
                 pricing.SubItemShowerNoGlassMinutes = subItemShowerNoGlassMinutes;
-            if (int.TryParse(SubItemShowerNoStoneMinutesBox.Text, out var subItemShowerNoStoneMinutes))
+            if (TryParseScaledMinutes(SubItemShowerNoStoneMinutesBox.Text, multiplier, out var subItemShowerNoStoneMinutes))
                 pricing.SubItemShowerNoStoneMinutes = subItemShowerNoStoneMinutes;
-            if (int.TryParse(SubItemSinkDiscountMinutesBox.Text, out var subItemSinkDiscountMinutes))
+            if (TryParseScaledMinutes(SubItemSinkDiscountMinutesBox.Text, multiplier, out var subItemSinkDiscountMinutes))
                 pricing.SubItemSinkDiscountMinutes = subItemSinkDiscountMinutes;
-            if (int.TryParse(SubItemStoveTopGasMinutesBox.Text, out var subItemStoveTopGasMinutes))
+            if (TryParseScaledMinutes(SubItemStoveTopGasMinutesBox.Text, multiplier, out var subItemStoveTopGasMinutes))
                 pricing.SubItemStoveTopGasMinutes = subItemStoveTopGasMinutes;
-            if (int.TryParse(SubItemTubMinutesBox.Text, out var subItemTubMinutes))
+            if (TryParseScaledMinutes(SubItemTubMinutesBox.Text, multiplier, out var subItemTubMinutes))
                 pricing.SubItemTubMinutes = subItemTubMinutes;
-            if (int.TryParse(SubItemWindowInsideFirstMinutesBox.Text, out var subItemWindowInsideFirstMinutes))
+            if (TryParseScaledMinutes(SubItemWindowInsideFirstMinutesBox.Text, multiplier, out var subItemWindowInsideFirstMinutes))
                 pricing.SubItemWindowInsideFirstMinutes = subItemWindowInsideFirstMinutes;
-            if (int.TryParse(SubItemWindowOutsideFirstMinutesBox.Text, out var subItemWindowOutsideFirstMinutes))
+            if (TryParseScaledMinutes(SubItemWindowOutsideFirstMinutesBox.Text, multiplier, out var subItemWindowOutsideFirstMinutes))
                 pricing.SubItemWindowOutsideFirstMinutes = subItemWindowOutsideFirstMinutes;
-            if (int.TryParse(SubItemWindowInsideSecondMinutesBox.Text, out var subItemWindowInsideSecondMinutes))
+            if (TryParseScaledMinutes(SubItemWindowInsideSecondMinutesBox.Text, multiplier, out var subItemWindowInsideSecondMinutes))
                 pricing.SubItemWindowInsideSecondMinutes = subItemWindowInsideSecondMinutes;
-            if (int.TryParse(SubItemWindowOutsideSecondMinutesBox.Text, out var subItemWindowOutsideSecondMinutes))
+            if (TryParseScaledMinutes(SubItemWindowOutsideSecondMinutesBox.Text, multiplier, out var subItemWindowOutsideSecondMinutes))
                 pricing.SubItemWindowOutsideSecondMinutes = subItemWindowOutsideSecondMinutes;
-            if (int.TryParse(SubItemWindowTrackMinutesBox.Text, out var subItemWindowTrackMinutes))
+            if (TryParseScaledMinutes(SubItemWindowTrackMinutesBox.Text, multiplier, out var subItemWindowTrackMinutes))
                 pricing.SubItemWindowTrackMinutes = subItemWindowTrackMinutes;
-            if (int.TryParse(SubItemWindowStandardMinutesBox.Text, out var subItemWindowStandardMinutes))
+            if (TryParseScaledMinutes(SubItemWindowStandardMinutesBox.Text, multiplier, out var subItemWindowStandardMinutes))
                 pricing.SubItemWindowStandardMinutes = subItemWindowStandardMinutes;
         }
 
@@ -178,12 +180,12 @@ namespace Cleaning_Quote
                 return;
 
             _suppressLoad = true;
+            var multiplier = GetSelectedServiceTypeMultiplier();
             DefaultRoomTypeBox.SelectedItem = pricing.DefaultRoomType;
             DefaultRoomLevelBox.SelectedItem = pricing.DefaultRoomLevel;
             DefaultRoomSizeBox.SelectedItem = pricing.DefaultRoomSize;
             DefaultRoomComplexityBox.SelectedItem = pricing.DefaultRoomComplexity;
             DefaultSubItemTypeBox.SelectedItem = pricing.DefaultSubItemType;
-            DefaultWindowSizeBox.SelectedItem = pricing.DefaultWindowSize;
             SizeSmallMultiplierBox.Text = pricing.SizeSmallMultiplier.ToString();
             SizeMediumMultiplierBox.Text = pricing.SizeMediumMultiplier.ToString();
             SizeLargeMultiplierBox.Text = pricing.SizeLargeMultiplier.ToString();
@@ -196,34 +198,34 @@ namespace Cleaning_Quote
             Complexity1DefinitionBox.Text = pricing.Complexity1Definition ?? "";
             Complexity2DefinitionBox.Text = pricing.Complexity2Definition ?? "";
             Complexity3DefinitionBox.Text = pricing.Complexity3Definition ?? "";
-            RoomBathroomFullMinutesBox.Text = pricing.RoomBathroomFullMinutes.ToString();
-            RoomBathroomHalfMinutesBox.Text = pricing.RoomBathroomHalfMinutes.ToString();
-            RoomBathroomMasterMinutesBox.Text = pricing.RoomBathroomMasterMinutes.ToString();
-            RoomBedroomMinutesBox.Text = pricing.RoomBedroomMinutes.ToString();
-            RoomBedroomMasterMinutesBox.Text = pricing.RoomBedroomMasterMinutes.ToString();
-            RoomDiningRoomMinutesBox.Text = pricing.RoomDiningRoomMinutes.ToString();
-            RoomEntryMinutesBox.Text = pricing.RoomEntryMinutes.ToString();
-            RoomFamilyRoomMinutesBox.Text = pricing.RoomFamilyRoomMinutes.ToString();
-            RoomHallwayMinutesBox.Text = pricing.RoomHallwayMinutes.ToString();
-            RoomKitchenMinutesBox.Text = pricing.RoomKitchenMinutes.ToString();
-            RoomLaundryMinutesBox.Text = pricing.RoomLaundryMinutes.ToString();
-            RoomLivingRoomMinutesBox.Text = pricing.RoomLivingRoomMinutes.ToString();
-            RoomOfficeMinutesBox.Text = pricing.RoomOfficeMinutes.ToString();
-            SubItemCeilingFanMinutesBox.Text = pricing.SubItemCeilingFanMinutes.ToString();
-            SubItemFridgeMinutesBox.Text = pricing.SubItemFridgeMinutes.ToString();
-            SubItemMirrorMinutesBox.Text = pricing.SubItemMirrorMinutes.ToString();
-            SubItemOvenMinutesBox.Text = pricing.SubItemOvenMinutes.ToString();
-            SubItemShowerNoGlassMinutesBox.Text = pricing.SubItemShowerNoGlassMinutes.ToString();
-            SubItemShowerNoStoneMinutesBox.Text = pricing.SubItemShowerNoStoneMinutes.ToString();
-            SubItemSinkDiscountMinutesBox.Text = pricing.SubItemSinkDiscountMinutes.ToString();
-            SubItemStoveTopGasMinutesBox.Text = pricing.SubItemStoveTopGasMinutes.ToString();
-            SubItemTubMinutesBox.Text = pricing.SubItemTubMinutes.ToString();
-            SubItemWindowInsideFirstMinutesBox.Text = pricing.SubItemWindowInsideFirstMinutes.ToString();
-            SubItemWindowOutsideFirstMinutesBox.Text = pricing.SubItemWindowOutsideFirstMinutes.ToString();
-            SubItemWindowInsideSecondMinutesBox.Text = pricing.SubItemWindowInsideSecondMinutes.ToString();
-            SubItemWindowOutsideSecondMinutesBox.Text = pricing.SubItemWindowOutsideSecondMinutes.ToString();
-            SubItemWindowTrackMinutesBox.Text = pricing.SubItemWindowTrackMinutes.ToString();
-            SubItemWindowStandardMinutesBox.Text = pricing.SubItemWindowStandardMinutes.ToString();
+            RoomBathroomFullMinutesBox.Text = FormatScaledMinutes(pricing.RoomBathroomFullMinutes, multiplier);
+            RoomBathroomHalfMinutesBox.Text = FormatScaledMinutes(pricing.RoomBathroomHalfMinutes, multiplier);
+            RoomBathroomMasterMinutesBox.Text = FormatScaledMinutes(pricing.RoomBathroomMasterMinutes, multiplier);
+            RoomBedroomMinutesBox.Text = FormatScaledMinutes(pricing.RoomBedroomMinutes, multiplier);
+            RoomBedroomMasterMinutesBox.Text = FormatScaledMinutes(pricing.RoomBedroomMasterMinutes, multiplier);
+            RoomDiningRoomMinutesBox.Text = FormatScaledMinutes(pricing.RoomDiningRoomMinutes, multiplier);
+            RoomEntryMinutesBox.Text = FormatScaledMinutes(pricing.RoomEntryMinutes, multiplier);
+            RoomFamilyRoomMinutesBox.Text = FormatScaledMinutes(pricing.RoomFamilyRoomMinutes, multiplier);
+            RoomHallwayMinutesBox.Text = FormatScaledMinutes(pricing.RoomHallwayMinutes, multiplier);
+            RoomKitchenMinutesBox.Text = FormatScaledMinutes(pricing.RoomKitchenMinutes, multiplier);
+            RoomLaundryMinutesBox.Text = FormatScaledMinutes(pricing.RoomLaundryMinutes, multiplier);
+            RoomLivingRoomMinutesBox.Text = FormatScaledMinutes(pricing.RoomLivingRoomMinutes, multiplier);
+            RoomOfficeMinutesBox.Text = FormatScaledMinutes(pricing.RoomOfficeMinutes, multiplier);
+            SubItemCeilingFanMinutesBox.Text = FormatScaledMinutes(pricing.SubItemCeilingFanMinutes, multiplier);
+            SubItemFridgeMinutesBox.Text = FormatScaledMinutes(pricing.SubItemFridgeMinutes, multiplier);
+            SubItemMirrorMinutesBox.Text = FormatScaledMinutes(pricing.SubItemMirrorMinutes, multiplier);
+            SubItemOvenMinutesBox.Text = FormatScaledMinutes(pricing.SubItemOvenMinutes, multiplier);
+            SubItemShowerNoGlassMinutesBox.Text = FormatScaledMinutes(pricing.SubItemShowerNoGlassMinutes, multiplier);
+            SubItemShowerNoStoneMinutesBox.Text = FormatScaledMinutes(pricing.SubItemShowerNoStoneMinutes, multiplier);
+            SubItemSinkDiscountMinutesBox.Text = FormatScaledMinutes(pricing.SubItemSinkDiscountMinutes, multiplier);
+            SubItemStoveTopGasMinutesBox.Text = FormatScaledMinutes(pricing.SubItemStoveTopGasMinutes, multiplier);
+            SubItemTubMinutesBox.Text = FormatScaledMinutes(pricing.SubItemTubMinutes, multiplier);
+            SubItemWindowInsideFirstMinutesBox.Text = FormatScaledMinutes(pricing.SubItemWindowInsideFirstMinutes, multiplier);
+            SubItemWindowOutsideFirstMinutesBox.Text = FormatScaledMinutes(pricing.SubItemWindowOutsideFirstMinutes, multiplier);
+            SubItemWindowInsideSecondMinutesBox.Text = FormatScaledMinutes(pricing.SubItemWindowInsideSecondMinutes, multiplier);
+            SubItemWindowOutsideSecondMinutesBox.Text = FormatScaledMinutes(pricing.SubItemWindowOutsideSecondMinutes, multiplier);
+            SubItemWindowTrackMinutesBox.Text = FormatScaledMinutes(pricing.SubItemWindowTrackMinutes, multiplier);
+            SubItemWindowStandardMinutesBox.Text = FormatScaledMinutes(pricing.SubItemWindowStandardMinutes, multiplier);
             _suppressLoad = false;
         }
 
@@ -251,6 +253,34 @@ namespace Cleaning_Quote
                     return;
                 }
             }
+        }
+
+        private decimal GetSelectedServiceTypeMultiplier()
+        {
+            var serviceType = GetSelectedServiceType();
+            var standard = _serviceTypeStandards.FirstOrDefault(item =>
+                string.Equals(item.ServiceType, serviceType, StringComparison.OrdinalIgnoreCase));
+            var multiplier = standard?.Multiplier ?? 1m;
+            return multiplier <= 0m ? 1m : multiplier;
+        }
+
+        private static string FormatScaledMinutes(int minutes, decimal multiplier)
+        {
+            var adjusted = minutes * (multiplier <= 0m ? 1m : multiplier);
+            var rounded = (int)Math.Round(adjusted, MidpointRounding.AwayFromZero);
+            return rounded.ToString();
+        }
+
+        private static bool TryParseScaledMinutes(string text, decimal multiplier, out int baseMinutes)
+        {
+            baseMinutes = 0;
+            if (!decimal.TryParse(text, out var displayedMinutes))
+                return false;
+
+            var safeMultiplier = multiplier <= 0m ? 1m : multiplier;
+            var baseValue = displayedMinutes / safeMultiplier;
+            baseMinutes = (int)Math.Round(baseValue, MidpointRounding.AwayFromZero);
+            return true;
         }
     }
 }

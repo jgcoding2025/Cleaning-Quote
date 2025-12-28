@@ -45,6 +45,8 @@ namespace Cleaning_Quote.Services
         public decimal WindowMediumHoursEach { get; set; }
         public decimal WindowLargeHoursEach { get; set; }
         public int WindowComplexity { get; set; } = 1;
+        public Dictionary<string, decimal> SubItemHoursByLabel { get; } =
+            new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 
         // House modifiers (as added hours)
         public decimal HoursPerPet { get; set; }
@@ -101,13 +103,14 @@ namespace Cleaning_Quote.Services
             return r;
         }
 
-        public static PricingRules FromServiceTypePricing(ServiceTypePricing settings)
+        public static PricingRules FromServiceTypePricing(ServiceTypePricing settings, decimal serviceTypeMultiplier = 1m)
         {
             var rules = Default();
 
             if (settings == null)
                 return rules;
 
+            var multiplier = serviceTypeMultiplier <= 0m ? 1m : serviceTypeMultiplier;
             rules.SqFtPerLaborHour = settings.SqFtPerLaborHour;
             rules.SizeSquareFootage["S"] = settings.SizeSmallSqFt;
             rules.SizeSquareFootage["M"] = settings.SizeMediumSqFt;
@@ -118,7 +121,7 @@ namespace Cleaning_Quote.Services
                 if (minutes <= 0)
                     return;
 
-                var baseHours = minutes / 60m;
+                var baseHours = (minutes / 60m) * multiplier;
                 var sizeSmall = settings.SizeSmallMultiplier <= 0m ? 1m : settings.SizeSmallMultiplier;
                 var sizeMedium = settings.SizeMediumMultiplier <= 0m ? 1m : settings.SizeMediumMultiplier;
                 var sizeLarge = settings.SizeLargeMultiplier <= 0m ? 1m : settings.SizeLargeMultiplier;
@@ -144,6 +147,30 @@ namespace Cleaning_Quote.Services
             AddRoomBaseHours("Laundry", settings.RoomLaundryMinutes);
             AddRoomBaseHours("Living Room", settings.RoomLivingRoomMinutes);
             AddRoomBaseHours("Office", settings.RoomOfficeMinutes);
+
+            void AddSubItemHours(string label, int minutes)
+            {
+                if (string.IsNullOrWhiteSpace(label))
+                    return;
+
+                rules.SubItemHoursByLabel[label] = (minutes / 60m) * multiplier;
+            }
+
+            AddSubItemHours("Ceiling Fan", settings.SubItemCeilingFanMinutes);
+            AddSubItemHours("Fridge", settings.SubItemFridgeMinutes);
+            AddSubItemHours("Mirror +1", settings.SubItemMirrorMinutes);
+            AddSubItemHours("Oven", settings.SubItemOvenMinutes);
+            AddSubItemHours("Shower: Discount (no glass)", settings.SubItemShowerNoGlassMinutes);
+            AddSubItemHours("Shower: Discount (no stone/tile)", settings.SubItemShowerNoStoneMinutes);
+            AddSubItemHours("Sink: Discount 1", settings.SubItemSinkDiscountMinutes);
+            AddSubItemHours("Stove Top (Gas)", settings.SubItemStoveTopGasMinutes);
+            AddSubItemHours("Tub / Jacuzzi Tub", settings.SubItemTubMinutes);
+            AddSubItemHours("Window (1 pane, inside only, 1st story)", settings.SubItemWindowInsideFirstMinutes);
+            AddSubItemHours("Window (1 pane, outside only, 1st story)", settings.SubItemWindowOutsideFirstMinutes);
+            AddSubItemHours("Window (1 pane, inside only, 2nd story)", settings.SubItemWindowInsideSecondMinutes);
+            AddSubItemHours("Window (1 pane, outside only, 2nd story)", settings.SubItemWindowOutsideSecondMinutes);
+            AddSubItemHours("Window Tract", settings.SubItemWindowTrackMinutes);
+            AddSubItemHours("Window: Standard (2 panes)", settings.SubItemWindowStandardMinutes);
 
             rules.ComplexityMultiplier[1] = settings.Complexity1Multiplier;
             rules.ComplexityMultiplier[2] = settings.Complexity2Multiplier;
@@ -260,16 +287,22 @@ namespace Cleaning_Quote.Services
             if (!item.IncludedInQuote) return 0m;
 
             var category = item.ItemCategory ?? "";
-            var baseHours = category switch
-            {
-                "FullGlassShower" => _rules.FullGlassShowerHoursEach,
-                "PebbleStoneFloor" => _rules.PebbleStoneFloorHoursEach,
-                "Fridge" => _rules.FridgeHoursEach,
-                "Oven" => _rules.OvenHoursEach,
-                "CeilingFan" => _rules.CeilingFanHoursEach,
-                "Window" => GetWindowHours(item),
-                _ => 0m
-            };
+            var label = item.RoomType ?? "";
+            var hasLabelHours = !string.IsNullOrWhiteSpace(label) &&
+                                _rules.SubItemHoursByLabel.TryGetValue(label, out var labelHours);
+
+            var baseHours = hasLabelHours
+                ? labelHours
+                : category switch
+                {
+                    "FullGlassShower" => _rules.FullGlassShowerHoursEach,
+                    "PebbleStoneFloor" => _rules.PebbleStoneFloorHoursEach,
+                    "Fridge" => _rules.FridgeHoursEach,
+                    "Oven" => _rules.OvenHoursEach,
+                    "CeilingFan" => _rules.CeilingFanHoursEach,
+                    "Window" => GetWindowHours(item),
+                    _ => 0m
+                };
 
             var complexity = category switch
             {

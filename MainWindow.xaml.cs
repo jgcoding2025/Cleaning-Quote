@@ -4,6 +4,7 @@ using Cleaning_Quote.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -61,9 +62,8 @@ namespace Cleaning_Quote
         private string _sqFtCalcText;
         private string _serviceTypeStandardText;
         private string _serviceTypeTotalText;
-        private string _windowInsideText;
-        private string _windowOutsideText;
         private Visibility _quotePanelVisibility = Visibility.Collapsed;
+        private readonly ObservableCollection<string> _subItemTotals = new ObservableCollection<string>();
 
         public string HoursText { get => _hoursText; set { _hoursText = value; OnPropertyChanged(); } }
         public string SubtotalText { get => _subtotalText; set { _subtotalText = value; OnPropertyChanged(); } }
@@ -77,9 +77,9 @@ namespace Cleaning_Quote
         public string SqFtCalcText { get => _sqFtCalcText; set { _sqFtCalcText = value; OnPropertyChanged(); } }
         public string ServiceTypeStandardText { get => _serviceTypeStandardText; set { _serviceTypeStandardText = value; OnPropertyChanged(); } }
         public string ServiceTypeTotalText { get => _serviceTypeTotalText; set { _serviceTypeTotalText = value; OnPropertyChanged(); } }
-        public string WindowInsideText { get => _windowInsideText; set { _windowInsideText = value; OnPropertyChanged(); } }
-        public string WindowOutsideText { get => _windowOutsideText; set { _windowOutsideText = value; OnPropertyChanged(); } }
         public Visibility QuotePanelVisibility { get => _quotePanelVisibility; set { _quotePanelVisibility = value; OnPropertyChanged(); } }
+        public IList<string> SubItemOptions => _serviceCatalog?.SubItems ?? new List<string>();
+        public ObservableCollection<string> SubItemTotals => _subItemTotals;
 
         public MainWindow()
         {
@@ -586,7 +586,7 @@ namespace Cleaning_Quote
             }
 
             var category = MapSubItemCategory(subItemLabel);
-            var size = GetDefaultWindowSize();
+            var size = "M";
 
             if (!int.TryParse(SubItemCountBox.Text, out var count))
                 count = 1;
@@ -608,6 +608,7 @@ namespace Cleaning_Quote
                     IsSubItem = true,
                     IncludedInQuote = true,
                     Size = category == "Window" ? size : "M",
+                    Level = "",
                     Complexity = GetSubItemDefaultComplexity(category),
                     WindowSideSelection = windowSideSelection,
                 };
@@ -636,13 +637,45 @@ namespace Cleaning_Quote
             _rooms.Insert(insertIndex, subItem);
         }
 
-        private void RemoveSubItems(Guid parentRoomId)
+        private int RemoveSubItems(Guid parentRoomId)
         {
+            var removed = 0;
             for (var i = _rooms.Count - 1; i >= 0; i--)
             {
                 if (_rooms[i].ParentRoomId == parentRoomId)
+                {
                     _rooms.RemoveAt(i);
+                    removed++;
+                }
             }
+            return removed;
+        }
+
+        private void RemoveSubItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (RoomsGrid.SelectedItem is not QuoteRoom selected)
+            {
+                MessageBox.Show("Select a sub-item row to remove.", "No selection");
+                return;
+            }
+
+            if (selected.IsSubItem)
+            {
+                _rooms.Remove(selected);
+                UpdateRoomSortOrders();
+                RecalculateTotals();
+                return;
+            }
+
+            var removed = RemoveSubItems(selected.QuoteRoomId);
+            if (removed == 0)
+            {
+                MessageBox.Show("Select a sub-item row to remove.", "No sub-items");
+                return;
+            }
+
+            UpdateRoomSortOrders();
+            RecalculateTotals();
         }
 
         private string GetSelectedSubItemLabel()
@@ -654,8 +687,6 @@ namespace Cleaning_Quote
         {
             return label switch
             {
-                "Full Glass Shower" => "FullGlassShower",
-                "Pebble Stone Floor" => "PebbleStoneFloor",
                 "Fridge" => "Fridge",
                 "Oven" => "Oven",
                 "Ceiling Fan" => "CeilingFan",
@@ -667,11 +698,6 @@ namespace Cleaning_Quote
                 "Window: Standard (2 panes)" => "Window",
                 _ => ""
             };
-        }
-
-        private string GetDefaultWindowSize()
-        {
-            return _currentServiceTypePricing?.DefaultWindowSize ?? "M";
         }
 
         private string GetWindowSideSelectionFromLabel(string label)
@@ -962,6 +988,7 @@ namespace Cleaning_Quote
                 _rooms.Clear();
                 foreach (var r in q.Rooms)
                     _rooms.Add(r);
+                ClearSubItemLevels();
                 UpdateRoomSortOrders();
 
                 _pets.Clear();
@@ -1219,9 +1246,8 @@ namespace Cleaning_Quote
                 SqFtCalcText = "";
                 ServiceTypeStandardText = "";
                 ServiceTypeTotalText = "";
-                WindowInsideText = "";
-                WindowOutsideText = "";
                 MinimumWarningText = "";
+                _subItemTotals.Clear();
                 return;
             }
 
@@ -1241,14 +1267,8 @@ namespace Cleaning_Quote
             ServiceTypeStandardText = $"{serviceType} ({rate:0.##}/sq ft x {multiplier:0.##})";
             ServiceTypeTotalText = $"Estimated total: {serviceTypeTotal:C}";
 
-            var windowInsideCount = CountWindows(side: "inside");
-            var windowOutsideCount = CountWindows(side: "outside");
-            var windowInsideTotal = windowInsideCount * _currentServiceTypePricing.WindowInsideRate;
-            var windowOutsideTotal = windowOutsideCount * _currentServiceTypePricing.WindowOutsideRate;
-            WindowInsideText = $"Windows inside ({windowInsideCount} @ {_currentServiceTypePricing.WindowInsideRate:C}): {windowInsideTotal:C}";
-            WindowOutsideText = $"Windows outside ({windowOutsideCount} @ {_currentServiceTypePricing.WindowOutsideRate:C}): {windowOutsideTotal:C}";
-
             MinimumWarningText = "";
+            UpdateSubItemTotals();
         }
 
         private decimal GetEstimatedSqFtValue()
@@ -1276,33 +1296,22 @@ namespace Cleaning_Quote
             return total;
         }
 
-        private int CountWindows(string side)
+        private void UpdateSubItemTotals()
         {
-            var count = 0;
-            foreach (var room in _rooms)
+            _subItemTotals.Clear();
+
+            var groups = _rooms
+                .Where(room => room.IsSubItem && room.IncludedInQuote)
+                .GroupBy(room => room.RoomType ?? "")
+                .OrderBy(group => group.Key);
+
+            foreach (var group in groups)
             {
-                if (!room.IncludedInQuote)
-                    continue;
-
-                var isWindow = room.ItemCategory.Equals("Window", StringComparison.OrdinalIgnoreCase) || room.IsWindowRoom;
-                if (!isWindow)
-                    continue;
-
-                var inside = room.WindowInside;
-                var outside = room.WindowOutside;
-                if (!inside && !outside && side == "inside")
-                {
-                    count++;
-                    continue;
-                }
-
-                if (side == "inside" && inside)
-                    count++;
-                else if (side == "outside" && outside)
-                    count++;
+                var name = string.IsNullOrWhiteSpace(group.Key) ? "Sub-Item" : group.Key;
+                var count = group.Count();
+                var total = group.Sum(item => item.RoomAmount);
+                _subItemTotals.Add($"{name} ({count}): {total:C}");
             }
-
-            return count;
         }
 
         private QuoteRoom BuildDefaultRoom()
@@ -1326,6 +1335,15 @@ namespace Cleaning_Quote
             for (var i = 0; i < _rooms.Count; i++)
             {
                 _rooms[i].SortOrder = i + 1;
+            }
+        }
+
+        private void ClearSubItemLevels()
+        {
+            foreach (var room in _rooms)
+            {
+                if (room.IsSubItem && !string.IsNullOrWhiteSpace(room.Level))
+                    room.Level = "";
             }
         }
 
@@ -1431,12 +1449,24 @@ namespace Cleaning_Quote
 
         private void ApplyServiceTypePricingRules()
         {
-            _pricing = new PricingService(PricingRules.FromServiceTypePricing(_currentServiceTypePricing));
+            var multiplier = GetServiceTypeMultiplier(GetSelectedServiceType());
+            _pricing = new PricingService(PricingRules.FromServiceTypePricing(_currentServiceTypePricing, multiplier));
         }
 
         private string GetSelectedServiceType()
         {
             return ServiceTypeBox.SelectedItem as string ?? "";
+        }
+
+        private decimal GetServiceTypeMultiplier(string serviceType)
+        {
+            if (string.IsNullOrWhiteSpace(serviceType))
+                return 1m;
+
+            var standard = _serviceTypeStandards.FirstOrDefault(item =>
+                string.Equals(item.ServiceType, serviceType, StringComparison.OrdinalIgnoreCase));
+            var multiplier = standard?.Multiplier ?? 1m;
+            return multiplier <= 0m ? 1m : multiplier;
         }
 
         private void ShowQuotePanel()
@@ -1466,8 +1496,7 @@ namespace Cleaning_Quote
             SqFtCalcText = "";
             ServiceTypeStandardText = "";
             ServiceTypeTotalText = "";
-            WindowInsideText = "";
-            WindowOutsideText = "";
+            _subItemTotals.Clear();
         }
 
     }

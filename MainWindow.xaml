@@ -244,6 +244,7 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <Button Content="Add Room" Width="90" Margin="0,0,8,0" Click="AddRoom_Click"/>
                 <Button Content="Remove Room" Width="110" Margin="0,0,8,0" Click="RemoveRoom_Click"/>
+                <Button Content="Remove Sub-Item" Width="120" Margin="0,0,8,0" Click="RemoveSubItem_Click"/>
                 <Button Content="Save Quote" Width="95" Click="SaveQuote_Click"/>
             </StackPanel>
 
@@ -343,9 +344,43 @@
                         Binding="{Binding SortOrder}" IsReadOnly="True"/>
                     <DataGridCheckBoxColumn Header="Include" Width="Auto"
                         Binding="{Binding IncludedInQuote, UpdateSourceTrigger=PropertyChanged}"/>
-                    <DataGridComboBoxColumn Header="Level" Width="Auto"
-                        ItemsSource="{StaticResource LevelOptions}"
-                        SelectedItemBinding="{Binding Level, UpdateSourceTrigger=PropertyChanged}"/>
+                    <DataGridTemplateColumn Header="Level" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Level}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSubItem}" Value="True">
+                                                    <Setter Property="Text" Value=""/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ComboBox x:Name="LevelEditor"
+                                              ItemsSource="{StaticResource LevelOptions}"
+                                              SelectedItem="{Binding Level, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock x:Name="LevelBlank" Text=""/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSubItem}" Value="True">
+                                        <Setter TargetName="LevelEditor" Property="Visibility" Value="Collapsed"/>
+                                        <Setter TargetName="LevelBlank" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsSubItem}" Value="False">
+                                        <Setter TargetName="LevelEditor" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="LevelBlank" Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
 
                     <DataGridTemplateColumn Header="Room" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
@@ -366,9 +401,26 @@
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{StaticResource RoomTypeOptions}"
-                                          IsEditable="True"
-                                          Text="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}" />
+                                <Grid>
+                                    <ComboBox x:Name="RoomTypeEditor"
+                                              ItemsSource="{StaticResource RoomTypeOptions}"
+                                              IsEditable="True"
+                                              Text="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ComboBox x:Name="SubItemEditor"
+                                              ItemsSource="{Binding DataContext.SubItemOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              IsEditable="True"
+                                              Text="{Binding RoomType, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSubItem}" Value="True">
+                                        <Setter TargetName="RoomTypeEditor" Property="Visibility" Value="Collapsed"/>
+                                        <Setter TargetName="SubItemEditor" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsSubItem}" Value="False">
+                                        <Setter TargetName="RoomTypeEditor" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="SubItemEditor" Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
@@ -419,8 +471,13 @@
                     <TextBlock Text="{Binding SqFtCalcText}" />
                     <TextBlock Text="{Binding ServiceTypeStandardText}" />
                     <TextBlock Text="{Binding ServiceTypeTotalText}" />
-                    <TextBlock Text="{Binding WindowInsideText}" />
-                    <TextBlock Text="{Binding WindowOutsideText}" />
+                    <ItemsControl ItemsSource="{Binding SubItemTotals}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
 
