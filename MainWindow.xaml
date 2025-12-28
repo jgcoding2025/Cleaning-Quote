@@ -128,6 +128,7 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="New Quote" Width="100" Margin="0,0,8,0" Click="NewQuote_Click"/>
                 <Button Content="Load Quote" Width="100" Margin="0,0,8,0" Click="LoadQuote_Click"/>
+                <Button Content="Duplicate Quote" Width="120" Margin="0,0,8,0" Click="DuplicateQuote_Click"/>
                 <Button Content="Delete Quote" Width="100" Margin="8,0,0,0" Click="DeleteQuote_Click"/>
             </StackPanel>
 
