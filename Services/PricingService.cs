@@ -113,6 +113,38 @@ namespace Cleaning_Quote.Services
             rules.SizeSquareFootage["M"] = settings.SizeMediumSqFt;
             rules.SizeSquareFootage["L"] = settings.SizeLargeSqFt;
 
+            void AddRoomBaseHours(string roomType, int minutes)
+            {
+                if (minutes <= 0)
+                    return;
+
+                var baseHours = minutes / 60m;
+                var sizeSmall = settings.SizeSmallMultiplier <= 0m ? 1m : settings.SizeSmallMultiplier;
+                var sizeMedium = settings.SizeMediumMultiplier <= 0m ? 1m : settings.SizeMediumMultiplier;
+                var sizeLarge = settings.SizeLargeMultiplier <= 0m ? 1m : settings.SizeLargeMultiplier;
+
+                rules.BaseHours[roomType] = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["S"] = baseHours * sizeSmall,
+                    ["M"] = baseHours * sizeMedium,
+                    ["L"] = baseHours * sizeLarge
+                };
+            }
+
+            AddRoomBaseHours("Bathroom (Full)", settings.RoomBathroomFullMinutes);
+            AddRoomBaseHours("Bathroom (Half)", settings.RoomBathroomHalfMinutes);
+            AddRoomBaseHours("Bathroom (Master - 2 sinks, glass/stone shower)", settings.RoomBathroomMasterMinutes);
+            AddRoomBaseHours("Bedroom", settings.RoomBedroomMinutes);
+            AddRoomBaseHours("Bedroom (Master)", settings.RoomBedroomMasterMinutes);
+            AddRoomBaseHours("Dining Room", settings.RoomDiningRoomMinutes);
+            AddRoomBaseHours("Entry", settings.RoomEntryMinutes);
+            AddRoomBaseHours("Family Room", settings.RoomFamilyRoomMinutes);
+            AddRoomBaseHours("Hallway", settings.RoomHallwayMinutes);
+            AddRoomBaseHours("Kitchen", settings.RoomKitchenMinutes);
+            AddRoomBaseHours("Laundry", settings.RoomLaundryMinutes);
+            AddRoomBaseHours("Living Room", settings.RoomLivingRoomMinutes);
+            AddRoomBaseHours("Office", settings.RoomOfficeMinutes);
+
             rules.ComplexityMultiplier[1] = settings.Complexity1Multiplier;
             rules.ComplexityMultiplier[2] = settings.Complexity2Multiplier;
             rules.ComplexityMultiplier[3] = settings.Complexity3Multiplier;
@@ -290,17 +322,17 @@ namespace Cleaning_Quote.Services
 
         private decimal GetBaseHours(string roomType, string size)
         {
+            if (_rules.BaseHours.TryGetValue(roomType, out var bySize) &&
+                bySize.TryGetValue(size, out var hours))
+            {
+                return hours;
+            }
+
             if (_rules.SqFtPerLaborHour > 0m &&
                 _rules.SizeSquareFootage.TryGetValue(size, out var sqft) &&
                 sqft > 0m)
             {
                 return sqft / _rules.SqFtPerLaborHour;
-            }
-
-            if (_rules.BaseHours.TryGetValue(roomType, out var bySize) &&
-                bySize.TryGetValue(size, out var hours))
-            {
-                return hours;
             }
 
             throw new InvalidOperationException($"No base hours configured for room type '{roomType}' size '{size}'.");

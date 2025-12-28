@@ -117,6 +117,12 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     SizeSmallSqFt REAL NOT NULL,
     SizeMediumSqFt REAL NOT NULL,
     SizeLargeSqFt REAL NOT NULL,
+    SizeSmallMultiplier REAL NOT NULL DEFAULT 0.9,
+    SizeMediumMultiplier REAL NOT NULL DEFAULT 1.0,
+    SizeLargeMultiplier REAL NOT NULL DEFAULT 1.1,
+    SizeSmallDefinition TEXT NOT NULL DEFAULT 'Small',
+    SizeMediumDefinition TEXT NOT NULL DEFAULT 'Medium (average)',
+    SizeLargeDefinition TEXT NOT NULL DEFAULT 'Large',
     Complexity1Multiplier REAL NOT NULL,
     Complexity2Multiplier REAL NOT NULL,
     Complexity3Multiplier REAL NOT NULL,
@@ -153,6 +159,34 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     DefaultRoomComplexity INTEGER NOT NULL DEFAULT 1,
     DefaultSubItemType TEXT NOT NULL DEFAULT 'Ceiling Fan',
     DefaultWindowSize TEXT NOT NULL DEFAULT 'M',
+    RoomBathroomFullMinutes INTEGER NOT NULL DEFAULT 60,
+    RoomBathroomHalfMinutes INTEGER NOT NULL DEFAULT 20,
+    RoomBathroomMasterMinutes INTEGER NOT NULL DEFAULT 120,
+    RoomBedroomMinutes INTEGER NOT NULL DEFAULT 15,
+    RoomBedroomMasterMinutes INTEGER NOT NULL DEFAULT 20,
+    RoomDiningRoomMinutes INTEGER NOT NULL DEFAULT 20,
+    RoomEntryMinutes INTEGER NOT NULL DEFAULT 8,
+    RoomFamilyRoomMinutes INTEGER NOT NULL DEFAULT 20,
+    RoomHallwayMinutes INTEGER NOT NULL DEFAULT 6,
+    RoomKitchenMinutes INTEGER NOT NULL DEFAULT 60,
+    RoomLaundryMinutes INTEGER NOT NULL DEFAULT 10,
+    RoomLivingRoomMinutes INTEGER NOT NULL DEFAULT 20,
+    RoomOfficeMinutes INTEGER NOT NULL DEFAULT 15,
+    SubItemCeilingFanMinutes INTEGER NOT NULL DEFAULT 10,
+    SubItemFridgeMinutes INTEGER NOT NULL DEFAULT 60,
+    SubItemMirrorMinutes INTEGER NOT NULL DEFAULT 5,
+    SubItemOvenMinutes INTEGER NOT NULL DEFAULT 60,
+    SubItemShowerNoGlassMinutes INTEGER NOT NULL DEFAULT -20,
+    SubItemShowerNoStoneMinutes INTEGER NOT NULL DEFAULT -20,
+    SubItemSinkDiscountMinutes INTEGER NOT NULL DEFAULT -10,
+    SubItemStoveTopGasMinutes INTEGER NOT NULL DEFAULT 30,
+    SubItemTubMinutes INTEGER NOT NULL DEFAULT 25,
+    SubItemWindowInsideFirstMinutes INTEGER NOT NULL DEFAULT 5,
+    SubItemWindowOutsideFirstMinutes INTEGER NOT NULL DEFAULT 5,
+    SubItemWindowInsideSecondMinutes INTEGER NOT NULL DEFAULT 10,
+    SubItemWindowOutsideSecondMinutes INTEGER NOT NULL DEFAULT 10,
+    SubItemWindowTrackMinutes INTEGER NOT NULL DEFAULT 5,
+    SubItemWindowStandardMinutes INTEGER NOT NULL DEFAULT 10,
     UpdatedAt TEXT NOT NULL
 );
 ";
@@ -185,6 +219,12 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "ServiceTypePricing", "SizeSmallSqFt", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "SizeMediumSqFt", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "SizeLargeSqFt", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeSmallMultiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeMediumMultiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeLargeMultiplier", "REAL");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeSmallDefinition", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeMediumDefinition", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "SizeLargeDefinition", "TEXT");
             EnsureColumn(conn, "ServiceTypePricing", "Complexity1Multiplier", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "Complexity2Multiplier", "REAL");
             EnsureColumn(conn, "ServiceTypePricing", "Complexity3Multiplier", "REAL");
@@ -221,6 +261,34 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
             EnsureColumn(conn, "ServiceTypePricing", "DefaultRoomComplexity", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "DefaultSubItemType", "TEXT");
             EnsureColumn(conn, "ServiceTypePricing", "DefaultWindowSize", "TEXT");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBathroomFullMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBathroomHalfMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBathroomMasterMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBedroomMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomBedroomMasterMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomDiningRoomMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomEntryMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomFamilyRoomMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomHallwayMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomKitchenMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomLaundryMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomLivingRoomMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "RoomOfficeMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemCeilingFanMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemFridgeMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemMirrorMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemOvenMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemShowerNoGlassMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemShowerNoStoneMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemSinkDiscountMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemStoveTopGasMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemTubMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemWindowInsideFirstMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemWindowOutsideFirstMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemWindowInsideSecondMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemWindowOutsideSecondMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemWindowTrackMinutes", "INTEGER");
+            EnsureColumn(conn, "ServiceTypePricing", "SubItemWindowStandardMinutes", "INTEGER");
             EnsureColumn(conn, "ServiceTypePricing", "UpdatedAt", "TEXT");
         }
 
