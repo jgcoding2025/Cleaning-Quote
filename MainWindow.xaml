@@ -430,6 +430,10 @@
                         Width="Auto"
                         ItemsSource="{StaticResource RoomSizeOptions}"
                         SelectedItemBinding="{Binding Size, UpdateSourceTrigger=PropertyChanged}"/>
+                    <DataGridTextColumn Header="Est. Sq.Ft."
+                        Width="Auto"
+                        IsReadOnly="True"
+                        Binding="{Binding EstimatedSqFt, StringFormat=N0}"/>
 
                     <DataGridComboBoxColumn Header="Complexity"
                         Width="Auto"

@@ -13,6 +13,7 @@ namespace Cleaning_Quote.Models
         private int _sortOrder;
         private decimal _roomLaborHours;
         private decimal _roomAmount;
+        private decimal? _estimatedSqFt;
         private bool _includedInQuote = true;
 
         public string RoomType { get; set; } = "Bedroom";
@@ -68,6 +69,18 @@ namespace Cleaning_Quote.Models
                 if (_roomAmount == value)
                     return;
                 _roomAmount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public decimal? EstimatedSqFt
+        {
+            get => _estimatedSqFt;
+            set
+            {
+                if (_estimatedSqFt == value)
+                    return;
+                _estimatedSqFt = value;
                 OnPropertyChanged();
             }
         }
