@@ -83,16 +83,14 @@ INSERT INTO QuoteRooms
 (
     QuoteRoomId, QuoteId, ParentRoomId,
     RoomType, Size, Complexity,
-    Level, ItemCategory, IsSubItem, IncludedInQuote, WindowInside, WindowOutside, WindowSide,
-    FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
+    Level, ItemCategory, IsSubItem, IncludedInQuote,
     RoomLaborHours, RoomAmount, RoomNotes, SortOrder
 )
 VALUES
 (
     $QuoteRoomId, $QuoteId, $ParentRoomId,
     $RoomType, $Size, $Complexity,
-    $Level, $ItemCategory, $IsSubItem, $IncludedInQuote, $WindowInside, $WindowOutside, $WindowSide,
-    $Glass, $Pebble, $Fridge, $Oven,
+    $Level, $ItemCategory, $IsSubItem, $IncludedInQuote,
     $RoomHours, $RoomAmount, $RoomNotes, $SortOrder
 );
 ";
@@ -106,13 +104,6 @@ VALUES
                     roomCmd.Parameters.AddWithValue("$ItemCategory", room.ItemCategory ?? "");
                     roomCmd.Parameters.AddWithValue("$IsSubItem", room.IsSubItem ? 1 : 0);
                     roomCmd.Parameters.AddWithValue("$IncludedInQuote", room.IncludedInQuote ? 1 : 0);
-                    roomCmd.Parameters.AddWithValue("$WindowInside", room.WindowInside ? 1 : 0);
-                    roomCmd.Parameters.AddWithValue("$WindowOutside", room.WindowOutside ? 1 : 0);
-                    roomCmd.Parameters.AddWithValue("$WindowSide", room.WindowSideSelection ?? "");
-                    roomCmd.Parameters.AddWithValue("$Glass", room.FullGlassShowersCount);
-                    roomCmd.Parameters.AddWithValue("$Pebble", room.PebbleStoneFloorsCount);
-                    roomCmd.Parameters.AddWithValue("$Fridge", room.FridgeCount);
-                    roomCmd.Parameters.AddWithValue("$Oven", room.OvenCount);
                     roomCmd.Parameters.AddWithValue("$RoomHours", (double)room.RoomLaborHours);
                     roomCmd.Parameters.AddWithValue("$RoomAmount", (double)room.RoomAmount);
                     roomCmd.Parameters.AddWithValue("$RoomNotes", room.RoomNotes ?? "");
@@ -221,8 +212,7 @@ ORDER BY QuoteDate DESC, CreatedAt DESC;
             {
                 cmd.CommandText = @"
 SELECT QuoteRoomId, RoomType, Size, Complexity,
-       Level, ItemCategory, IsSubItem, ParentRoomId, IncludedInQuote, WindowInside, WindowOutside, WindowSide,
-       FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
+       Level, ItemCategory, IsSubItem, ParentRoomId, IncludedInQuote,
        RoomLaborHours, RoomAmount, RoomNotes, SortOrder
 FROM QuoteRooms
 WHERE QuoteId = $QuoteId
@@ -245,23 +235,11 @@ ORDER BY SortOrder ASC, rowid ASC;
                         IsSubItem = !r.IsDBNull(6) && r.GetInt32(6) == 1,
                         ParentRoomId = r.IsDBNull(7) ? (Guid?)null : Guid.Parse(r.GetString(7)),
                         IncludedInQuote = r.IsDBNull(8) || r.GetInt32(8) == 1,
-                        WindowInside = !r.IsDBNull(9) && r.GetInt32(9) == 1,
-                        WindowOutside = !r.IsDBNull(10) && r.GetInt32(10) == 1,
-                        FullGlassShowersCount = r.IsDBNull(12) ? 0 : r.GetInt32(12),
-                        PebbleStoneFloorsCount = r.IsDBNull(13) ? 0 : r.GetInt32(13),
-                        FridgeCount = r.IsDBNull(14) ? 0 : r.GetInt32(14),
-                        OvenCount = r.IsDBNull(15) ? 0 : r.GetInt32(15),
-                        RoomLaborHours = r.IsDBNull(16) ? 0m : Convert.ToDecimal(r.GetDouble(16)),
-                        RoomAmount = r.IsDBNull(17) ? 0m : Convert.ToDecimal(r.GetDouble(17)),
-                        RoomNotes = r.IsDBNull(18) ? "" : r.GetString(18),
-                        SortOrder = r.IsDBNull(19) ? 0 : r.GetInt32(19),
+                        RoomLaborHours = r.IsDBNull(9) ? 0m : Convert.ToDecimal(r.GetDouble(9)),
+                        RoomAmount = r.IsDBNull(10) ? 0m : Convert.ToDecimal(r.GetDouble(10)),
+                        RoomNotes = r.IsDBNull(11) ? "" : r.GetString(11),
+                        SortOrder = r.IsDBNull(12) ? 0 : r.GetInt32(12),
                     };
-
-                    var windowSide = r.IsDBNull(11) ? "" : r.GetString(11);
-                    if (string.IsNullOrWhiteSpace(windowSide))
-                        room.SyncWindowSideSelectionFromFlags();
-                    else
-                        room.WindowSideSelection = windowSide;
 
                     q.Rooms.Add(room);
                 }
@@ -385,16 +363,14 @@ INSERT INTO QuoteRooms
 (
     QuoteRoomId, QuoteId, ParentRoomId,
     RoomType, Size, Complexity,
-    Level, ItemCategory, IsSubItem, IncludedInQuote, WindowInside, WindowOutside, WindowSide,
-    FullGlassShowersCount, PebbleStoneFloorsCount, FridgeCount, OvenCount,
+    Level, ItemCategory, IsSubItem, IncludedInQuote,
     RoomLaborHours, RoomAmount, RoomNotes, SortOrder
 )
 VALUES
 (
     $QuoteRoomId, $QuoteId, $ParentRoomId,
     $RoomType, $Size, $Complexity,
-    $Level, $ItemCategory, $IsSubItem, $IncludedInQuote, $WindowInside, $WindowOutside, $WindowSide,
-    $Glass, $Pebble, $Fridge, $Oven,
+    $Level, $ItemCategory, $IsSubItem, $IncludedInQuote,
     $RoomHours, $RoomAmount, $RoomNotes, $SortOrder
 );
 ";
@@ -408,13 +384,6 @@ VALUES
                     ins.Parameters.AddWithValue("$ItemCategory", room.ItemCategory ?? "");
                     ins.Parameters.AddWithValue("$IsSubItem", room.IsSubItem ? 1 : 0);
                     ins.Parameters.AddWithValue("$IncludedInQuote", room.IncludedInQuote ? 1 : 0);
-                    ins.Parameters.AddWithValue("$WindowInside", room.WindowInside ? 1 : 0);
-                    ins.Parameters.AddWithValue("$WindowOutside", room.WindowOutside ? 1 : 0);
-                    ins.Parameters.AddWithValue("$WindowSide", room.WindowSideSelection ?? "");
-                    ins.Parameters.AddWithValue("$Glass", room.FullGlassShowersCount);
-                    ins.Parameters.AddWithValue("$Pebble", room.PebbleStoneFloorsCount);
-                    ins.Parameters.AddWithValue("$Fridge", room.FridgeCount);
-                    ins.Parameters.AddWithValue("$Oven", room.OvenCount);
                     ins.Parameters.AddWithValue("$RoomHours", (double)room.RoomLaborHours);
                     ins.Parameters.AddWithValue("$RoomAmount", (double)room.RoomAmount);
                     ins.Parameters.AddWithValue("$RoomNotes", room.RoomNotes ?? "");
