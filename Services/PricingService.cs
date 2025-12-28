@@ -288,8 +288,9 @@ namespace Cleaning_Quote.Services
 
             var category = item.ItemCategory ?? "";
             var label = item.RoomType ?? "";
+            var labelHours = 0m;
             var hasLabelHours = !string.IsNullOrWhiteSpace(label) &&
-                                _rules.SubItemHoursByLabel.TryGetValue(label, out var labelHours);
+                                _rules.SubItemHoursByLabel.TryGetValue(label, out labelHours);
 
             var baseHours = hasLabelHours
                 ? labelHours
