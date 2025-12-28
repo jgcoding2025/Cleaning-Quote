@@ -1317,13 +1317,7 @@ namespace Cleaning_Quote
                     continue;
                 }
 
-                var size = (room.Size ?? "").Trim().ToUpperInvariant();
-                var estimatedSqFt = size switch
-                {
-                    "S" => _currentServiceTypePricing.SizeSmallSqFt,
-                    "L" => _currentServiceTypePricing.SizeLargeSqFt,
-                    _ => _currentServiceTypePricing.SizeMediumSqFt
-                };
+                var estimatedSqFt = GetRoomTypeSqFtValue(room.RoomType, room.Size);
 
                 room.EstimatedSqFt = estimatedSqFt;
 
@@ -1384,16 +1378,55 @@ namespace Cleaning_Quote
                 if (!room.IncludedInQuote)
                     continue;
 
-                var size = (room.Size ?? "").Trim().ToUpperInvariant();
-                total += size switch
-                {
-                    "S" => _currentServiceTypePricing.SizeSmallSqFt,
-                    "L" => _currentServiceTypePricing.SizeLargeSqFt,
-                    _ => _currentServiceTypePricing.SizeMediumSqFt
-                };
+                total += GetRoomTypeSqFtValue(room.RoomType, room.Size);
             }
 
             return total;
+        }
+
+        private decimal GetRoomTypeSqFtValue(string roomType, string size)
+        {
+            if (_currentServiceTypePricing == null)
+                return 0m;
+
+            var normalizedRoomType = roomType?.Trim() ?? "";
+            var roomSqFt = normalizedRoomType switch
+            {
+                "Bathroom (Full)" => _currentServiceTypePricing.RoomBathroomFullSqFt,
+                "Bathroom (Half)" => _currentServiceTypePricing.RoomBathroomHalfSqFt,
+                "Bathroom (Master - 2 sinks, glass/stone shower)" => _currentServiceTypePricing.RoomBathroomMasterSqFt,
+                "Bedroom" => _currentServiceTypePricing.RoomBedroomSqFt,
+                "Bedroom (Master)" => _currentServiceTypePricing.RoomBedroomMasterSqFt,
+                "Dining Room" => _currentServiceTypePricing.RoomDiningRoomSqFt,
+                "Entry" => _currentServiceTypePricing.RoomEntrySqFt,
+                "Family Room" => _currentServiceTypePricing.RoomFamilyRoomSqFt,
+                "Hallway" => _currentServiceTypePricing.RoomHallwaySqFt,
+                "Kitchen" => _currentServiceTypePricing.RoomKitchenSqFt,
+                "Laundry" => _currentServiceTypePricing.RoomLaundrySqFt,
+                "Living Room" => _currentServiceTypePricing.RoomLivingRoomSqFt,
+                "Office" => _currentServiceTypePricing.RoomOfficeSqFt,
+                _ => 0
+            };
+
+            var normalizedSize = (size ?? "").Trim().ToUpperInvariant();
+            if (roomSqFt > 0)
+            {
+                var ratio = normalizedSize switch
+                {
+                    "S" => _currentServiceTypePricing.SizeSmallMultiplier,
+                    "L" => _currentServiceTypePricing.SizeLargeMultiplier,
+                    _ => _currentServiceTypePricing.SizeMediumMultiplier
+                };
+
+                return Math.Round(roomSqFt * ratio, MidpointRounding.AwayFromZero);
+            }
+
+            return normalizedSize switch
+            {
+                "S" => _currentServiceTypePricing.SizeSmallSqFt,
+                "L" => _currentServiceTypePricing.SizeLargeSqFt,
+                _ => _currentServiceTypePricing.SizeMediumSqFt
+            };
         }
 
         private void UpdateSubItemTotals()
