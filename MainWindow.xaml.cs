@@ -1408,6 +1408,55 @@ namespace Cleaning_Quote
                 _ => 0
             };
 
+            var normalizedSize = (size ?? "").Trim().ToUpperInvariant();
+            if (roomSqFt > 0)
+            {
+                var mediumSqFt = _currentServiceTypePricing.SizeMediumSqFt;
+                if (mediumSqFt <= 0)
+                    return roomSqFt;
+
+                var ratio = normalizedSize switch
+                {
+                    "S" => _currentServiceTypePricing.SizeSmallSqFt / mediumSqFt,
+                    "L" => _currentServiceTypePricing.SizeLargeSqFt / mediumSqFt,
+                    _ => 1m
+                };
+
+                return Math.Round(roomSqFt * ratio, MidpointRounding.AwayFromZero);
+            }
+
+            return normalizedSize switch
+            {
+                "S" => _currentServiceTypePricing.SizeSmallSqFt,
+                "L" => _currentServiceTypePricing.SizeLargeSqFt,
+                _ => _currentServiceTypePricing.SizeMediumSqFt
+            };
+        }
+
+        private decimal GetRoomTypeSqFt(string roomType, string size)
+        {
+            if (_currentServiceTypePricing == null)
+                return 0m;
+
+            var normalizedRoomType = roomType?.Trim() ?? "";
+            var roomSqFt = normalizedRoomType switch
+            {
+                "Bathroom (Full)" => _currentServiceTypePricing.RoomBathroomFullSqFt,
+                "Bathroom (Half)" => _currentServiceTypePricing.RoomBathroomHalfSqFt,
+                "Bathroom (Master - 2 sinks, glass/stone shower)" => _currentServiceTypePricing.RoomBathroomMasterSqFt,
+                "Bedroom" => _currentServiceTypePricing.RoomBedroomSqFt,
+                "Bedroom (Master)" => _currentServiceTypePricing.RoomBedroomMasterSqFt,
+                "Dining Room" => _currentServiceTypePricing.RoomDiningRoomSqFt,
+                "Entry" => _currentServiceTypePricing.RoomEntrySqFt,
+                "Family Room" => _currentServiceTypePricing.RoomFamilyRoomSqFt,
+                "Hallway" => _currentServiceTypePricing.RoomHallwaySqFt,
+                "Kitchen" => _currentServiceTypePricing.RoomKitchenSqFt,
+                "Laundry" => _currentServiceTypePricing.RoomLaundrySqFt,
+                "Living Room" => _currentServiceTypePricing.RoomLivingRoomSqFt,
+                "Office" => _currentServiceTypePricing.RoomOfficeSqFt,
+                _ => 0
+            };
+
             if (roomSqFt > 0)
                 return roomSqFt;
 
