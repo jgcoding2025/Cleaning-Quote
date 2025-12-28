@@ -7,37 +7,37 @@
   {
     "serviceType": "Initial Clean (Standard Clean Items Only)",
     "rate": 0.16,
-    "multiplier": 1.0
+    "multiplier": 1.33
   },
   {
     "serviceType": "Deep Clean (one-time)",
     "rate": 0.3,
-    "multiplier": 1.0
+    "multiplier": 2.5
   },
   {
     "serviceType": "Deep Clean (post initial clean)",
     "rate": 0.2,
-    "multiplier": 1.0
+    "multiplier": 1.67
   },
   {
     "serviceType": "Deep Clean (Semi-Annual)",
     "rate": 0.22,
-    "multiplier": 1.0
+    "multiplier": 1.83
   },
   {
     "serviceType": "Deep Clean (Annual)",
     "rate": 0.22,
-    "multiplier": 1.0
+    "multiplier": 1.83
   },
   {
     "serviceType": "Light Clean (dusting and floors)",
     "rate": 0.06,
-    "multiplier": 1.0
+    "multiplier": 0.5
   },
   {
     "serviceType": "Move In/Out Clean",
     "rate": 0.32,
-    "multiplier": 1.0
+    "multiplier": 2.67
   },
   {
     "serviceType": "Pressure Washing",

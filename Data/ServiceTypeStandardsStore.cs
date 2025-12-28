@@ -100,14 +100,14 @@ namespace Cleaning_Quote.Data
         {
             return new List<ServiceTypeStandard>
             {
-                new ServiceTypeStandard { ServiceType = "Standard Clean", Rate = 0.12m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Initial Clean (Standard Clean Items Only)", Rate = 0.16m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Deep Clean (one-time)", Rate = 0.30m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Deep Clean (post initial clean)", Rate = 0.20m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Deep Clean (Semi-Annual)", Rate = 0.22m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Deep Clean (Annual)", Rate = 0.22m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Light Clean (dusting and floors)", Rate = 0.06m, Multiplier = 1m },
-                new ServiceTypeStandard { ServiceType = "Move In/Out Clean", Rate = 0.32m, Multiplier = 1m },
+                new ServiceTypeStandard { ServiceType = "Standard Clean", Rate = 0.12m, Multiplier = 1.00m },
+                new ServiceTypeStandard { ServiceType = "Initial Clean (Standard Clean Items Only)", Rate = 0.16m, Multiplier = 1.33m },
+                new ServiceTypeStandard { ServiceType = "Deep Clean (one-time)", Rate = 0.30m, Multiplier = 2.50m },
+                new ServiceTypeStandard { ServiceType = "Deep Clean (post initial clean)", Rate = 0.20m, Multiplier = 1.67m },
+                new ServiceTypeStandard { ServiceType = "Deep Clean (Semi-Annual)", Rate = 0.22m, Multiplier = 1.83m },
+                new ServiceTypeStandard { ServiceType = "Deep Clean (Annual)", Rate = 0.22m, Multiplier = 1.83m },
+                new ServiceTypeStandard { ServiceType = "Light Clean (dusting and floors)", Rate = 0.06m, Multiplier = 0.50m },
+                new ServiceTypeStandard { ServiceType = "Move In/Out Clean", Rate = 0.32m, Multiplier = 2.67m },
                 new ServiceTypeStandard { ServiceType = "Pressure Washing", Rate = 0m, Multiplier = 1m },
                 new ServiceTypeStandard { ServiceType = "Organizing", Rate = 0m, Multiplier = 1m }
             };
