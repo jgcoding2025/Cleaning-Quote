@@ -677,7 +677,7 @@ namespace Cleaning_Quote
                 return "Inside";
             if (includeOutside)
                 return "Outside";
-            return "";
+            return "Excluded";
         }
 
         private int GetSubItemDefaultComplexity(string category)
