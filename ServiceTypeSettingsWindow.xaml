@@ -284,6 +284,423 @@
                     </StackPanel>
                 </GroupBox>
 
+                <GroupBox Header="Standards Reference" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Default Service Type Standards" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="240"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Service Type" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Size" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="$/Sq.Ft." FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Complexity" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="4" Text="Multiplier" FontWeight="SemiBold"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Standard Clean"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="$0.12"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="1.00"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Initial Clean (Standard Clean Items Only)"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="$0.16"/>
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="2" Grid.Column="4" Text="1.33"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Deep Clean (one-time)"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" Text="$0.30"/>
+                            <TextBlock Grid.Row="3" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="3" Grid.Column="4" Text="2.50"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Deep Clean (post initial clean)"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="4" Grid.Column="2" Text="$0.20"/>
+                            <TextBlock Grid.Row="4" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="4" Grid.Column="4" Text="1.67"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Deep Clean (Semi-Annual)"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="5" Grid.Column="2" Text="$0.22"/>
+                            <TextBlock Grid.Row="5" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="5" Grid.Column="4" Text="1.83"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Deep Clean (Annual)"/>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="6" Grid.Column="2" Text="$0.22"/>
+                            <TextBlock Grid.Row="6" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="6" Grid.Column="4" Text="1.83"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Light Clean (dusting and floors)"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="7" Grid.Column="2" Text="$0.06"/>
+                            <TextBlock Grid.Row="7" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="7" Grid.Column="4" Text="0.50"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Move In/Out Clean"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="8" Grid.Column="2" Text="$0.32"/>
+                            <TextBlock Grid.Row="8" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="8" Grid.Column="4" Text="2.67"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Pressure Washing"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="9" Grid.Column="2" Text="NA"/>
+                            <TextBlock Grid.Row="9" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="9" Grid.Column="4" Text="NA"/>
+
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Organizing"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="10" Grid.Column="2" Text="NA"/>
+                            <TextBlock Grid.Row="10" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="10" Grid.Column="4" Text="NA"/>
+                        </Grid>
+
+                        <WrapPanel Margin="0,0,0,12">
+                            <StackPanel Width="280" Margin="0,0,10,0">
+                                <TextBlock Text="Complexity" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Level" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Multiplier" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Definition" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Easy"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="0.75"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Light use with minimal buildup"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Medium"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="1.00"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Moderate use with visible buildup (Average)"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Hard"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="1.25"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Heavy use with significant buildup"/>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Width="240">
+                                <TextBlock Text="Sizes" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Size" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Multiplier" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Definition" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="S"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="0.9"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Small"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="M"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="1"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Medium (average)"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="L"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="1.1"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Large"/>
+                                </Grid>
+                            </StackPanel>
+                        </WrapPanel>
+
+                        <TextBlock Text="Default Room Type Standards" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="320"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Room Type" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Size" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Time (min)" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Complexity" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="4" Text="Frequency" FontWeight="SemiBold"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Bathroom (Full)"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="60"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Bathroom (Half)"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="20"/>
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="2" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Bathroom (Master - 2 sinks, glass/stone shower)"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" Text="120"/>
+                            <TextBlock Grid.Row="3" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="3" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Bedroom"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="4" Grid.Column="2" Text="15"/>
+                            <TextBlock Grid.Row="4" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="4" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Bedroom (Master)"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="5" Grid.Column="2" Text="20"/>
+                            <TextBlock Grid.Row="5" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="5" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Dining Room"/>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="6" Grid.Column="2" Text="20"/>
+                            <TextBlock Grid.Row="6" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="6" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Entry"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="7" Grid.Column="2" Text="8"/>
+                            <TextBlock Grid.Row="7" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="7" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Family Room"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="8" Grid.Column="2" Text="20"/>
+                            <TextBlock Grid.Row="8" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="8" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Hallway"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="9" Grid.Column="2" Text="6"/>
+                            <TextBlock Grid.Row="9" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="9" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Kitchen"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="10" Grid.Column="2" Text="60"/>
+                            <TextBlock Grid.Row="10" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="10" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="Laundry"/>
+                            <TextBlock Grid.Row="11" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="11" Grid.Column="2" Text="10"/>
+                            <TextBlock Grid.Row="11" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="11" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Living Room"/>
+                            <TextBlock Grid.Row="12" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="12" Grid.Column="2" Text="20"/>
+                            <TextBlock Grid.Row="12" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="12" Grid.Column="4" Text="Bi-weekly"/>
+
+                            <TextBlock Grid.Row="13" Grid.Column="0" Text="Office"/>
+                            <TextBlock Grid.Row="13" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="13" Grid.Column="2" Text="15"/>
+                            <TextBlock Grid.Row="13" Grid.Column="3" Text="Standard"/>
+                            <TextBlock Grid.Row="13" Grid.Column="4" Text="Bi-weekly"/>
+                        </Grid>
+
+                        <WrapPanel Margin="0,0,0,12">
+                            <StackPanel Width="320" Margin="0,0,10,0">
+                                <TextBlock Text="Frequency Standards for Discounts" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Service Type" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Multiplier" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Frequency" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Standard Clean"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="0.90"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Weekly"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Standard Clean"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="1.00"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Bi-weekly"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Standard Clean"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="1.25"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Every 4 weeks"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Deep Clean"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="0.75"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="Semi-Annual"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Deep Clean"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="1.00"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="2" Text="Annual"/>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Width="320">
+                                <TextBlock Text="Service Tiers Based on Client Preferences and Budget" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Tier" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Multiplier" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Description" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Bronze (Basic)"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="0.75"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="A quick, affordable option for light upkeep. Ideal for tidy homes needing just a quick refresh." TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Silver (Standard)"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="1"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Great for regular cleaning and upkeep. Balances cost and cleanliness with more time spent than Bronze." TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Gold (Premium)"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="1.5"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Perfect for deep cleaning, first-time cleans, or clients who want every detail attended to. Expect a spotless shine and the highest attention to detail." TextWrapping="Wrap"/>
+                                </Grid>
+                            </StackPanel>
+                        </WrapPanel>
+
+                        <TextBlock Text="Default Sub-Item Standards" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="220"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Sub-Item" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Size" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Time (min)" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Complexity" FontWeight="SemiBold"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Ceiling Fan"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="10"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Fridge"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="60"/>
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Mirror +1"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" Text="5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Oven"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="4" Grid.Column="2" Text="60"/>
+                            <TextBlock Grid.Row="4" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Shower: Discount (no glass)"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="5" Grid.Column="2" Text="-20"/>
+                            <TextBlock Grid.Row="5" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Shower: Discount (no stone/tile)"/>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="6" Grid.Column="2" Text="-20"/>
+                            <TextBlock Grid.Row="6" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Sink: Discount 1"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="7" Grid.Column="2" Text="-10"/>
+                            <TextBlock Grid.Row="7" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Stove Top (Gas)"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="8" Grid.Column="2" Text="30"/>
+                            <TextBlock Grid.Row="8" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Tub / Jacuzzi Tub"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="9" Grid.Column="2" Text="25"/>
+                            <TextBlock Grid.Row="9" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Window (1 pane)"/>
+                            <TextBlock Grid.Row="10" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="10" Grid.Column="2" Text="5"/>
+                            <TextBlock Grid.Row="10" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="Window Tract"/>
+                            <TextBlock Grid.Row="11" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="11" Grid.Column="2" Text="5"/>
+                            <TextBlock Grid.Row="11" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Window: Standard (2 panes)"/>
+                            <TextBlock Grid.Row="12" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="12" Grid.Column="2" Text="10"/>
+                            <TextBlock Grid.Row="12" Grid.Column="3" Text="Standard"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Reset to Default" Width="130" Margin="0,0,8,0" Click="ResetToDefault_Click" />
                     <Button Content="Save" Width="90" Margin="0,0,8,0" Click="Save_Click" />
