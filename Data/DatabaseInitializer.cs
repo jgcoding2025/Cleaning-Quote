@@ -339,7 +339,7 @@ INSERT INTO QuoteRooms_New
  RoomType, Size, Complexity, Level, ItemCategory, IsSubItem, IncludedInQuote, SortOrder,
  RoomLaborHours, RoomAmount, RoomNotes)
 SELECT QuoteRoomId, QuoteId, ParentRoomId,
-       RoomType, Size, Complexity, Level, ItemCategory, IsSubItem, IncludedInQuote, SortOrder,
+       RoomType, Size, Complexity, Level, ItemCategory, IsSubItem, IncludedInQuote, COALESCE(SortOrder, 0),
        RoomLaborHours, RoomAmount, RoomNotes
 FROM QuoteRooms;
 ";
