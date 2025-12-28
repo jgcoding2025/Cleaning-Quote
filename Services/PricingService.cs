@@ -48,9 +48,9 @@ namespace Cleaning_Quote.Services
             var r = new PricingRules();
 
             // Typical starting multipliers (edit as you like)
-            r.ComplexityMultiplier[1] = 1.00m;
-            r.ComplexityMultiplier[2] = 1.25m;
-            r.ComplexityMultiplier[3] = 1.50m;
+            r.ComplexityMultiplier[1] = 0.75m;
+            r.ComplexityMultiplier[2] = 1.00m;
+            r.ComplexityMultiplier[3] = 1.25m;
 
             // Typical starting square-foot defaults (edit as needed)
             r.SqFtPerLaborHour = 500m;

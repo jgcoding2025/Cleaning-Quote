@@ -840,9 +840,7 @@ namespace Cleaning_Quote
             _currentQuote.CreditCard = CreditCardCheck.IsChecked == true;
             _currentQuote.PetsCount = pets;
             _currentQuote.ServiceType = ServiceTypeBox.SelectedItem as string ?? "";
-            _currentQuote.ServiceFrequency = ServiceFrequencyBox.SelectedItem is ComboBoxItem frequencyItem
-                ? frequencyItem.Content?.ToString() ?? ""
-                : "";
+            _currentQuote.ServiceFrequency = GetSelectedFrequency();
             _currentQuote.LastProfessionalCleaning = LastProfessionalCleaningBox.SelectedItem is ComboBoxItem cleaningItem
                 ? cleaningItem.Content?.ToString() ?? ""
                 : "";
@@ -1284,7 +1282,7 @@ namespace Cleaning_Quote
             DefaultRoomTypeBox.SelectedItem = _currentServiceTypePricing.DefaultRoomType;
             DefaultRoomLevelBox.SelectedItem = _currentServiceTypePricing.DefaultRoomLevel;
             DefaultRoomSizeBox.SelectedItem = _currentServiceTypePricing.DefaultRoomSize;
-            DefaultRoomComplexityBox.SelectedItem = _currentServiceTypePricing.DefaultRoomComplexity;
+            DefaultRoomComplexityBox.SelectedValue = _currentServiceTypePricing.DefaultRoomComplexity;
             SetSelectedCombo(SubItemTypeBox, _currentServiceTypePricing.DefaultSubItemType);
             ApplyServiceTypePricingRules();
             RecalculateTotals();
@@ -1361,9 +1359,12 @@ namespace Cleaning_Quote
                 string.Equals(item.ServiceType, serviceType, StringComparison.OrdinalIgnoreCase));
             var rate = standard?.Rate ?? 0m;
             var multiplier = standard?.Multiplier ?? 1m;
-            var serviceTypeTotal = effectiveSqFt * rate * multiplier;
+            var frequency = GetSelectedFrequency();
+            var frequencyMultiplier = GetFrequencyMultiplier(serviceType, frequency);
+            var serviceTypeTotal = effectiveSqFt * rate * multiplier * frequencyMultiplier;
 
-            ServiceTypeStandardText = $"{serviceType} ({rate:0.##}/sq ft x {multiplier:0.##})";
+            var frequencyText = string.IsNullOrWhiteSpace(frequency) ? "" : $" x {frequencyMultiplier:0.##} {frequency}";
+            ServiceTypeStandardText = $"{serviceType} ({rate:0.##}/sq ft x {multiplier:0.##}{frequencyText})";
             ServiceTypeTotalText = $"Estimated total: {serviceTypeTotal:C}";
 
             MinimumWarningText = "";
@@ -1525,14 +1526,8 @@ namespace Cleaning_Quote
 
         private int GetDefaultRoomComplexity()
         {
-            if (DefaultRoomComplexityBox.SelectedItem is int complexity)
+            if (DefaultRoomComplexityBox.SelectedValue is int complexity)
                 return complexity;
-
-            if (DefaultRoomComplexityBox.SelectedItem is string value &&
-                int.TryParse(value, out var parsed))
-            {
-                return parsed;
-            }
 
             return 1;
         }
@@ -1548,7 +1543,9 @@ namespace Cleaning_Quote
 
         private void ApplyServiceTypePricingRules()
         {
-            var multiplier = GetServiceTypeMultiplier(GetSelectedServiceType());
+            var serviceType = GetSelectedServiceType();
+            var frequency = GetSelectedFrequency();
+            var multiplier = GetServiceTypeMultiplier(serviceType) * GetFrequencyMultiplier(serviceType, frequency);
             _pricing = new PricingService(PricingRules.FromServiceTypePricing(_currentServiceTypePricing, multiplier));
         }
 
@@ -1566,6 +1563,42 @@ namespace Cleaning_Quote
                 string.Equals(item.ServiceType, serviceType, StringComparison.OrdinalIgnoreCase));
             var multiplier = standard?.Multiplier ?? 1m;
             return multiplier <= 0m ? 1m : multiplier;
+        }
+
+        private string GetSelectedFrequency()
+        {
+            return ServiceFrequencyBox.SelectedItem is ComboBoxItem frequencyItem
+                ? frequencyItem.Content?.ToString() ?? ""
+                : "";
+        }
+
+        private static decimal GetFrequencyMultiplier(string serviceType, string frequency)
+        {
+            if (string.IsNullOrWhiteSpace(serviceType) || string.IsNullOrWhiteSpace(frequency))
+                return 1m;
+
+            if (serviceType.Contains("Standard Clean", StringComparison.OrdinalIgnoreCase))
+            {
+                return frequency switch
+                {
+                    "Weekly" => 0.90m,
+                    "Bi-weekly" => 1.00m,
+                    "Every 4 weeks" => 1.25m,
+                    _ => 1m
+                };
+            }
+
+            if (serviceType.Contains("Deep Clean", StringComparison.OrdinalIgnoreCase))
+            {
+                return frequency switch
+                {
+                    "Semi-Annual" => 0.75m,
+                    "Annual" => 1.00m,
+                    _ => 1m
+                };
+            }
+
+            return 1m;
         }
 
         private void ShowQuotePanel()
