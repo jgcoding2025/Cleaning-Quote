@@ -602,10 +602,10 @@ namespace Cleaning_Quote
                     RoomType = subItemLabel,
                     ItemCategory = category,
                     IsSubItem = true,
-                    IncludedInQuote = true,
+                    IncludedInQuote = false,
                     Size = category == "Window" ? size : "M",
                     Level = "",
-                    Complexity = 1
+                    Complexity = 2
                 };
 
                 InsertSubItemAfterParent(parentRoom, subItem);
@@ -919,6 +919,31 @@ namespace Cleaning_Quote
                 return;
             }
 
+            ApplyQuoteToForm(q, $"Loaded quote from {q.QuoteDate:MM/dd/yyyy}");
+        }
+
+        private void DuplicateQuote_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedQuoteListItem == null)
+            {
+                MessageBox.Show("Select a quote to duplicate.");
+                return;
+            }
+
+            var q = _quoteRepo.GetById(_selectedQuoteListItem.QuoteId);
+            if (q == null)
+            {
+                MessageBox.Show("Could not load that quote.");
+                LoadQuotesForSelectedClient();
+                return;
+            }
+
+            var duplicate = CreateDuplicateQuote(q);
+            ApplyQuoteToForm(duplicate, "Duplicated quote ready.");
+        }
+
+        private void ApplyQuoteToForm(Quote q, string statusText)
+        {
             _isLoadingQuote = true;
             try
             {
@@ -988,7 +1013,7 @@ namespace Cleaning_Quote
                 UpdateEstimatedSqFt();
                 UpdateQuoteFormCalculator();
 
-                StatusText.Text = $"Loaded quote from {q.QuoteDate:MM/dd/yyyy}";
+                StatusText.Text = statusText;
             }
             finally
             {
@@ -996,6 +1021,106 @@ namespace Cleaning_Quote
             }
 
             RecalculateTotals();
+        }
+
+        private Quote CreateDuplicateQuote(Quote source)
+        {
+            var duplicateName = BuildDuplicateQuoteName(source.QuoteName);
+            var duplicate = new Quote
+            {
+                QuoteId = Guid.NewGuid(),
+                ClientId = source.ClientId,
+                QuoteDate = DateTime.Today,
+                QuoteName = duplicateName,
+                ServiceType = source.ServiceType,
+                ServiceFrequency = source.ServiceFrequency,
+                LastProfessionalCleaning = source.LastProfessionalCleaning,
+                TotalSqFt = source.TotalSqFt,
+                UseTotalSqFtOverride = source.UseTotalSqFtOverride,
+                EntryInstructions = source.EntryInstructions,
+                PaymentMethod = source.PaymentMethod,
+                PaymentMethodOther = source.PaymentMethodOther,
+                FeedbackDiscussed = source.FeedbackDiscussed,
+                LaborRate = source.LaborRate,
+                TaxRate = source.TaxRate,
+                CreditCardFeeRate = source.CreditCardFeeRate,
+                CreditCard = source.CreditCard,
+                PetsCount = source.PetsCount,
+                HouseholdSize = source.HouseholdSize,
+                SmokingInside = source.SmokingInside,
+                Notes = source.Notes,
+                Status = "Draft"
+            };
+
+            var roomIdMap = new Dictionary<Guid, Guid>();
+            foreach (var room in source.Rooms)
+            {
+                roomIdMap[room.QuoteRoomId] = Guid.NewGuid();
+            }
+
+            foreach (var room in source.Rooms)
+            {
+                var newRoomId = roomIdMap[room.QuoteRoomId];
+                Guid? parentRoomId = null;
+                if (room.ParentRoomId.HasValue && roomIdMap.TryGetValue(room.ParentRoomId.Value, out var newParentId))
+                    parentRoomId = newParentId;
+
+                duplicate.Rooms.Add(new QuoteRoom
+                {
+                    QuoteRoomId = newRoomId,
+                    QuoteId = duplicate.QuoteId,
+                    ParentRoomId = parentRoomId,
+                    RoomType = room.RoomType,
+                    Size = room.Size,
+                    Complexity = room.Complexity,
+                    Level = room.Level,
+                    ItemCategory = room.ItemCategory,
+                    IsSubItem = room.IsSubItem,
+                    IncludedInQuote = room.IncludedInQuote,
+                    SortOrder = room.SortOrder,
+                    RoomNotes = room.RoomNotes
+                });
+            }
+
+            if (source.Pets != null)
+            {
+                foreach (var pet in source.Pets)
+                {
+                    duplicate.Pets.Add(new QuotePet
+                    {
+                        QuotePetId = Guid.NewGuid(),
+                        QuoteId = duplicate.QuoteId,
+                        Name = pet.Name,
+                        Type = pet.Type,
+                        Notes = pet.Notes
+                    });
+                }
+            }
+
+            if (source.Occupants != null)
+            {
+                foreach (var occupant in source.Occupants)
+                {
+                    duplicate.Occupants.Add(new QuoteOccupant
+                    {
+                        QuoteOccupantId = Guid.NewGuid(),
+                        QuoteId = duplicate.QuoteId,
+                        Name = occupant.Name,
+                        Relationship = occupant.Relationship,
+                        Notes = occupant.Notes
+                    });
+                }
+            }
+
+            return duplicate;
+        }
+
+        private string BuildDuplicateQuoteName(string originalName)
+        {
+            if (string.IsNullOrWhiteSpace(originalName))
+                return "";
+
+            return $"{originalName} (Copy)";
         }
 
 
