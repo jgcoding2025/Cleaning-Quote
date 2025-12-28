@@ -133,6 +133,32 @@ namespace Cleaning_Quote
                 pricing.RoomLivingRoomMinutes = roomLivingRoomMinutes;
             if (TryParseScaledMinutes(RoomOfficeMinutesBox.Text, multiplier, out var roomOfficeMinutes))
                 pricing.RoomOfficeMinutes = roomOfficeMinutes;
+            if (int.TryParse(RoomBathroomFullSqFtBox.Text, out var roomBathroomFullSqFt))
+                pricing.RoomBathroomFullSqFt = roomBathroomFullSqFt;
+            if (int.TryParse(RoomBathroomHalfSqFtBox.Text, out var roomBathroomHalfSqFt))
+                pricing.RoomBathroomHalfSqFt = roomBathroomHalfSqFt;
+            if (int.TryParse(RoomBathroomMasterSqFtBox.Text, out var roomBathroomMasterSqFt))
+                pricing.RoomBathroomMasterSqFt = roomBathroomMasterSqFt;
+            if (int.TryParse(RoomBedroomSqFtBox.Text, out var roomBedroomSqFt))
+                pricing.RoomBedroomSqFt = roomBedroomSqFt;
+            if (int.TryParse(RoomBedroomMasterSqFtBox.Text, out var roomBedroomMasterSqFt))
+                pricing.RoomBedroomMasterSqFt = roomBedroomMasterSqFt;
+            if (int.TryParse(RoomDiningRoomSqFtBox.Text, out var roomDiningRoomSqFt))
+                pricing.RoomDiningRoomSqFt = roomDiningRoomSqFt;
+            if (int.TryParse(RoomEntrySqFtBox.Text, out var roomEntrySqFt))
+                pricing.RoomEntrySqFt = roomEntrySqFt;
+            if (int.TryParse(RoomFamilyRoomSqFtBox.Text, out var roomFamilyRoomSqFt))
+                pricing.RoomFamilyRoomSqFt = roomFamilyRoomSqFt;
+            if (int.TryParse(RoomHallwaySqFtBox.Text, out var roomHallwaySqFt))
+                pricing.RoomHallwaySqFt = roomHallwaySqFt;
+            if (int.TryParse(RoomKitchenSqFtBox.Text, out var roomKitchenSqFt))
+                pricing.RoomKitchenSqFt = roomKitchenSqFt;
+            if (int.TryParse(RoomLaundrySqFtBox.Text, out var roomLaundrySqFt))
+                pricing.RoomLaundrySqFt = roomLaundrySqFt;
+            if (int.TryParse(RoomLivingRoomSqFtBox.Text, out var roomLivingRoomSqFt))
+                pricing.RoomLivingRoomSqFt = roomLivingRoomSqFt;
+            if (int.TryParse(RoomOfficeSqFtBox.Text, out var roomOfficeSqFt))
+                pricing.RoomOfficeSqFt = roomOfficeSqFt;
             if (TryParseScaledMinutes(SubItemCeilingFanMinutesBox.Text, multiplier, out var subItemCeilingFanMinutes))
                 pricing.SubItemCeilingFanMinutes = subItemCeilingFanMinutes;
             if (TryParseScaledMinutes(SubItemFridgeMinutesBox.Text, multiplier, out var subItemFridgeMinutes))
@@ -202,6 +228,19 @@ namespace Cleaning_Quote
             RoomLaundryMinutesBox.Text = FormatScaledMinutes(pricing.RoomLaundryMinutes, multiplier);
             RoomLivingRoomMinutesBox.Text = FormatScaledMinutes(pricing.RoomLivingRoomMinutes, multiplier);
             RoomOfficeMinutesBox.Text = FormatScaledMinutes(pricing.RoomOfficeMinutes, multiplier);
+            RoomBathroomFullSqFtBox.Text = pricing.RoomBathroomFullSqFt.ToString();
+            RoomBathroomHalfSqFtBox.Text = pricing.RoomBathroomHalfSqFt.ToString();
+            RoomBathroomMasterSqFtBox.Text = pricing.RoomBathroomMasterSqFt.ToString();
+            RoomBedroomSqFtBox.Text = pricing.RoomBedroomSqFt.ToString();
+            RoomBedroomMasterSqFtBox.Text = pricing.RoomBedroomMasterSqFt.ToString();
+            RoomDiningRoomSqFtBox.Text = pricing.RoomDiningRoomSqFt.ToString();
+            RoomEntrySqFtBox.Text = pricing.RoomEntrySqFt.ToString();
+            RoomFamilyRoomSqFtBox.Text = pricing.RoomFamilyRoomSqFt.ToString();
+            RoomHallwaySqFtBox.Text = pricing.RoomHallwaySqFt.ToString();
+            RoomKitchenSqFtBox.Text = pricing.RoomKitchenSqFt.ToString();
+            RoomLaundrySqFtBox.Text = pricing.RoomLaundrySqFt.ToString();
+            RoomLivingRoomSqFtBox.Text = pricing.RoomLivingRoomSqFt.ToString();
+            RoomOfficeSqFtBox.Text = pricing.RoomOfficeSqFt.ToString();
             SubItemCeilingFanMinutesBox.Text = FormatScaledMinutes(pricing.SubItemCeilingFanMinutes, multiplier);
             SubItemFridgeMinutesBox.Text = FormatScaledMinutes(pricing.SubItemFridgeMinutes, multiplier);
             SubItemMirrorMinutesBox.Text = FormatScaledMinutes(pricing.SubItemMirrorMinutes, multiplier);
