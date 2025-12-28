@@ -29,19 +29,30 @@ SELECT ServiceType, SqFtPerLaborHour, SizeSmallSqFt, SizeMediumSqFt, SizeLargeSq
        MaintenanceRate, MaintenanceMinimum,
        OneTimeDeepCleanRate, OneTimeDeepCleanMinimum,
        WindowInsideRate, WindowOutsideRate,
+       DefaultRoomType, DefaultRoomLevel, DefaultRoomSize, DefaultRoomComplexity,
+       DefaultSubItemType, DefaultWindowSize,
        UpdatedAt
 FROM ServiceTypePricing
 WHERE ServiceType = $ServiceType;
 ";
             cmd.Parameters.AddWithValue("$ServiceType", normalized);
 
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            ServiceTypePricing pricing = null;
+            var needsUpdate = false;
+
+            using (var reader = cmd.ExecuteReader())
             {
-                var defaults = ServiceTypePricing.Default(normalized);
-                var windowInsideRate = GetOptionalDecimal(reader, 33, defaults.WindowInsideRate);
-                var windowOutsideRate = GetOptionalDecimal(reader, 34, defaults.WindowOutsideRate);
-                var needsUpdate = false;
+                if (reader.Read())
+                {
+                    var defaults = ServiceTypePricing.Default(normalized);
+                    var windowInsideRate = GetOptionalDecimal(reader, 33, defaults.WindowInsideRate);
+                    var windowOutsideRate = GetOptionalDecimal(reader, 34, defaults.WindowOutsideRate);
+                    var defaultRoomType = GetOptionalString(reader, 35);
+                    var defaultRoomLevel = GetOptionalString(reader, 36);
+                    var defaultRoomSize = GetOptionalString(reader, 37);
+                    var defaultRoomComplexity = GetOptionalInt(reader, 38, defaults.DefaultRoomComplexity);
+                    var defaultSubItemType = GetOptionalString(reader, 39);
+                    var defaultWindowSize = GetOptionalString(reader, 40);
 
                 if (windowInsideRate <= 0m)
                 {
@@ -55,46 +66,92 @@ WHERE ServiceType = $ServiceType;
                     needsUpdate = true;
                 }
 
-                var pricing = new ServiceTypePricing
+                if (string.IsNullOrWhiteSpace(defaultRoomType))
                 {
-                    ServiceType = reader.GetString(0),
-                    SqFtPerLaborHour = Convert.ToDecimal(reader.GetDouble(1)),
-                    SizeSmallSqFt = Convert.ToDecimal(reader.GetDouble(2)),
-                    SizeMediumSqFt = Convert.ToDecimal(reader.GetDouble(3)),
-                    SizeLargeSqFt = Convert.ToDecimal(reader.GetDouble(4)),
-                    Complexity1Multiplier = Convert.ToDecimal(reader.GetDouble(5)),
-                    Complexity2Multiplier = Convert.ToDecimal(reader.GetDouble(6)),
-                    Complexity3Multiplier = Convert.ToDecimal(reader.GetDouble(7)),
-                    Complexity1Definition = GetOptionalString(reader, 8),
-                    Complexity2Definition = GetOptionalString(reader, 9),
-                    Complexity3Definition = GetOptionalString(reader, 10),
-                    FullGlassShowerHoursEach = Convert.ToDecimal(reader.GetDouble(11)),
-                    FullGlassShowerComplexity = GetOptionalInt(reader, 12, defaults.FullGlassShowerComplexity),
-                    PebbleStoneFloorHoursEach = Convert.ToDecimal(reader.GetDouble(13)),
-                    PebbleStoneFloorComplexity = GetOptionalInt(reader, 14, defaults.PebbleStoneFloorComplexity),
-                    FridgeHoursEach = Convert.ToDecimal(reader.GetDouble(15)),
-                    FridgeComplexity = GetOptionalInt(reader, 16, defaults.FridgeComplexity),
-                    OvenHoursEach = Convert.ToDecimal(reader.GetDouble(17)),
-                    OvenComplexity = GetOptionalInt(reader, 18, defaults.OvenComplexity),
-                    CeilingFanHoursEach = GetOptionalDecimal(reader, 19, defaults.CeilingFanHoursEach),
-                    CeilingFanComplexity = GetOptionalInt(reader, 20, defaults.CeilingFanComplexity),
-                    WindowSmallHoursEach = GetOptionalDecimal(reader, 21, defaults.WindowSmallHoursEach),
-                    WindowMediumHoursEach = GetOptionalDecimal(reader, 22, defaults.WindowMediumHoursEach),
-                    WindowLargeHoursEach = GetOptionalDecimal(reader, 23, defaults.WindowLargeHoursEach),
-                    WindowComplexity = GetOptionalInt(reader, 24, defaults.WindowComplexity),
-                    FirstCleanRate = GetOptionalDecimal(reader, 25, defaults.FirstCleanRate),
-                    FirstCleanMinimum = GetOptionalDecimal(reader, 26, defaults.FirstCleanMinimum),
-                    DeepCleanRate = GetOptionalDecimal(reader, 27, defaults.DeepCleanRate),
-                    DeepCleanMinimum = GetOptionalDecimal(reader, 28, defaults.DeepCleanMinimum),
-                    MaintenanceRate = GetOptionalDecimal(reader, 29, defaults.MaintenanceRate),
-                    MaintenanceMinimum = GetOptionalDecimal(reader, 30, defaults.MaintenanceMinimum),
-                    OneTimeDeepCleanRate = GetOptionalDecimal(reader, 31, defaults.OneTimeDeepCleanRate),
-                    OneTimeDeepCleanMinimum = GetOptionalDecimal(reader, 32, defaults.OneTimeDeepCleanMinimum),
-                    WindowInsideRate = windowInsideRate,
-                    WindowOutsideRate = windowOutsideRate,
-                    UpdatedAt = DateTime.Parse(reader.GetString(35))
-                };
+                    defaultRoomType = defaults.DefaultRoomType;
+                    needsUpdate = true;
+                }
 
+                if (string.IsNullOrWhiteSpace(defaultRoomLevel))
+                {
+                    defaultRoomLevel = defaults.DefaultRoomLevel;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultRoomSize))
+                {
+                    defaultRoomSize = defaults.DefaultRoomSize;
+                    needsUpdate = true;
+                }
+
+                if (defaultRoomComplexity <= 0)
+                {
+                    defaultRoomComplexity = defaults.DefaultRoomComplexity;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultSubItemType))
+                {
+                    defaultSubItemType = defaults.DefaultSubItemType;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultWindowSize))
+                {
+                    defaultWindowSize = defaults.DefaultWindowSize;
+                    needsUpdate = true;
+                }
+
+                    pricing = new ServiceTypePricing
+                    {
+                        ServiceType = reader.GetString(0),
+                        SqFtPerLaborHour = Convert.ToDecimal(reader.GetDouble(1)),
+                        SizeSmallSqFt = Convert.ToDecimal(reader.GetDouble(2)),
+                        SizeMediumSqFt = Convert.ToDecimal(reader.GetDouble(3)),
+                        SizeLargeSqFt = Convert.ToDecimal(reader.GetDouble(4)),
+                        Complexity1Multiplier = Convert.ToDecimal(reader.GetDouble(5)),
+                        Complexity2Multiplier = Convert.ToDecimal(reader.GetDouble(6)),
+                        Complexity3Multiplier = Convert.ToDecimal(reader.GetDouble(7)),
+                        Complexity1Definition = GetOptionalString(reader, 8),
+                        Complexity2Definition = GetOptionalString(reader, 9),
+                        Complexity3Definition = GetOptionalString(reader, 10),
+                        FullGlassShowerHoursEach = Convert.ToDecimal(reader.GetDouble(11)),
+                        FullGlassShowerComplexity = GetOptionalInt(reader, 12, defaults.FullGlassShowerComplexity),
+                        PebbleStoneFloorHoursEach = Convert.ToDecimal(reader.GetDouble(13)),
+                        PebbleStoneFloorComplexity = GetOptionalInt(reader, 14, defaults.PebbleStoneFloorComplexity),
+                        FridgeHoursEach = Convert.ToDecimal(reader.GetDouble(15)),
+                        FridgeComplexity = GetOptionalInt(reader, 16, defaults.FridgeComplexity),
+                        OvenHoursEach = Convert.ToDecimal(reader.GetDouble(17)),
+                        OvenComplexity = GetOptionalInt(reader, 18, defaults.OvenComplexity),
+                        CeilingFanHoursEach = GetOptionalDecimal(reader, 19, defaults.CeilingFanHoursEach),
+                        CeilingFanComplexity = GetOptionalInt(reader, 20, defaults.CeilingFanComplexity),
+                        WindowSmallHoursEach = GetOptionalDecimal(reader, 21, defaults.WindowSmallHoursEach),
+                        WindowMediumHoursEach = GetOptionalDecimal(reader, 22, defaults.WindowMediumHoursEach),
+                        WindowLargeHoursEach = GetOptionalDecimal(reader, 23, defaults.WindowLargeHoursEach),
+                        WindowComplexity = GetOptionalInt(reader, 24, defaults.WindowComplexity),
+                        FirstCleanRate = GetOptionalDecimal(reader, 25, defaults.FirstCleanRate),
+                        FirstCleanMinimum = GetOptionalDecimal(reader, 26, defaults.FirstCleanMinimum),
+                        DeepCleanRate = GetOptionalDecimal(reader, 27, defaults.DeepCleanRate),
+                        DeepCleanMinimum = GetOptionalDecimal(reader, 28, defaults.DeepCleanMinimum),
+                        MaintenanceRate = GetOptionalDecimal(reader, 29, defaults.MaintenanceRate),
+                        MaintenanceMinimum = GetOptionalDecimal(reader, 30, defaults.MaintenanceMinimum),
+                        OneTimeDeepCleanRate = GetOptionalDecimal(reader, 31, defaults.OneTimeDeepCleanRate),
+                        OneTimeDeepCleanMinimum = GetOptionalDecimal(reader, 32, defaults.OneTimeDeepCleanMinimum),
+                        WindowInsideRate = windowInsideRate,
+                        WindowOutsideRate = windowOutsideRate,
+                        DefaultRoomType = defaultRoomType,
+                        DefaultRoomLevel = defaultRoomLevel,
+                        DefaultRoomSize = defaultRoomSize,
+                        DefaultRoomComplexity = defaultRoomComplexity,
+                        DefaultSubItemType = defaultSubItemType,
+                        DefaultWindowSize = defaultWindowSize,
+                        UpdatedAt = DateTime.Parse(reader.GetString(41))
+                    };
+                }
+            }
+
+            if (pricing != null)
+            {
                 if (needsUpdate)
                     Upsert(pricing);
 
@@ -158,6 +215,12 @@ SET SqFtPerLaborHour = $SqFtPerLaborHour,
     OneTimeDeepCleanMinimum = $OneTimeDeepCleanMinimum,
     WindowInsideRate = $WindowInsideRate,
     WindowOutsideRate = $WindowOutsideRate,
+    DefaultRoomType = $DefaultRoomType,
+    DefaultRoomLevel = $DefaultRoomLevel,
+    DefaultRoomSize = $DefaultRoomSize,
+    DefaultRoomComplexity = $DefaultRoomComplexity,
+    DefaultSubItemType = $DefaultSubItemType,
+    DefaultWindowSize = $DefaultWindowSize,
     UpdatedAt = $UpdatedAt
 WHERE ServiceType = $ServiceType;
 ";
@@ -196,6 +259,12 @@ WHERE ServiceType = $ServiceType;
                 cmd.Parameters.AddWithValue("$OneTimeDeepCleanMinimum", (double)settings.OneTimeDeepCleanMinimum);
                 cmd.Parameters.AddWithValue("$WindowInsideRate", (double)settings.WindowInsideRate);
                 cmd.Parameters.AddWithValue("$WindowOutsideRate", (double)settings.WindowOutsideRate);
+                cmd.Parameters.AddWithValue("$DefaultRoomType", settings.DefaultRoomType ?? "");
+                cmd.Parameters.AddWithValue("$DefaultRoomLevel", settings.DefaultRoomLevel ?? "");
+                cmd.Parameters.AddWithValue("$DefaultRoomSize", settings.DefaultRoomSize ?? "");
+                cmd.Parameters.AddWithValue("$DefaultRoomComplexity", settings.DefaultRoomComplexity);
+                cmd.Parameters.AddWithValue("$DefaultSubItemType", settings.DefaultSubItemType ?? "");
+                cmd.Parameters.AddWithValue("$DefaultWindowSize", settings.DefaultWindowSize ?? "");
                 cmd.Parameters.AddWithValue("$UpdatedAt", settings.UpdatedAt.ToString("o"));
 
                 var rows = cmd.ExecuteNonQuery();
@@ -221,6 +290,8 @@ INSERT INTO ServiceTypePricing
  MaintenanceRate, MaintenanceMinimum,
  OneTimeDeepCleanRate, OneTimeDeepCleanMinimum,
  WindowInsideRate, WindowOutsideRate,
+ DefaultRoomType, DefaultRoomLevel, DefaultRoomSize, DefaultRoomComplexity,
+ DefaultSubItemType, DefaultWindowSize,
  UpdatedAt)
 VALUES
 ($ServiceType, $SqFtPerLaborHour, $SizeSmallSqFt, $SizeMediumSqFt, $SizeLargeSqFt,
@@ -237,6 +308,8 @@ VALUES
  $MaintenanceRate, $MaintenanceMinimum,
  $OneTimeDeepCleanRate, $OneTimeDeepCleanMinimum,
  $WindowInsideRate, $WindowOutsideRate,
+ $DefaultRoomType, $DefaultRoomLevel, $DefaultRoomSize, $DefaultRoomComplexity,
+ $DefaultSubItemType, $DefaultWindowSize,
  $UpdatedAt);
 ";
                 insert.Parameters.AddWithValue("$ServiceType", normalized);
@@ -274,6 +347,12 @@ VALUES
                 insert.Parameters.AddWithValue("$OneTimeDeepCleanMinimum", (double)settings.OneTimeDeepCleanMinimum);
                 insert.Parameters.AddWithValue("$WindowInsideRate", (double)settings.WindowInsideRate);
                 insert.Parameters.AddWithValue("$WindowOutsideRate", (double)settings.WindowOutsideRate);
+                insert.Parameters.AddWithValue("$DefaultRoomType", settings.DefaultRoomType ?? "");
+                insert.Parameters.AddWithValue("$DefaultRoomLevel", settings.DefaultRoomLevel ?? "");
+                insert.Parameters.AddWithValue("$DefaultRoomSize", settings.DefaultRoomSize ?? "");
+                insert.Parameters.AddWithValue("$DefaultRoomComplexity", settings.DefaultRoomComplexity);
+                insert.Parameters.AddWithValue("$DefaultSubItemType", settings.DefaultSubItemType ?? "");
+                insert.Parameters.AddWithValue("$DefaultWindowSize", settings.DefaultWindowSize ?? "");
                 insert.Parameters.AddWithValue("$UpdatedAt", settings.UpdatedAt.ToString("o"));
 
                 insert.ExecuteNonQuery();

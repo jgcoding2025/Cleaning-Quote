@@ -1,7 +1,55 @@
 <Window x:Class="Cleaning_Quote.ServiceTypeSettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Service Type Defaults" Height="720" Width="700" WindowStartupLocation="CenterOwner">
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="Service Type Defaults" Height="820" Width="720" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <x:Array x:Key="RoomTypeOptions" Type="{x:Type sys:String}">
+            <sys:String>Bedroom</sys:String>
+            <sys:String>Bathroom</sys:String>
+            <sys:String>Kitchen</sys:String>
+            <sys:String>Living Room</sys:String>
+            <sys:String>Dining Room</sys:String>
+            <sys:String>Office</sys:String>
+            <sys:String>Laundry</sys:String>
+            <sys:String>Family Room</sys:String>
+            <sys:String>Entry</sys:String>
+            <sys:String>Hallway</sys:String>
+            <sys:String>Garage</sys:String>
+            <sys:String>Other</sys:String>
+        </x:Array>
+        <x:Array x:Key="LevelOptions" Type="{x:Type sys:String}">
+            <sys:String>Basement</sys:String>
+            <sys:String>Main Floor (1)</sys:String>
+            <sys:String>Upstairs (2)</sys:String>
+            <sys:String>Floor 3</sys:String>
+            <sys:String>Floor 4</sys:String>
+            <sys:String>Floor 5</sys:String>
+        </x:Array>
+        <x:Array x:Key="RoomSizeOptions" Type="{x:Type sys:String}">
+            <sys:String>S</sys:String>
+            <sys:String>M</sys:String>
+            <sys:String>L</sys:String>
+        </x:Array>
+        <x:Array x:Key="ComplexityOptions" Type="{x:Type sys:Int32}">
+            <sys:Int32>1</sys:Int32>
+            <sys:Int32>2</sys:Int32>
+            <sys:Int32>3</sys:Int32>
+        </x:Array>
+        <x:Array x:Key="SubItemTypeOptions" Type="{x:Type sys:String}">
+            <sys:String>Full Glass Shower</sys:String>
+            <sys:String>Pebble Stone Floor</sys:String>
+            <sys:String>Fridge</sys:String>
+            <sys:String>Oven</sys:String>
+            <sys:String>Ceiling Fan</sys:String>
+            <sys:String>Standard Window - 2 panes</sys:String>
+        </x:Array>
+        <x:Array x:Key="WindowSizeOptions" Type="{x:Type sys:String}">
+            <sys:String>S</sys:String>
+            <sys:String>M</sys:String>
+            <sys:String>L</sys:String>
+        </x:Array>
+    </Window.Resources>
     <DockPanel Margin="10">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
@@ -17,6 +65,44 @@
                         <ComboBoxItem>Organizing</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
+
+                <GroupBox Header="Room Defaults" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <WrapPanel>
+                            <StackPanel Width="180" Margin="0,0,10,0">
+                                <TextBlock Text="Room Type" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="DefaultRoomTypeBox" Height="26" ItemsSource="{StaticResource RoomTypeOptions}"/>
+                            </StackPanel>
+                            <StackPanel Width="180" Margin="0,0,10,0">
+                                <TextBlock Text="Level" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="DefaultRoomLevelBox" Height="26" ItemsSource="{StaticResource LevelOptions}"/>
+                            </StackPanel>
+                            <StackPanel Width="90" Margin="0,0,10,0">
+                                <TextBlock Text="Size" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="DefaultRoomSizeBox" Height="26" ItemsSource="{StaticResource RoomSizeOptions}"/>
+                            </StackPanel>
+                            <StackPanel Width="120">
+                                <TextBlock Text="Complexity" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="DefaultRoomComplexityBox" Height="26" ItemsSource="{StaticResource ComplexityOptions}"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Sub-Item Defaults" Margin="0,0,0,12">
+                    <StackPanel Margin="10">
+                        <WrapPanel>
+                            <StackPanel Width="220" Margin="0,0,10,0">
+                                <TextBlock Text="Sub-Item Type" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="DefaultSubItemTypeBox" Height="26" ItemsSource="{StaticResource SubItemTypeOptions}"/>
+                            </StackPanel>
+                            <StackPanel Width="120">
+                                <TextBlock Text="Window Size" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="DefaultWindowSizeBox" Height="26" ItemsSource="{StaticResource WindowSizeOptions}"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
 
                 <GroupBox Header="Default Pricing Settings" Margin="0,0,0,12">
                     <StackPanel Margin="10">
@@ -91,7 +177,7 @@
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Header="Sub-Item Defaults" Margin="0,0,0,12">
+                <GroupBox Header="Sub-Item Labor Defaults" Margin="0,0,0,12">
                     <StackPanel Margin="10">
                         <WrapPanel Margin="0,0,0,10">
                             <StackPanel Width="140" Margin="0,0,10,0">
