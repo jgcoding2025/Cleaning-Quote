@@ -135,7 +135,7 @@ namespace Cleaning_Quote.Models
                 return "";
 
             if (string.IsNullOrWhiteSpace(selection) || selection == "Excluded")
-                return "";
+                return "Excluded";
 
             return selection switch
             {
@@ -153,7 +153,7 @@ namespace Cleaning_Quote.Models
                 return "";
 
             if (!IncludedInQuote)
-                return "";
+                return "Excluded";
 
             if (WindowInside && WindowOutside)
                 return "Inside & Outside";
@@ -161,7 +161,7 @@ namespace Cleaning_Quote.Models
                 return "Inside";
             if (WindowOutside)
                 return "Outside";
-            return "";
+            return "Excluded";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
