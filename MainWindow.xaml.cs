@@ -665,7 +665,12 @@ namespace Cleaning_Quote
                 "Fridge" => "Fridge",
                 "Oven" => "Oven",
                 "Ceiling Fan" => "CeilingFan",
-                "Standard Window - 2 panes" => "Window",
+                "Window (1 pane, inside only, 1st story)" => "Window",
+                "Window (1 pane, outside only, 1st story)" => "Window",
+                "Window (1 pane, inside only, 2nd story)" => "Window",
+                "Window (1 pane, outside only, 2nd story)" => "Window",
+                "Window Tract" => "Window",
+                "Window: Standard (2 panes)" => "Window",
                 _ => ""
             };
         }

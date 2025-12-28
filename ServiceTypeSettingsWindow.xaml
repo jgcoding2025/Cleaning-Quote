@@ -40,12 +40,21 @@
             <sys:Int32>3</sys:Int32>
         </x:Array>
         <x:Array x:Key="SubItemTypeOptions" Type="{x:Type sys:String}">
-            <sys:String>Full Glass Shower</sys:String>
-            <sys:String>Pebble Stone Floor</sys:String>
-            <sys:String>Fridge</sys:String>
-            <sys:String>Oven</sys:String>
             <sys:String>Ceiling Fan</sys:String>
-            <sys:String>Standard Window - 2 panes</sys:String>
+            <sys:String>Fridge</sys:String>
+            <sys:String>Mirror +1</sys:String>
+            <sys:String>Oven</sys:String>
+            <sys:String>Shower: Discount (no glass)</sys:String>
+            <sys:String>Shower: Discount (no stone/tile)</sys:String>
+            <sys:String>Sink: Discount 1</sys:String>
+            <sys:String>Stove Top (Gas)</sys:String>
+            <sys:String>Tub / Jacuzzi Tub</sys:String>
+            <sys:String>Window (1 pane, inside only, 1st story)</sys:String>
+            <sys:String>Window (1 pane, outside only, 1st story)</sys:String>
+            <sys:String>Window (1 pane, inside only, 2nd story)</sys:String>
+            <sys:String>Window (1 pane, outside only, 2nd story)</sys:String>
+            <sys:String>Window Tract</sys:String>
+            <sys:String>Window: Standard (2 panes)</sys:String>
         </x:Array>
         <x:Array x:Key="WindowSizeOptions" Type="{x:Type sys:String}">
             <sys:String>S</sys:String>
@@ -458,6 +467,9 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Room Type" FontWeight="SemiBold"/>
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="Size" FontWeight="SemiBold"/>
@@ -632,6 +644,9 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Sub-Item" FontWeight="SemiBold"/>
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="Size" FontWeight="SemiBold"/>
@@ -683,20 +698,35 @@
                             <TextBlock Grid.Row="9" Grid.Column="2" Text="25"/>
                             <TextBlock Grid.Row="9" Grid.Column="3" Text="Standard"/>
 
-                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Window (1 pane)"/>
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="Window (1 pane, inside only, 1st story)"/>
                             <TextBlock Grid.Row="10" Grid.Column="1" Text="M"/>
                             <TextBlock Grid.Row="10" Grid.Column="2" Text="5"/>
                             <TextBlock Grid.Row="10" Grid.Column="3" Text="Standard"/>
 
-                            <TextBlock Grid.Row="11" Grid.Column="0" Text="Window Tract"/>
+                            <TextBlock Grid.Row="11" Grid.Column="0" Text="Window (1 pane, outside only, 1st story)"/>
                             <TextBlock Grid.Row="11" Grid.Column="1" Text="M"/>
                             <TextBlock Grid.Row="11" Grid.Column="2" Text="5"/>
                             <TextBlock Grid.Row="11" Grid.Column="3" Text="Standard"/>
 
-                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Window: Standard (2 panes)"/>
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="Window (1 pane, inside only, 2nd story)"/>
                             <TextBlock Grid.Row="12" Grid.Column="1" Text="M"/>
                             <TextBlock Grid.Row="12" Grid.Column="2" Text="10"/>
                             <TextBlock Grid.Row="12" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="13" Grid.Column="0" Text="Window (1 pane, outside only, 2nd story)"/>
+                            <TextBlock Grid.Row="13" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="13" Grid.Column="2" Text="10"/>
+                            <TextBlock Grid.Row="13" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="14" Grid.Column="0" Text="Window Tract"/>
+                            <TextBlock Grid.Row="14" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="14" Grid.Column="2" Text="5"/>
+                            <TextBlock Grid.Row="14" Grid.Column="3" Text="Standard"/>
+
+                            <TextBlock Grid.Row="15" Grid.Column="0" Text="Window: Standard (2 panes)"/>
+                            <TextBlock Grid.Row="15" Grid.Column="1" Text="M"/>
+                            <TextBlock Grid.Row="15" Grid.Column="2" Text="10"/>
+                            <TextBlock Grid.Row="15" Grid.Column="3" Text="Standard"/>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
