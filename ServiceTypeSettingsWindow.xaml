@@ -96,6 +96,7 @@
                                 <ColumnDefinition Width="320"/>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="90"/>
                                 <ColumnDefinition Width="90"/>
                             </Grid.ColumnDefinitions>
@@ -118,86 +119,100 @@
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Room Type" FontWeight="SemiBold"/>
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="Size" FontWeight="SemiBold"/>
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="Time (min)" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Complexity" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="0" Grid.Column="4" Text="Frequency" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Sq.Ft." FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="4" Text="Complexity" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="5" Text="Frequency" FontWeight="SemiBold"/>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="Bathroom (Full)"/>
                             <TextBlock Grid.Row="1" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="1" Grid.Column="2" x:Name="RoomBathroomFullMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="1" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="1" Grid.Column="3" x:Name="RoomBathroomFullSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="1" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="Bathroom (Half)"/>
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="2" Grid.Column="2" x:Name="RoomBathroomHalfMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="2" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="2" Grid.Column="3" x:Name="RoomBathroomHalfSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="2" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="2" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Bathroom (Master - 2 sinks, glass/stone shower)"/>
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="3" Grid.Column="2" x:Name="RoomBathroomMasterMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="3" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="3" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="3" Grid.Column="3" x:Name="RoomBathroomMasterSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="3" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="3" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Bedroom"/>
                             <TextBlock Grid.Row="4" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="4" Grid.Column="2" x:Name="RoomBedroomMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="4" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="4" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="4" Grid.Column="3" x:Name="RoomBedroomSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="4" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="4" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Bedroom (Master)"/>
                             <TextBlock Grid.Row="5" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="5" Grid.Column="2" x:Name="RoomBedroomMasterMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="5" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="5" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="5" Grid.Column="3" x:Name="RoomBedroomMasterSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="5" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="5" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Dining Room"/>
                             <TextBlock Grid.Row="6" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="6" Grid.Column="2" x:Name="RoomDiningRoomMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="6" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="6" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="6" Grid.Column="3" x:Name="RoomDiningRoomSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="6" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="6" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="7" Grid.Column="0" Text="Entry"/>
                             <TextBlock Grid.Row="7" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="7" Grid.Column="2" x:Name="RoomEntryMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="7" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="7" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="7" Grid.Column="3" x:Name="RoomEntrySqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="7" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="7" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="8" Grid.Column="0" Text="Family Room"/>
                             <TextBlock Grid.Row="8" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="8" Grid.Column="2" x:Name="RoomFamilyRoomMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="8" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="8" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="8" Grid.Column="3" x:Name="RoomFamilyRoomSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="8" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="8" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="9" Grid.Column="0" Text="Hallway"/>
                             <TextBlock Grid.Row="9" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="9" Grid.Column="2" x:Name="RoomHallwayMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="9" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="9" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="9" Grid.Column="3" x:Name="RoomHallwaySqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="9" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="9" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="10" Grid.Column="0" Text="Kitchen"/>
                             <TextBlock Grid.Row="10" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="10" Grid.Column="2" x:Name="RoomKitchenMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="10" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="10" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="10" Grid.Column="3" x:Name="RoomKitchenSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="10" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="10" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="11" Grid.Column="0" Text="Laundry"/>
                             <TextBlock Grid.Row="11" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="11" Grid.Column="2" x:Name="RoomLaundryMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="11" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="11" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="11" Grid.Column="3" x:Name="RoomLaundrySqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="11" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="11" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="12" Grid.Column="0" Text="Living Room"/>
                             <TextBlock Grid.Row="12" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="12" Grid.Column="2" x:Name="RoomLivingRoomMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="12" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="12" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="12" Grid.Column="3" x:Name="RoomLivingRoomSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="12" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="12" Grid.Column="5" Text="Bi-weekly"/>
 
                             <TextBlock Grid.Row="13" Grid.Column="0" Text="Office"/>
                             <TextBlock Grid.Row="13" Grid.Column="1" Text="M"/>
                             <TextBox Grid.Row="13" Grid.Column="2" x:Name="RoomOfficeMinutesBox" Height="24"/>
-                            <TextBlock Grid.Row="13" Grid.Column="3" Text="Standard"/>
-                            <TextBlock Grid.Row="13" Grid.Column="4" Text="Bi-weekly"/>
+                            <TextBox Grid.Row="13" Grid.Column="3" x:Name="RoomOfficeSqFtBox" Height="24"/>
+                            <TextBlock Grid.Row="13" Grid.Column="4" Text="Standard"/>
+                            <TextBlock Grid.Row="13" Grid.Column="5" Text="Bi-weekly"/>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
