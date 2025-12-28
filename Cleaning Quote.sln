@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36811.4 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cleaning Quote", "Cleaning Quote.csproj", "{ED4898B1-1DA0-4FE8-AF79-8A7FBA5D0401}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleaningQuote.Api", "CleaningQuote.Api\\CleaningQuote.Api.csproj", "{C35029F2-E6AD-46FE-9D75-74A1980C3419}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{ED4898B1-1DA0-4FE8-AF79-8A7FBA5D0401}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED4898B1-1DA0-4FE8-AF79-8A7FBA5D0401}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED4898B1-1DA0-4FE8-AF79-8A7FBA5D0401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C35029F2-E6AD-46FE-9D75-74A1980C3419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C35029F2-E6AD-46FE-9D75-74A1980C3419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C35029F2-E6AD-46FE-9D75-74A1980C3419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C35029F2-E6AD-46FE-9D75-74A1980C3419}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
