@@ -29,6 +29,8 @@ SELECT ServiceType, SqFtPerLaborHour, SizeSmallSqFt, SizeMediumSqFt, SizeLargeSq
        MaintenanceRate, MaintenanceMinimum,
        OneTimeDeepCleanRate, OneTimeDeepCleanMinimum,
        WindowInsideRate, WindowOutsideRate,
+       DefaultRoomType, DefaultRoomLevel, DefaultRoomSize, DefaultRoomComplexity,
+       DefaultSubItemType, DefaultWindowSize,
        UpdatedAt
 FROM ServiceTypePricing
 WHERE ServiceType = $ServiceType;
@@ -41,6 +43,12 @@ WHERE ServiceType = $ServiceType;
                 var defaults = ServiceTypePricing.Default(normalized);
                 var windowInsideRate = GetOptionalDecimal(reader, 33, defaults.WindowInsideRate);
                 var windowOutsideRate = GetOptionalDecimal(reader, 34, defaults.WindowOutsideRate);
+                var defaultRoomType = GetOptionalString(reader, 35);
+                var defaultRoomLevel = GetOptionalString(reader, 36);
+                var defaultRoomSize = GetOptionalString(reader, 37);
+                var defaultRoomComplexity = GetOptionalInt(reader, 38, defaults.DefaultRoomComplexity);
+                var defaultSubItemType = GetOptionalString(reader, 39);
+                var defaultWindowSize = GetOptionalString(reader, 40);
                 var needsUpdate = false;
 
                 if (windowInsideRate <= 0m)
@@ -52,6 +60,42 @@ WHERE ServiceType = $ServiceType;
                 if (windowOutsideRate <= 0m)
                 {
                     windowOutsideRate = defaults.WindowOutsideRate;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultRoomType))
+                {
+                    defaultRoomType = defaults.DefaultRoomType;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultRoomLevel))
+                {
+                    defaultRoomLevel = defaults.DefaultRoomLevel;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultRoomSize))
+                {
+                    defaultRoomSize = defaults.DefaultRoomSize;
+                    needsUpdate = true;
+                }
+
+                if (defaultRoomComplexity <= 0)
+                {
+                    defaultRoomComplexity = defaults.DefaultRoomComplexity;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultSubItemType))
+                {
+                    defaultSubItemType = defaults.DefaultSubItemType;
+                    needsUpdate = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(defaultWindowSize))
+                {
+                    defaultWindowSize = defaults.DefaultWindowSize;
                     needsUpdate = true;
                 }
 
@@ -92,7 +136,13 @@ WHERE ServiceType = $ServiceType;
                     OneTimeDeepCleanMinimum = GetOptionalDecimal(reader, 32, defaults.OneTimeDeepCleanMinimum),
                     WindowInsideRate = windowInsideRate,
                     WindowOutsideRate = windowOutsideRate,
-                    UpdatedAt = DateTime.Parse(reader.GetString(35))
+                    DefaultRoomType = defaultRoomType,
+                    DefaultRoomLevel = defaultRoomLevel,
+                    DefaultRoomSize = defaultRoomSize,
+                    DefaultRoomComplexity = defaultRoomComplexity,
+                    DefaultSubItemType = defaultSubItemType,
+                    DefaultWindowSize = defaultWindowSize,
+                    UpdatedAt = DateTime.Parse(reader.GetString(41))
                 };
 
                 if (needsUpdate)
@@ -158,6 +208,12 @@ SET SqFtPerLaborHour = $SqFtPerLaborHour,
     OneTimeDeepCleanMinimum = $OneTimeDeepCleanMinimum,
     WindowInsideRate = $WindowInsideRate,
     WindowOutsideRate = $WindowOutsideRate,
+    DefaultRoomType = $DefaultRoomType,
+    DefaultRoomLevel = $DefaultRoomLevel,
+    DefaultRoomSize = $DefaultRoomSize,
+    DefaultRoomComplexity = $DefaultRoomComplexity,
+    DefaultSubItemType = $DefaultSubItemType,
+    DefaultWindowSize = $DefaultWindowSize,
     UpdatedAt = $UpdatedAt
 WHERE ServiceType = $ServiceType;
 ";
@@ -196,6 +252,12 @@ WHERE ServiceType = $ServiceType;
                 cmd.Parameters.AddWithValue("$OneTimeDeepCleanMinimum", (double)settings.OneTimeDeepCleanMinimum);
                 cmd.Parameters.AddWithValue("$WindowInsideRate", (double)settings.WindowInsideRate);
                 cmd.Parameters.AddWithValue("$WindowOutsideRate", (double)settings.WindowOutsideRate);
+                cmd.Parameters.AddWithValue("$DefaultRoomType", settings.DefaultRoomType ?? "");
+                cmd.Parameters.AddWithValue("$DefaultRoomLevel", settings.DefaultRoomLevel ?? "");
+                cmd.Parameters.AddWithValue("$DefaultRoomSize", settings.DefaultRoomSize ?? "");
+                cmd.Parameters.AddWithValue("$DefaultRoomComplexity", settings.DefaultRoomComplexity);
+                cmd.Parameters.AddWithValue("$DefaultSubItemType", settings.DefaultSubItemType ?? "");
+                cmd.Parameters.AddWithValue("$DefaultWindowSize", settings.DefaultWindowSize ?? "");
                 cmd.Parameters.AddWithValue("$UpdatedAt", settings.UpdatedAt.ToString("o"));
 
                 var rows = cmd.ExecuteNonQuery();
@@ -221,6 +283,8 @@ INSERT INTO ServiceTypePricing
  MaintenanceRate, MaintenanceMinimum,
  OneTimeDeepCleanRate, OneTimeDeepCleanMinimum,
  WindowInsideRate, WindowOutsideRate,
+ DefaultRoomType, DefaultRoomLevel, DefaultRoomSize, DefaultRoomComplexity,
+ DefaultSubItemType, DefaultWindowSize,
  UpdatedAt)
 VALUES
 ($ServiceType, $SqFtPerLaborHour, $SizeSmallSqFt, $SizeMediumSqFt, $SizeLargeSqFt,
@@ -237,6 +301,8 @@ VALUES
  $MaintenanceRate, $MaintenanceMinimum,
  $OneTimeDeepCleanRate, $OneTimeDeepCleanMinimum,
  $WindowInsideRate, $WindowOutsideRate,
+ $DefaultRoomType, $DefaultRoomLevel, $DefaultRoomSize, $DefaultRoomComplexity,
+ $DefaultSubItemType, $DefaultWindowSize,
  $UpdatedAt);
 ";
                 insert.Parameters.AddWithValue("$ServiceType", normalized);
@@ -274,6 +340,12 @@ VALUES
                 insert.Parameters.AddWithValue("$OneTimeDeepCleanMinimum", (double)settings.OneTimeDeepCleanMinimum);
                 insert.Parameters.AddWithValue("$WindowInsideRate", (double)settings.WindowInsideRate);
                 insert.Parameters.AddWithValue("$WindowOutsideRate", (double)settings.WindowOutsideRate);
+                insert.Parameters.AddWithValue("$DefaultRoomType", settings.DefaultRoomType ?? "");
+                insert.Parameters.AddWithValue("$DefaultRoomLevel", settings.DefaultRoomLevel ?? "");
+                insert.Parameters.AddWithValue("$DefaultRoomSize", settings.DefaultRoomSize ?? "");
+                insert.Parameters.AddWithValue("$DefaultRoomComplexity", settings.DefaultRoomComplexity);
+                insert.Parameters.AddWithValue("$DefaultSubItemType", settings.DefaultSubItemType ?? "");
+                insert.Parameters.AddWithValue("$DefaultWindowSize", settings.DefaultWindowSize ?? "");
                 insert.Parameters.AddWithValue("$UpdatedAt", settings.UpdatedAt.ToString("o"));
 
                 insert.ExecuteNonQuery();

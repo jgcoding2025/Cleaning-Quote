@@ -465,6 +465,7 @@ namespace Cleaning_Quote
             WindowSizeBox.SelectedIndex = 1;
             WindowInsideCheck.IsChecked = false;
             WindowOutsideCheck.IsChecked = false;
+            DefaultRoomTypeBox.SelectedIndex = 0;
             DefaultRoomLevelBox.SelectedIndex = 1;
             DefaultRoomSizeBox.SelectedIndex = 1;
             DefaultRoomComplexityBox.SelectedIndex = 0;
@@ -1155,6 +1156,13 @@ namespace Cleaning_Quote
             _currentServiceTypePricing = _serviceTypePricingRepo.GetOrCreate(serviceType);
             _suppressServiceTypeSettingsChange = true;
 
+            DefaultRoomTypeBox.SelectedItem = _currentServiceTypePricing.DefaultRoomType;
+            DefaultRoomLevelBox.SelectedItem = _currentServiceTypePricing.DefaultRoomLevel;
+            DefaultRoomSizeBox.SelectedItem = _currentServiceTypePricing.DefaultRoomSize;
+            DefaultRoomComplexityBox.SelectedItem = _currentServiceTypePricing.DefaultRoomComplexity;
+            SetSelectedCombo(SubItemTypeBox, _currentServiceTypePricing.DefaultSubItemType);
+            SetSelectedCombo(WindowSizeBox, _currentServiceTypePricing.DefaultWindowSize);
+
             SqFtPerLaborHourBox.Text = _currentServiceTypePricing.SqFtPerLaborHour.ToString();
             SizeSmallSqFtBox.Text = _currentServiceTypePricing.SizeSmallSqFt.ToString();
             SizeMediumSqFtBox.Text = _currentServiceTypePricing.SizeMediumSqFt.ToString();
@@ -1349,11 +1357,16 @@ namespace Cleaning_Quote
         {
             return new QuoteRoom
             {
-                RoomType = "Bedroom",
+                RoomType = GetDefaultRoomType(),
                 Size = GetDefaultRoomSize(),
                 Complexity = GetDefaultRoomComplexity(),
                 Level = GetDefaultRoomLevel()
             };
+        }
+
+        private string GetDefaultRoomType()
+        {
+            return DefaultRoomTypeBox.SelectedItem as string ?? "Bedroom";
         }
 
         private void UpdateRoomSortOrders()
