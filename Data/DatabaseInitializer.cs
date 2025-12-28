@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS ServiceTypePricing(
     DefaultRoomLevel TEXT NOT NULL DEFAULT 'Main Floor (1)',
     DefaultRoomSize TEXT NOT NULL DEFAULT 'M',
     DefaultRoomComplexity INTEGER NOT NULL DEFAULT 1,
-    DefaultSubItemType TEXT NOT NULL DEFAULT 'Full Glass Shower',
+    DefaultSubItemType TEXT NOT NULL DEFAULT 'Ceiling Fan',
     DefaultWindowSize TEXT NOT NULL DEFAULT 'M',
     UpdatedAt TEXT NOT NULL
 );

@@ -43,7 +43,7 @@ namespace Cleaning_Quote.Models
         public string DefaultRoomLevel { get; set; } = "Main Floor (1)";
         public string DefaultRoomSize { get; set; } = "M";
         public int DefaultRoomComplexity { get; set; } = 2;
-        public string DefaultSubItemType { get; set; } = "Full Glass Shower";
+        public string DefaultSubItemType { get; set; } = "Ceiling Fan";
         public string DefaultWindowSize { get; set; } = "M";
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
@@ -90,7 +90,7 @@ namespace Cleaning_Quote.Models
                 DefaultRoomLevel = "Main Floor (1)",
                 DefaultRoomSize = "M",
                 DefaultRoomComplexity = 2,
-                DefaultSubItemType = "Full Glass Shower",
+                DefaultSubItemType = "Ceiling Fan",
                 DefaultWindowSize = "M",
                 UpdatedAt = DateTime.UtcNow
             };

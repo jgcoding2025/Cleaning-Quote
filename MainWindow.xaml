@@ -43,13 +43,6 @@
             <sys:Int32>2</sys:Int32>
             <sys:Int32>3</sys:Int32>
         </x:Array>
-        <x:Array x:Key="WindowSideOptions" Type="{x:Type sys:String}">
-            <sys:String>Excluded</sys:String>
-            <sys:String>Inside</sys:String>
-            <sys:String>Inside &amp; Outside</sys:String>
-            <sys:String>Outside</sys:String>
-            <sys:String>Window Tract</sys:String>
-        </x:Array>
     </Window.Resources>
     <DockPanel Margin="10">
         <Menu DockPanel.Dock="Top">
@@ -455,20 +448,6 @@
                         Width="90"
                         ItemsSource="{StaticResource ComplexityOptions}"
                         SelectedItemBinding="{Binding Complexity, UpdateSourceTrigger=PropertyChanged}"/>
-                    <DataGridTemplateColumn Header="Window Side" Width="130">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding WindowSideSelection}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                        <DataGridTemplateColumn.CellEditingTemplate>
-                            <DataTemplate>
-                                <ComboBox ItemsSource="{StaticResource WindowSideOptions}"
-                                          SelectedItem="{Binding WindowSideSelection, UpdateSourceTrigger=PropertyChanged}"
-                                          IsEnabled="{Binding IsWindowRoom}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellEditingTemplate>
-                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Est. Time" Binding="{Binding RoomLaborHours}" IsReadOnly="True" Width="80"/>
                     <DataGridTextColumn Header="Notes" Binding="{Binding RoomNotes}" Width="150"/>
                     <DataGridTextColumn Header="$ Amount" Binding="{Binding RoomAmount, StringFormat=C}" IsReadOnly="True" Width="90"/>
@@ -480,12 +459,21 @@
                     <WrapPanel Margin="0,0,0,6">
                         <TextBlock Text="Sub-Item" FontWeight="SemiBold" Width="80"/>
                         <ComboBox x:Name="SubItemTypeBox" Width="200">
-                            <ComboBoxItem>Full Glass Shower</ComboBoxItem>
-                            <ComboBoxItem>Pebble Stone Floor</ComboBoxItem>
-                            <ComboBoxItem>Fridge</ComboBoxItem>
-                            <ComboBoxItem>Oven</ComboBoxItem>
                             <ComboBoxItem>Ceiling Fan</ComboBoxItem>
-                            <ComboBoxItem>Standard Window - 2 panes</ComboBoxItem>
+                            <ComboBoxItem>Fridge</ComboBoxItem>
+                            <ComboBoxItem>Mirror +1</ComboBoxItem>
+                            <ComboBoxItem>Oven</ComboBoxItem>
+                            <ComboBoxItem>Shower: Discount (no glass)</ComboBoxItem>
+                            <ComboBoxItem>Shower: Discount (no stone/tile)</ComboBoxItem>
+                            <ComboBoxItem>Sink: Discount 1</ComboBoxItem>
+                            <ComboBoxItem>Stove Top (Gas)</ComboBoxItem>
+                            <ComboBoxItem>Tub / Jacuzzi Tub</ComboBoxItem>
+                            <ComboBoxItem>Window (1 pane, inside only, 1st story)</ComboBoxItem>
+                            <ComboBoxItem>Window (1 pane, outside only, 1st story)</ComboBoxItem>
+                            <ComboBoxItem>Window (1 pane, inside only, 2nd story)</ComboBoxItem>
+                            <ComboBoxItem>Window (1 pane, outside only, 2nd story)</ComboBoxItem>
+                            <ComboBoxItem>Window Tract</ComboBoxItem>
+                            <ComboBoxItem>Window: Standard (2 panes)</ComboBoxItem>
                         </ComboBox>
                         <TextBlock Text="Count" FontWeight="SemiBold" Margin="12,0,4,0"/>
                         <TextBox x:Name="SubItemCountBox" Width="40" Height="24" Text="1"/>
