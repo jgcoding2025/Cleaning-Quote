@@ -1302,6 +1302,10 @@ namespace Cleaning_Quote
         {
             if (_currentServiceTypePricing == null)
             {
+                foreach (var room in _rooms)
+                {
+                    room.EstimatedSqFt = null;
+                }
                 EstimatedSqFtText = "";
                 return;
             }
@@ -1310,17 +1314,25 @@ namespace Cleaning_Quote
             foreach (var room in _rooms)
             {
                 if (room.IsSubItem)
+                {
+                    room.EstimatedSqFt = null;
                     continue;
-                if (!room.IncludedInQuote)
-                    continue;
+                }
 
                 var size = (room.Size ?? "").Trim().ToUpperInvariant();
-                total += size switch
+                var estimatedSqFt = size switch
                 {
                     "S" => _currentServiceTypePricing.SizeSmallSqFt,
                     "L" => _currentServiceTypePricing.SizeLargeSqFt,
                     _ => _currentServiceTypePricing.SizeMediumSqFt
                 };
+
+                room.EstimatedSqFt = estimatedSqFt;
+
+                if (!room.IncludedInQuote)
+                    continue;
+
+                total += estimatedSqFt;
             }
 
             EstimatedSqFtText = $"{total:N0}";
