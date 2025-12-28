@@ -40,8 +40,8 @@ namespace Cleaning_Quote.Services
         public decimal HouseholdSize_3to4_Hours { get; set; }
         public decimal HouseholdSize_5plus_Hours { get; set; }
 
-        // Rounding increment for labor hours (0.25 = quarter-hour)
-        public decimal HourRoundingIncrement { get; set; } = 0.25m;
+        // Rounding increment for labor hours (0.01 = hundredth of an hour)
+        public decimal HourRoundingIncrement { get; set; } = 0.01m;
 
         public static PricingRules Default()
         {
@@ -67,7 +67,7 @@ namespace Cleaning_Quote.Services
             r.HouseholdSize_5plus_Hours = 0.50m;
 
             // Rounding (edit or set to 0 for none)
-            r.HourRoundingIncrement = 0.25m;
+            r.HourRoundingIncrement = 0.01m;
 
             return r;
         }
