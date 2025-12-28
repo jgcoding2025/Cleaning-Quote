@@ -1411,15 +1411,11 @@ namespace Cleaning_Quote
             var normalizedSize = (size ?? "").Trim().ToUpperInvariant();
             if (roomSqFt > 0)
             {
-                var mediumSqFt = _currentServiceTypePricing.SizeMediumSqFt;
-                if (mediumSqFt <= 0)
-                    return roomSqFt;
-
                 var ratio = normalizedSize switch
                 {
-                    "S" => _currentServiceTypePricing.SizeSmallSqFt / mediumSqFt,
-                    "L" => _currentServiceTypePricing.SizeLargeSqFt / mediumSqFt,
-                    _ => 1m
+                    "S" => _currentServiceTypePricing.SizeSmallMultiplier,
+                    "L" => _currentServiceTypePricing.SizeLargeMultiplier,
+                    _ => _currentServiceTypePricing.SizeMediumMultiplier
                 };
 
                 return Math.Round(roomSqFt * ratio, MidpointRounding.AwayFromZero);
